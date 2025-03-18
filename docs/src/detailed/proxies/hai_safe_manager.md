@@ -1,6 +1,6 @@
 # SAFE Manager
 
-See [HaiSafeManager.sol](/src/contracts/proxies/HaiSafeManager.sol/contract.HaiSafeManager.html) and [SAFEHandler.sol](/src/contracts/proxies/SAFEHandler.sol/contract.SAFEHandler.html) for more details.
+See [AzosSafeManager.sol](/src/contracts/proxies/AzosSafeManager.sol/contract.AzosSafeManager.html) and [SAFEHandler.sol](/src/contracts/proxies/SAFEHandler.sol/contract.SAFEHandler.html) for more details.
 
 ## 1. Introduction
 

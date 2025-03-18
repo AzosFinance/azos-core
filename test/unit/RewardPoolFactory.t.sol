@@ -7,9 +7,9 @@ import {IRewardPool} from '@interfaces/tokens/IRewardPool.sol';
 import {IStakingManager} from '@interfaces/tokens/IStakingManager.sol';
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   address deployer = label('deployer');
   address authorizedAccount = label('authorizedAccount');
   address user = label('user');

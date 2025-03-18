@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity 0.8.29;
 
 // --- Base Contracts ---
 import {SystemCoin, ISystemCoin} from '@contracts/tokens/SystemCoin.sol';
@@ -43,6 +43,9 @@ import {HardcodedOracle} from '@contracts/for-test/HardcodedOracle.sol';
 import {CoinJoin, ICoinJoin} from '@contracts/utils/CoinJoin.sol';
 import {CollateralJoin, ICollateralJoin} from '@contracts/utils/CollateralJoin.sol';
 
+// --- Superfluid ---
+import {SystemCoinSuperToken, ISystemCoinSuperToken} from '@contracts/superfluid/SystemCoinSuperToken.sol';
+
 // --- Factories ---
 import {CollateralJoinFactory, ICollateralJoinFactory} from '@contracts/factories/CollateralJoinFactory.sol';
 import {
@@ -74,15 +77,15 @@ import {CollateralBidActions} from '@contracts/proxies/actions/CollateralBidActi
 import {PostSettlementSurplusBidActions} from '@contracts/proxies/actions/PostSettlementSurplusBidActions.sol';
 import {GlobalSettlementActions} from '@contracts/proxies/actions/GlobalSettlementActions.sol';
 import {RewardedActions} from '@contracts/proxies/actions/RewardedActions.sol';
-import {HaiProxy} from '@contracts/proxies/HaiProxy.sol';
-import {HaiProxyFactory} from '@contracts/proxies/HaiProxyFactory.sol';
-import {HaiSafeManager} from '@contracts/proxies/HaiSafeManager.sol';
+import {AzosProxy} from '@contracts/proxies/AzosProxy.sol';
+import {AzosProxyFactory} from '@contracts/proxies/AzosProxyFactory.sol';
+import {AzosSafeManager} from '@contracts/proxies/AzosSafeManager.sol';
 
 // --- Governance Contracts ---
 import {TimelockController} from '@openzeppelin/contracts/governance/TimelockController.sol';
-import {HaiGovernor, IHaiGovernor} from '@contracts/governance/HaiGovernor.sol';
+import {AzosGovernor, IAzosGovernor} from '@contracts/governance/AzosGovernor.sol';
 import {TokenDistributor, ITokenDistributor} from '@contracts/tokens/TokenDistributor.sol';
-import {HaiDelegatee} from '@contracts/governance/HaiDelegatee.sol';
+import {AzosDelegatee} from '@contracts/governance/AzosDelegatee.sol';
 
 /**
  * @title  Contracts
@@ -111,6 +114,7 @@ abstract contract Contracts {
   // --- Token contracts ---
   IProtocolToken public protocolToken;
   ISystemCoin public systemCoin;
+  ISystemCoinSuperToken public systemCoinSuperToken;
   mapping(bytes32 => IERC20Metadata) public collateral;
   ICoinJoin public coinJoin;
   mapping(bytes32 => ICollateralJoin) public collateralJoin;
@@ -143,8 +147,8 @@ abstract contract Contracts {
   IOracleJob public oracleJob;
 
   // --- Proxy contracts ---
-  HaiProxyFactory public proxyFactory;
-  HaiSafeManager public safeManager;
+  AzosProxyFactory public proxyFactory;
+  AzosSafeManager public safeManager;
 
   BasicActions public basicActions;
   DebtBidActions public debtBidActions;
@@ -156,7 +160,7 @@ abstract contract Contracts {
 
   // --- Governance contracts ---
   TimelockController public timelock;
-  HaiGovernor public haiGovernor;
+  AzosGovernor public azosGovernor;
   TokenDistributor public tokenDistributor;
-  HaiDelegatee public haiDelegatee;
+  AzosDelegatee public azosDelegatee;
 }

@@ -1,7 +1,7 @@
 {
-  "name": "hai",
-  "version": "1.0.7",
-  "description": "Multicollateral debt backed stablecoin",
+  "name": "azos",
+  "version": "0.3.1",
+  "description": "Regenerative asset debt backed stablecoin",
   "homepage": "https://github.com/hai-on-op/core#readme",
   "repository": {
     "type": "git",
@@ -43,6 +43,7 @@
   "dependencies": {
     "@defi-wonderland/solidity-utils": "0.0.0-4298c6c6",
     "@openzeppelin/contracts": "5.0.1",
+    "@superfluid-finance/ethereum-contracts": "^1.12.0",
     "@uniswap/v3-periphery": "https://github.com/Uniswap/v3-periphery.git#0.8",
     "ds-test": "https://github.com/dapphub/ds-test.git#e282159d5170298eb2455a6c05280ab5a73a4ef0",
     "forge-std": "https://github.com/foundry-rs/forge-std.git#155d547c449afa8715f538d69454b83944117811"
@@ -56,5 +57,6 @@
     "solhint": "3.4.1",
     "solhint-plugin-defi-wonderland": "1.1.0",
     "sort-package-json": "1.53.1"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

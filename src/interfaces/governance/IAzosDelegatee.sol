@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import {IGovernor} from '@openzeppelin/contracts/governance/IGovernor.sol';
 
-interface IHaiDelegatee {
+interface IAzosDelegatee {
   // --- Events ---
 
   /**
@@ -31,7 +31,9 @@ interface IHaiDelegatee {
    * @notice Set the delegatee of the contract
    * @param _delegatee The address of the new delegatee
    */
-  function setDelegatee(address _delegatee) external;
+  function setDelegatee(
+    address _delegatee
+  ) external;
 
   /**
    * @notice Cast a vote using the voting power delegated to this contract

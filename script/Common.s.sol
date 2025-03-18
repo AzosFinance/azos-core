@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity 0.8.29;
 
 import '@script/Contracts.s.sol';
 import '@script/Params.s.sol';
@@ -12,19 +12,26 @@ abstract contract Common is Contracts, Params {
   uint256 internal _governorPK;
 
   function deployTokens() public updateParams {
-    systemCoin = new SystemCoin('HAI Index Token', 'HAI');
+    systemCoin = new SystemCoin('AZUSD Index Token', 'AZUSD');
     protocolToken = new ProtocolToken('Protocol Token', 'KITE');
+    
+    // Deploy SuperToken version of systemCoin
+    systemCoinSuperToken = new SystemCoinSuperToken(address(systemCoin));
+    // Initialize with the same name and symbol but with Super prefix
+    systemCoinSuperToken.initialize('Super AZUSD', 'sAZUSD');
+    // Authorize the SystemCoinSuperToken to mint
+    systemCoin.addAuthorization(address(systemCoinSuperToken));
   }
 
   function deployGovernance() public updateParams {
-    IHaiGovernor.HaiGovernorParams memory _emptyGovernorParams;
+    IAzosGovernor.AzosGovernorParams memory _emptyGovernorParams;
     // if governor params are not empty, deploy governor
     if (keccak256(abi.encode(_governorParams)) != keccak256(abi.encode(_emptyGovernorParams))) {
-      haiGovernor = new HaiGovernor(protocolToken, 'HaiGovernor', _governorParams);
+      azosGovernor = new AzosGovernor(protocolToken, 'AzosGovernor', _governorParams);
 
-      timelock = TimelockController(payable(haiGovernor.timelock()));
+      timelock = TimelockController(payable(azosGovernor.timelock()));
 
-      haiDelegatee = new HaiDelegatee(address(timelock));
+      azosDelegatee = new AzosDelegatee(address(timelock));
 
       // sets timelock as protocol governor
       governor = address(timelock);
@@ -188,8 +195,8 @@ abstract contract Common is Contracts, Params {
   }
 
   function deployProxyContracts(address _safeEngine) public updateParams {
-    proxyFactory = new HaiProxyFactory();
-    safeManager = new HaiSafeManager(_safeEngine);
+    proxyFactory = new AzosProxyFactory();
+    safeManager = new AzosSafeManager(_safeEngine);
     _deployProxyActions();
   }
 
@@ -314,6 +321,9 @@ abstract contract Common is Contracts, Params {
 
     // token distributor
     if (address(tokenDistributor) != address(0)) _function(tokenDistributor, _target);
+    
+    // Superfluid
+    if (address(systemCoinSuperToken) != address(0)) _function(systemCoinSuperToken, _target);
   }
 
   modifier updateParams() {

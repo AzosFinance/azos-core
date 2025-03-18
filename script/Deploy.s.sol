@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity 0.8.29;
 
 import '@script/Contracts.s.sol';
 import '@script/Params.s.sol';
@@ -110,28 +110,28 @@ contract DeployMainnet is MainnetParams, Deploy {
     collateralTypes.push(OP);
 
     // NOTE: Deploying the PID Controller turned off until governance action
-    systemCoinOracle = new HardcodedOracle('HAI / USD', HAI_USD_INITIAL_PRICE); // 1 HAI = 1 USD
+    systemCoinOracle = new HardcodedOracle('AZUSD / USD', AZUSD_USD_INITIAL_PRICE); // 1 AZUSD = 1 USD
   }
 
   function setupPostEnvironment() public virtual override updateParams {
-    // Deploy HAI/WETH UniV3 pool (uninitialized)
+    // Deploy AZUSD/WETH UniV3 pool (uninitialized)
     IUniswapV3Factory(UNISWAP_V3_FACTORY).createPool({
       tokenA: address(systemCoin),
       tokenB: address(collateral[WETH]),
-      fee: HAI_POOL_FEE_TIER
+      fee: AZUSD_POOL_FEE_TIER
     });
 
-    // Setup HAI/WETH oracle feed
-    IBaseOracle _haiWethOracle = uniV3RelayerFactory.deployUniV3Relayer({
+    // Setup AZUSD/WETH oracle feed
+    IBaseOracle _azusdWethOracle = uniV3RelayerFactory.deployUniV3Relayer({
       _baseToken: address(systemCoin),
       _quoteToken: address(collateral[WETH]),
-      _feeTier: HAI_POOL_FEE_TIER,
+      _feeTier: AZUSD_POOL_FEE_TIER,
       _quotePeriod: 1 days
     });
 
-    // Setup HAI/USD oracle feed
+    // Setup AZUSD/USD oracle feed
     denominatedOracleFactory.deployDenominatedOracle({
-      _priceSource: _haiWethOracle,
+      _priceSource: _azusdWethOracle,
       _denominationPriceSource: delayedOracle[WETH].priceSource(),
       _inverted: false
     });
@@ -152,8 +152,8 @@ contract DeployTestnet is TestnetParams, Deploy {
 
     // Setup oracle feeds
 
-    // HAI
-    systemCoinOracle = new HardcodedOracle('HAI / USD', HAI_USD_INITIAL_PRICE); // 1 HAI = 1 USD
+    // AZUSD
+    systemCoinOracle = new HardcodedOracle('AZUSD / USD', AZUSD_USD_INITIAL_PRICE); // 1 AZUSD = 1 USD
 
     // Test tokens
     collateral[WETH] = IERC20Metadata(OP_WETH);
@@ -186,9 +186,9 @@ contract DeployTestnet is TestnetParams, Deploy {
   function setupPostEnvironment() public virtual override updateParams {
     // Setup deviated oracle
     systemCoinOracle = new DeviatedOracle({
-      _symbol: 'HAI / USD',
+      _symbol: 'AZUSD / USD',
       _oracleRelayer: address(oracleRelayer),
-      _deviation: OP_SEPOLIA_HAI_PRICE_DEVIATION
+      _deviation: OP_SEPOLIA_AZUSD_PRICE_DEVIATION
     });
 
     oracleRelayer.modifyParameters('systemCoinOracle', abi.encode(systemCoinOracle));

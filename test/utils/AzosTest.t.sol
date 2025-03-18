@@ -7,13 +7,17 @@ import {DSTestPlus, stdStorage, StdStorage} from '@defi-wonderland/solidity-util
 contract OverflowChecker {
   using Math for uint256;
 
-  function trySum(uint256[] calldata _numbers) external pure returns (uint256 _total) {
+  function trySum(
+    uint256[] calldata _numbers
+  ) external pure returns (uint256 _total) {
     for (uint256 _i = 0; _i < _numbers.length; ++_i) {
       _total += _numbers[_i];
     }
   }
 
-  function notOverflowAdd(uint256[] memory _numbers) public view returns (bool _valid) {
+  function notOverflowAdd(
+    uint256[] memory _numbers
+  ) public view returns (bool _valid) {
     try OverflowChecker(address(this)).trySum(_numbers) {
       _valid = true;
     } catch {
@@ -126,13 +130,17 @@ contract OverflowChecker {
     }
   }
 
-  function notOverflowInt256(uint256 _number) public pure returns (bool _valid) {
+  function notOverflowInt256(
+    uint256 _number
+  ) public pure returns (bool _valid) {
     _valid = _number < 2 ** 255;
   }
 }
 
-abstract contract HaiTest is DSTestPlus, OverflowChecker {
-  modifier mockAsContract(address _address) {
+abstract contract AzosTest is DSTestPlus, OverflowChecker {
+  modifier mockAsContract(
+    address _address
+  ) {
     // Foundry fuzzer sometimes gives us the next deployment address
     // this results in very unexpected reverts as any contract deploy will revert
     // we check here to make sure it's not the next deployment address for the (pranked) msg.sender

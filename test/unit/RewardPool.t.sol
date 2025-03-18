@@ -5,13 +5,13 @@ import {RewardPool, IRewardPool} from '@contracts/tokens/RewardPool.sol';
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import {IStakingManager} from '@interfaces/tokens/IStakingManager.sol';
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {Assertions} from '@libraries/Assertions.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   address deployer = label('deployer');
   address factoryDeployer = label('factoryDeployer');
   address authorizedAccount = label('authorizedAccount');

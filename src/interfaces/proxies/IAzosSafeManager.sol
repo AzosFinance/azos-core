@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.20;
 
-interface IHaiSafeManager {
+interface IAzosSafeManager {
   // --- Events ---
 
   /// @notice Emitted when calling allowSAFE with the sender address and the method arguments
@@ -77,7 +77,9 @@ interface IHaiSafeManager {
    * @param  _usr Address of the user
    * @return _safes List of safe ids owned by the user
    */
-  function getSafes(address _usr) external view returns (uint256[] memory _safes);
+  function getSafes(
+    address _usr
+  ) external view returns (uint256[] memory _safes);
 
   /**
    * @notice Getter for the list of safes owned by a user for a given collateral type
@@ -94,17 +96,18 @@ interface IHaiSafeManager {
    * @return _safeHandlers List of safe handlers addresses owned by the user
    * @return _cTypes List of collateral types of the safes owned by the user
    */
-  function getSafesData(address _usr)
-    external
-    view
-    returns (uint256[] memory _safes, address[] memory _safeHandlers, bytes32[] memory _cTypes);
+  function getSafesData(
+    address _usr
+  ) external view returns (uint256[] memory _safes, address[] memory _safeHandlers, bytes32[] memory _cTypes);
 
   /**
    * @notice Getter for the details of a SAFE
    * @param  _safe Id of the SAFE
    * @return _sData Struct with the safe data
    */
-  function safeData(uint256 _safe) external view returns (SAFEData memory _sData);
+  function safeData(
+    uint256 _safe
+  ) external view returns (SAFEData memory _sData);
 
   // --- Methods ---
 
@@ -142,7 +145,9 @@ interface IHaiSafeManager {
    * @notice Accept the transfer of the ownership of a safe
    * @param  _safe Id of the SAFE
    */
-  function acceptSAFEOwnership(uint256 _safe) external;
+  function acceptSAFEOwnership(
+    uint256 _safe
+  ) external;
 
   /**
    * @notice Modify a SAFE's collateralization ratio while keeping the generated COIN or collateral freed in the safe handler address
@@ -204,14 +209,18 @@ interface IHaiSafeManager {
    * @param  _safe Id of the SAFE
    * @dev    This function is meant to allow the user to add a safe to their list (if it was previously removed)
    */
-  function addSAFE(uint256 _safe) external;
+  function addSAFE(
+    uint256 _safe
+  ) external;
 
   /**
    * @notice Remove a safe from the user's list of safes (doesn't erase safe ownership)
    * @param  _safe Id of the SAFE
    * @dev    This function is meant to allow the user to remove a safe from their list (if it was added against their will)
    */
-  function removeSAFE(uint256 _safe) external;
+  function removeSAFE(
+    uint256 _safe
+  ) external;
 
   /**
    * @notice Choose a safe saviour inside LiquidationEngine for the SAFE

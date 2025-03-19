@@ -98,9 +98,9 @@ abstract contract TestnetDeployment is Contracts, TestnetParams {
     delayedOracle[TOTEM] = IDelayedOracle(0x458057eB20175895D2598ABC313d8F2Ab0b2230a);
 
     // --- governance ---
-    haiGovernor = AzosGovernor(payable(0x34C0CdCe8D66A559CcCCcBeB2AeabCF68182e8B9));
+    azosGovernor = AzosGovernor(payable(0x34C0CdCe8D66A559CcCCcBeB2AeabCF68182e8B9));
     timelock = TimelockController(payable(0x06F2bC32144aAbEfb5FaaB498356c9ADc56EEEaa));
-    haiDelegatee = AzosDelegatee(0x8bdBebfDFb82C1A8315A8Ebe00E53b87944D7526);
+    azosDelegatee = AzosDelegatee(0x8bdBebfDFb82C1A8315A8Ebe00E53b87944D7526);
 
     tokenDistributor = TokenDistributor(0x5684Ea6cf4A323F410a1Eb25B4A6ec8D8a93Cf24);
 

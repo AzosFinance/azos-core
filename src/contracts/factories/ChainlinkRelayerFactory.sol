@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IChainlinkRelayerFactory} from '@interfaces/factories/IChainlinkRelayerFactory.sol';
 import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
@@ -34,7 +34,9 @@ contract ChainlinkRelayerFactory is Authorizable, IChainlinkRelayerFactory {
   /**
    * @param  _sequencerUptimeFeed The address of the Chainlink sequencer uptime feed
    */
-  constructor(address _sequencerUptimeFeed) Authorizable(msg.sender) {
+  constructor(
+    address _sequencerUptimeFeed
+  ) Authorizable(msg.sender) {
     _setSequencerUptimeFeed(_sequencerUptimeFeed);
   }
 
@@ -64,11 +66,15 @@ contract ChainlinkRelayerFactory is Authorizable, IChainlinkRelayerFactory {
   // --- Administration ---
 
   /// @inheritdoc IChainlinkRelayerFactory
-  function setSequencerUptimeFeed(address _sequencerUptimeFeed) external isAuthorized {
+  function setSequencerUptimeFeed(
+    address _sequencerUptimeFeed
+  ) external isAuthorized {
     _setSequencerUptimeFeed(_sequencerUptimeFeed);
   }
 
-  function _setSequencerUptimeFeed(address _sequencerUptimeFeed) internal {
+  function _setSequencerUptimeFeed(
+    address _sequencerUptimeFeed
+  ) internal {
     if (_sequencerUptimeFeed == address(0)) revert ChainlinkRelayerFactory_NullSequencerUptimeFeed();
     sequencerUptimeFeed = IChainlinkOracle(_sequencerUptimeFeed);
   }

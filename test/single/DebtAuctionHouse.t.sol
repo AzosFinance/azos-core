@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {DSTest} from 'ds-test/test.sol';
 import {ProtocolToken} from '@contracts/tokens/ProtocolToken.sol';
@@ -9,13 +9,17 @@ import {ISAFEEngine, SAFEEngine} from '@contracts/SAFEEngine.sol';
 import {IDisableable} from '@interfaces/utils/IDisableable.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
+  function warp(
+    uint256
+  ) public virtual;
 }
 
 contract Guy {
   DebtAuctionHouse debtAuctionHouse;
 
-  constructor(DebtAuctionHouse debtAuctionHouse_) {
+  constructor(
+    DebtAuctionHouse debtAuctionHouse_
+  ) {
     debtAuctionHouse = debtAuctionHouse_;
     debtAuctionHouse.safeEngine().approveSAFEModification(address(debtAuctionHouse));
     debtAuctionHouse.protocolToken().approve(address(debtAuctionHouse), type(uint256).max);
@@ -25,7 +29,9 @@ contract Guy {
     debtAuctionHouse.decreaseSoldAmount(id, amountToBuy);
   }
 
-  function settleAuction(uint256 id) public {
+  function settleAuction(
+    uint256 id
+  ) public {
     debtAuctionHouse.settleAuction(id);
   }
 
@@ -34,12 +40,16 @@ contract Guy {
     (ok,) = address(debtAuctionHouse).call(abi.encodeWithSignature(sig, id, amountToBuy));
   }
 
-  function try_settleAuction(uint256 id) public returns (bool ok) {
+  function try_settleAuction(
+    uint256 id
+  ) public returns (bool ok) {
     string memory sig = 'settleAuction(uint256)';
     (ok,) = address(debtAuctionHouse).call(abi.encodeWithSignature(sig, id));
   }
 
-  function try_restart_auction(uint256 id) public returns (bool ok) {
+  function try_restart_auction(
+    uint256 id
+  ) public returns (bool ok) {
     string memory sig = 'restartAuction(uint256)';
     (ok,) = address(debtAuctionHouse).call(abi.encodeWithSignature(sig, id));
   }
@@ -58,11 +68,15 @@ contract DummyAccountingEngine {
     return id;
   }
 
-  function cancelAuctionedDebtWithSurplus(uint256 rad) external {
+  function cancelAuctionedDebtWithSurplus(
+    uint256 rad
+  ) external {
     totalOnAuctionDebt -= rad;
   }
 
-  function disableContract(IDisableable target) external {
+  function disableContract(
+    IDisableable target
+  ) external {
     target.disableContract();
   }
 }
@@ -78,7 +92,9 @@ contract SingleDebtAuctionHouseTest is DSTest {
   address ali;
   address bob;
 
-  function cancelAuctionedDebtWithSurplus(uint256) public pure {} // arbitrary callback
+  function cancelAuctionedDebtWithSurplus(
+    uint256
+  ) public pure {} // arbitrary callback
 
   function setUp() public {
     hevm = Hevm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);

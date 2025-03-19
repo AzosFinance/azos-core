@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {IAccountingEngine} from '@interfaces/IAccountingEngine.sol';
@@ -136,7 +136,9 @@ interface IDebtAuctionHouse is IAuthorizable, IDisableable, IModifiable {
    * @param  _id Id of the auction
    * @return _auction Auction data struct
    */
-  function auctions(uint256 _id) external view returns (Auction memory _auction);
+  function auctions(
+    uint256 _id
+  ) external view returns (Auction memory _auction);
 
   /**
    * @notice Unpacked data of an auction
@@ -148,7 +150,9 @@ interface IDebtAuctionHouse is IAuthorizable, IDisableable, IModifiable {
    * @return _auctionDeadline Time when the auction expires
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _auctions(uint256 _id)
+  function _auctions(
+    uint256 _id
+  )
     external
     view
     returns (
@@ -215,7 +219,9 @@ interface IDebtAuctionHouse is IAuthorizable, IDisableable, IModifiable {
    * @dev    An auction can be restarted if the auction expired with no bids
    * @param  _id Id of the auction
    */
-  function restartAuction(uint256 _id) external;
+  function restartAuction(
+    uint256 _id
+  ) external;
 
   /**
    * @notice Decrease the protocol token amount you're willing to receive in
@@ -230,7 +236,9 @@ interface IDebtAuctionHouse is IAuthorizable, IDisableable, IModifiable {
    * @dev    Can only be called after the auction expired with a winning bid
    * @param  _id Id of the auction
    */
-  function settleAuction(uint256 _id) external;
+  function settleAuction(
+    uint256 _id
+  ) external;
 
   /**
    * @notice Terminate an auction prematurely
@@ -238,5 +246,7 @@ interface IDebtAuctionHouse is IAuthorizable, IDisableable, IModifiable {
    * @dev    Can only be called after the contract is disabled
    * @dev    The method creates an unbacked debt position in the AccountingEngine for the remaining debt
    */
-  function terminateAuctionPrematurely(uint256 _id) external;
+  function terminateAuctionPrematurely(
+    uint256 _id
+  ) external;
 }

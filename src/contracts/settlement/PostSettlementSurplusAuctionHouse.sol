@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {
   IPostSettlementSurplusAuctionHouse,
@@ -35,7 +35,9 @@ contract PostSettlementSurplusAuctionHouse is Authorizable, Modifiable, IPostSet
   mapping(uint256 => Auction) public _auctions;
 
   /// @inheritdoc ICommonSurplusAuctionHouse
-  function auctions(uint256 _id) external view returns (Auction memory _auction) {
+  function auctions(
+    uint256 _id
+  ) external view returns (Auction memory _auction) {
     return _auctions[_id];
   }
 
@@ -105,7 +107,9 @@ contract PostSettlementSurplusAuctionHouse is Authorizable, Modifiable, IPostSet
   }
 
   /// @inheritdoc ICommonSurplusAuctionHouse
-  function restartAuction(uint256 _id) external {
+  function restartAuction(
+    uint256 _id
+  ) external {
     if (_id == 0 || _id > auctionsStarted) revert SAH_AuctionNeverStarted();
     Auction storage _auction = _auctions[_id];
     if (_auction.auctionDeadline > block.timestamp) revert SAH_AuctionNotFinished();
@@ -158,7 +162,9 @@ contract PostSettlementSurplusAuctionHouse is Authorizable, Modifiable, IPostSet
   }
 
   /// @inheritdoc ICommonSurplusAuctionHouse
-  function settleAuction(uint256 _id) external {
+  function settleAuction(
+    uint256 _id
+  ) external {
     Auction memory _auction = _auctions[_id];
     if (_auction.bidExpiry == 0 || (_auction.bidExpiry > block.timestamp && _auction.auctionDeadline > block.timestamp))
     {

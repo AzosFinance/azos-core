@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 /**
  * @title  BaseUser
@@ -16,7 +16,9 @@ abstract contract BaseUser {
 
   function _getCollateralBalance(address _user, bytes32 _cType) internal view virtual returns (uint256 _wad);
 
-  function _getInternalCoinBalance(address _user) internal virtual returns (uint256 _rad);
+  function _getInternalCoinBalance(
+    address _user
+  ) internal virtual returns (uint256 _rad);
 
   // --- SAFE actions ---
 
@@ -24,7 +26,9 @@ abstract contract BaseUser {
 
   function _exitCoins(address _user, uint256 _amount) internal virtual;
 
-  function _exitAllCoins(address _user) internal virtual;
+  function _exitAllCoins(
+    address _user
+  ) internal virtual;
 
   function _joinTKN(address _user, address _collateralJoin, uint256 _amount) internal virtual;
 
@@ -91,15 +95,23 @@ abstract contract BaseUser {
 
   function _workPopDebtFromQueue(address _user, uint256 _debtBlockTimestamp) internal virtual;
 
-  function _workAuctionDebt(address _user) internal virtual;
+  function _workAuctionDebt(
+    address _user
+  ) internal virtual;
 
-  function _workAuctionSurplus(address _user) internal virtual;
+  function _workAuctionSurplus(
+    address _user
+  ) internal virtual;
 
-  function _workTransferExtraSurplus(address _user) internal virtual;
+  function _workTransferExtraSurplus(
+    address _user
+  ) internal virtual;
 
   function _workLiquidation(address _user, bytes32 _cType, address _safe) internal virtual;
 
   function _workUpdateCollateralPrice(address _user, bytes32 _cType) internal virtual;
 
-  function _workUpdateRate(address _user) internal virtual;
+  function _workUpdateRate(
+    address _user
+  ) internal virtual;
 }

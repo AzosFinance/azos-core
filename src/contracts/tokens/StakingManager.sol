@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
@@ -58,7 +58,9 @@ contract StakingManager is Authorizable, Modifiable, IStakingManager {
   mapping(address _account => PendingWithdrawal) public _pendingWithdrawals;
 
   /// @inheritdoc IStakingManager
-  function pendingWithdrawals(address _account) external view returns (PendingWithdrawal memory _pendingWithdrawal) {
+  function pendingWithdrawals(
+    address _account
+  ) external view returns (PendingWithdrawal memory _pendingWithdrawal) {
     return _pendingWithdrawals[_account];
   }
 
@@ -67,7 +69,9 @@ contract StakingManager is Authorizable, Modifiable, IStakingManager {
   mapping(uint256 _id => RewardType) public _rewardTypes;
 
   /// @inheritdoc IStakingManager
-  function rewardTypes(uint256 _id) external view returns (RewardTypeInfo memory _rewardTypeInfo) {
+  function rewardTypes(
+    uint256 _id
+  ) external view returns (RewardTypeInfo memory _rewardTypeInfo) {
     RewardType storage _rewardType = _rewardTypes[_id];
     return RewardTypeInfo({
       rewardToken: _rewardType.rewardToken,
@@ -136,7 +140,9 @@ contract StakingManager is Authorizable, Modifiable, IStakingManager {
   }
 
   /// @inheritdoc IStakingManager
-  function initiateWithdrawal(uint256 _wad) external {
+  function initiateWithdrawal(
+    uint256 _wad
+  ) external {
     if (_wad == 0) revert StakingManager_WithdrawNullAmount();
 
     PendingWithdrawal storage _existingWithdrawal = _pendingWithdrawals[msg.sender];
@@ -234,7 +240,9 @@ contract StakingManager is Authorizable, Modifiable, IStakingManager {
   }
 
   /// @inheritdoc IStakingManager
-  function getReward(address _account) external {
+  function getReward(
+    address _account
+  ) external {
     _checkpointAndClaim([_account, _account]);
   }
 
@@ -264,7 +272,9 @@ contract StakingManager is Authorizable, Modifiable, IStakingManager {
   }
 
   /// @inheritdoc IStakingManager
-  function activateRewardType(uint256 _id) external isAuthorized {
+  function activateRewardType(
+    uint256 _id
+  ) external isAuthorized {
     if (_rewardTypes[_id].rewardToken == address(0)) {
       revert StakingManager_InvalidRewardType();
     }
@@ -273,7 +283,9 @@ contract StakingManager is Authorizable, Modifiable, IStakingManager {
   }
 
   /// @inheritdoc IStakingManager
-  function deactivateRewardType(uint256 _id) external isAuthorized {
+  function deactivateRewardType(
+    uint256 _id
+  ) external isAuthorized {
     if (_rewardTypes[_id].rewardToken == address(0)) {
       revert StakingManager_InvalidRewardType();
     }
@@ -282,22 +294,30 @@ contract StakingManager is Authorizable, Modifiable, IStakingManager {
   }
 
   /// @inheritdoc IStakingManager
-  function earned(address _account) external returns (EarnedData[] memory _claimable) {
+  function earned(
+    address _account
+  ) external returns (EarnedData[] memory _claimable) {
     _checkpoint([_account, address(0)]);
     return _earned(_account);
   }
 
   /// @inheritdoc IStakingManager
-  function checkpoint(address[2] memory _accounts) external {
+  function checkpoint(
+    address[2] memory _accounts
+  ) external {
     _checkpoint(_accounts);
   }
 
   /// @inheritdoc IStakingManager
-  function userCheckpoint(address _account) external {
+  function userCheckpoint(
+    address _account
+  ) external {
     _checkpoint([_account, address(0)]);
   }
 
-  function _earned(address _account) internal view returns (EarnedData[] memory _claimable) {
+  function _earned(
+    address _account
+  ) internal view returns (EarnedData[] memory _claimable) {
     _claimable = new EarnedData[](rewards);
 
     for (uint256 _i = 0; _i < rewards; _i++) {
@@ -378,7 +398,9 @@ contract StakingManager is Authorizable, Modifiable, IStakingManager {
     }
   }
 
-  function _checkpoint(address[2] memory _accounts) internal {
+  function _checkpoint(
+    address[2] memory _accounts
+  ) internal {
     uint256 _supply = stakingToken.totalSupply();
     uint256[2] memory _depositedBalance;
     _depositedBalance[0] = stakingToken.balanceOf(_accounts[0]);
@@ -391,7 +413,9 @@ contract StakingManager is Authorizable, Modifiable, IStakingManager {
     }
   }
 
-  function _checkpointAndClaim(address[2] memory _accounts) internal {
+  function _checkpointAndClaim(
+    address[2] memory _accounts
+  ) internal {
     uint256 _supply = stakingToken.totalSupply();
     uint256[2] memory _depositedBalance;
     _depositedBalance[0] = stakingToken.balanceOf(_accounts[0]); //only do first slot

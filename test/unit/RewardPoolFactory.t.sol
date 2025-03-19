@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {RewardPoolFactoryForTest, IRewardPoolFactory} from '@test/mocks/RewardPoolFactoryForTest.sol';
 import {RewardPoolChild} from '@contracts/factories/RewardPoolChild.sol';
@@ -52,7 +52,9 @@ abstract contract Base is AzosTest {
     vm.stopPrank();
   }
 
-  function _mockRewardPool(address _rewardPool) internal {
+  function _mockRewardPool(
+    address _rewardPool
+  ) internal {
     rewardPoolFactory.addRewardPool(_rewardPool);
   }
 }

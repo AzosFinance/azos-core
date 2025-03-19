@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ScriptBase} from 'forge-std/Script.sol';
 import {ETH_A} from '@script/Params.s.sol';
@@ -52,7 +52,9 @@ abstract contract ProxyUser is BaseUser, Contracts, ScriptBase {
     _wad = _wei * 10 ** (18 - _decimals);
   }
 
-  function _getInternalCoinBalance(address _user) internal override returns (uint256 _rad) {
+  function _getInternalCoinBalance(
+    address _user
+  ) internal override returns (uint256 _rad) {
     AzosProxy _proxy = _getProxy(_user);
     _rad = safeEngine.coinBalance(address(_proxy));
   }
@@ -81,7 +83,9 @@ abstract contract ProxyUser is BaseUser, Contracts, ScriptBase {
     _proxy.execute(address(basicActions), _callData);
   }
 
-  function _exitAllCoins(address _user) internal override {
+  function _exitAllCoins(
+    address _user
+  ) internal override {
     AzosProxy _proxy = _getProxy(_user);
 
     bytes memory _callData = abi.encodeWithSelector(CommonActions.exitAllSystemCoins.selector, address(coinJoin));
@@ -192,7 +196,9 @@ abstract contract ProxyUser is BaseUser, Contracts, ScriptBase {
     _proxy.execute(address(basicActions), _callData);
   }
 
-  function _getProxy(address _user) internal returns (AzosProxy) {
+  function _getProxy(
+    address _user
+  ) internal returns (AzosProxy) {
     if (proxy[_user] == AzosProxy(address(0))) {
       proxy[_user] = AzosProxy(proxyFactory.build(_user));
     }
@@ -385,7 +391,9 @@ abstract contract ProxyUser is BaseUser, Contracts, ScriptBase {
     _proxy.execute(address(rewardedActions), _callData);
   }
 
-  function _workAuctionDebt(address _user) internal override {
+  function _workAuctionDebt(
+    address _user
+  ) internal override {
     AzosProxy _proxy = _getProxy(_user);
 
     bytes memory _callData =
@@ -395,7 +403,9 @@ abstract contract ProxyUser is BaseUser, Contracts, ScriptBase {
     _proxy.execute(address(rewardedActions), _callData);
   }
 
-  function _workAuctionSurplus(address _user) internal override {
+  function _workAuctionSurplus(
+    address _user
+  ) internal override {
     AzosProxy _proxy = _getProxy(_user);
 
     bytes memory _callData =
@@ -405,7 +415,9 @@ abstract contract ProxyUser is BaseUser, Contracts, ScriptBase {
     _proxy.execute(address(rewardedActions), _callData);
   }
 
-  function _workTransferExtraSurplus(address _user) internal override {
+  function _workTransferExtraSurplus(
+    address _user
+  ) internal override {
     AzosProxy _proxy = _getProxy(_user);
 
     bytes memory _callData =
@@ -437,7 +449,9 @@ abstract contract ProxyUser is BaseUser, Contracts, ScriptBase {
     _proxy.execute(address(rewardedActions), _callData);
   }
 
-  function _workUpdateRate(address _user) internal override {
+  function _workUpdateRate(
+    address _user
+  ) internal override {
     AzosProxy _proxy = _getProxy(_user);
 
     bytes memory _callData =

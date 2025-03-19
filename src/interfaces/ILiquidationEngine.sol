@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {IAccountingEngine} from '@interfaces/IAccountingEngine.sol';
@@ -147,7 +147,9 @@ interface ILiquidationEngine is IAuthorizable, IDisableable, IModifiable, IModif
    * @param  _cType Bytes32 representation of the collateral type
    * @return _liqEngineCParams LiquidationEngine collateral parameters struct
    */
-  function cParams(bytes32 _cType) external view returns (LiquidationEngineCollateralParams memory _liqEngineCParams);
+  function cParams(
+    bytes32 _cType
+  ) external view returns (LiquidationEngineCollateralParams memory _liqEngineCParams);
 
   /**
    * @notice Getter for the unpacked collateral parameters struct
@@ -157,10 +159,9 @@ interface ILiquidationEngine is IAuthorizable, IDisableable, IModifiable, IModif
    * @return _liquidationQuantity Max amount of system coins to request in one auction for this collateral type [rad]
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _cParams(bytes32 _cType)
-    external
-    view
-    returns (address _collateralAuctionHouse, uint256 _liquidationPenalty, uint256 _liquidationQuantity);
+  function _cParams(
+    bytes32 _cType
+  ) external view returns (address _collateralAuctionHouse, uint256 _liquidationPenalty, uint256 _liquidationQuantity);
 
   // --- Data ---
 
@@ -182,7 +183,9 @@ interface ILiquidationEngine is IAuthorizable, IDisableable, IModifiable, IModif
    * @param  _saviour The SAFE saviour contract to check
    * @return _canSave Whether the contract can save SAFEs or not
    */
-  function safeSaviours(address _saviour) external view returns (bool _canSave);
+  function safeSaviours(
+    address _saviour
+  ) external view returns (bool _canSave);
 
   /**
    * @notice Saviour contract chosen for each SAFE by its owner
@@ -199,7 +202,9 @@ interface ILiquidationEngine is IAuthorizable, IDisableable, IModifiable, IModif
    * @dev    Usually called by CollateralAuctionHouse when an auction is settled
    * @param  _rad The amount of debt in RAD to withdraw from `currentOnAuctionSystemCoins`
    */
-  function removeCoinsFromAuction(uint256 _rad) external;
+  function removeCoinsFromAuction(
+    uint256 _rad
+  ) external;
 
   /**
    * @notice Liquidate a SAFE
@@ -224,11 +229,15 @@ interface ILiquidationEngine is IAuthorizable, IDisableable, IModifiable, IModif
    * @notice Authed function to add contracts that can save SAFEs from liquidation
    * @param  _saviour SAFE saviour contract to be whitelisted
    */
-  function connectSAFESaviour(address _saviour) external;
+  function connectSAFESaviour(
+    address _saviour
+  ) external;
 
   /**
    * @notice Authed function to remove contracts that can save SAFEs from liquidation
    * @param  _saviour SAFE saviour contract to be removed
    */
-  function disconnectSAFESaviour(address _saviour) external;
+  function disconnectSAFESaviour(
+    address _saviour
+  ) external;
 }

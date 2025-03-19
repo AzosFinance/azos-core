@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 
@@ -9,7 +9,9 @@ import {ISAFEEngine, SAFEEngine} from '@contracts/SAFEEngine.sol';
 import {RAY} from '@libraries/Math.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
+  function warp(
+    uint256
+  ) public virtual;
 }
 
 contract SingleTaxCollectorTest is DSTest {
@@ -17,23 +19,33 @@ contract SingleTaxCollectorTest is DSTest {
   TaxCollector taxCollector;
   SAFEEngine safeEngine;
 
-  function ray(uint256 _wad) internal pure returns (uint256) {
+  function ray(
+    uint256 _wad
+  ) internal pure returns (uint256) {
     return _wad * 10 ** 9;
   }
 
-  function rad(uint256 _wad) internal pure returns (uint256) {
+  function rad(
+    uint256 _wad
+  ) internal pure returns (uint256) {
     return _wad * 10 ** 27;
   }
 
-  function wad(uint256 _rad) internal pure returns (uint256) {
+  function wad(
+    uint256 _rad
+  ) internal pure returns (uint256) {
     return _rad / 10 ** 27;
   }
 
-  function wad(int256 _rad) internal pure returns (uint256) {
+  function wad(
+    int256 _rad
+  ) internal pure returns (uint256) {
     return uint256(_rad / 10 ** 27);
   }
 
-  function _updateTime(bytes32 _collateralType) internal view returns (uint256) {
+  function _updateTime(
+    bytes32 _collateralType
+  ) internal view returns (uint256) {
     return taxCollector.cData(_collateralType).updateTime;
   }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {RewardDistributor} from '@contracts/tokens/RewardDistributor.sol';
 import {ERC20ForTest} from '@test/mocks/ERC20ForTest.sol';

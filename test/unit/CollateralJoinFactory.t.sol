@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {CollateralJoinFactoryForTest, ICollateralJoinFactory} from '@test/mocks/CollateralJoinFactoryForTest.sol';
 import {CollateralJoinChild} from '@contracts/factories/CollateralJoinChild.sol';
@@ -41,11 +41,15 @@ abstract contract Base is AzosTest {
     vm.stopPrank();
   }
 
-  function _mockDecimals(uint8 _decimals) internal {
+  function _mockDecimals(
+    uint8 _decimals
+  ) internal {
     vm.mockCall(address(mockCollateral), abi.encodeCall(mockCollateral.decimals, ()), abi.encode(_decimals));
   }
 
-  function _mockContractEnabled(bool _contractEnabled) internal {
+  function _mockContractEnabled(
+    bool _contractEnabled
+  ) internal {
     // BUG: Accessing packed slots is not supported by Std Storage
     collateralJoinFactory.setContractEnabled(_contractEnabled);
   }
@@ -84,7 +88,9 @@ contract Unit_CollateralJoinFactory_Constructor is Base {
 contract Unit_CollateralJoinFactory_DeployCollateralJoin is Base {
   event DeployCollateralJoin(bytes32 indexed _cType, address indexed _collateral, address indexed _collateralJoin);
 
-  modifier happyPath(uint8 _decimals) {
+  modifier happyPath(
+    uint8 _decimals
+  ) {
     vm.startPrank(authorizedAccount);
 
     _assumeHappyPath(_decimals);
@@ -92,21 +98,29 @@ contract Unit_CollateralJoinFactory_DeployCollateralJoin is Base {
     _;
   }
 
-  function _assumeHappyPath(uint8 _decimals) internal pure {
+  function _assumeHappyPath(
+    uint8 _decimals
+  ) internal pure {
     vm.assume(_decimals <= 18);
   }
 
-  function _mockValues(uint8 _decimals) internal {
+  function _mockValues(
+    uint8 _decimals
+  ) internal {
     _mockDecimals(_decimals);
   }
 
-  function test_Revert_Unauthorized(bytes32 _cType) public {
+  function test_Revert_Unauthorized(
+    bytes32 _cType
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     collateralJoinFactory.deployCollateralJoin(_cType, address(mockCollateral));
   }
 
-  function test_Revert_ContractIsDisabled(bytes32 _cType) public {
+  function test_Revert_ContractIsDisabled(
+    bytes32 _cType
+  ) public {
     vm.startPrank(authorizedAccount);
 
     _mockContractEnabled(false);
@@ -160,7 +174,9 @@ contract Unit_CollateralJoinFactory_DeployCollateralJoin is Base {
     );
   }
 
-  function test_Call_SafeEngineAuth(bytes32 _cType) public happyPath(18) {
+  function test_Call_SafeEngineAuth(
+    bytes32 _cType
+  ) public happyPath(18) {
     vm.expectCall(address(mockSafeEngine), abi.encodeCall(IAuthorizable.addAuthorization, address(collateralJoinChild)));
 
     collateralJoinFactory.deployCollateralJoin(_cType, address(mockCollateral));
@@ -178,7 +194,9 @@ contract Unit_CollateralJoinFactory_DeployDelegatableCollateralJoin is Base {
     delegatee = newAddress();
   }
 
-  modifier happyPath(uint8 _decimals) {
+  modifier happyPath(
+    uint8 _decimals
+  ) {
     vm.startPrank(authorizedAccount);
 
     _assumeHappyPath(_decimals);
@@ -186,21 +204,29 @@ contract Unit_CollateralJoinFactory_DeployDelegatableCollateralJoin is Base {
     _;
   }
 
-  function _assumeHappyPath(uint8 _decimals) internal pure {
+  function _assumeHappyPath(
+    uint8 _decimals
+  ) internal pure {
     vm.assume(_decimals <= 18);
   }
 
-  function _mockValues(uint8 _decimals) internal {
+  function _mockValues(
+    uint8 _decimals
+  ) internal {
     _mockDecimals(_decimals);
   }
 
-  function test_Revert_Unauthorized(bytes32 _cType) public {
+  function test_Revert_Unauthorized(
+    bytes32 _cType
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     collateralJoinFactory.deployDelegatableCollateralJoin(_cType, address(mockCollateral), delegatee);
   }
 
-  function test_Revert_ContractIsDisabled(bytes32 _cType) public {
+  function test_Revert_ContractIsDisabled(
+    bytes32 _cType
+  ) public {
     vm.startPrank(authorizedAccount);
 
     _mockContractEnabled(false);
@@ -260,7 +286,9 @@ contract Unit_CollateralJoinFactory_DeployDelegatableCollateralJoin is Base {
     );
   }
 
-  function test_Call_SafeEngineAuth(bytes32 _cType) public happyPath(18) {
+  function test_Call_SafeEngineAuth(
+    bytes32 _cType
+  ) public happyPath(18) {
     vm.expectCall(address(mockSafeEngine), abi.encodeCall(IAuthorizable.addAuthorization, address(collateralJoinChild)));
 
     collateralJoinFactory.deployDelegatableCollateralJoin(_cType, address(mockCollateral), delegatee);
@@ -288,13 +316,17 @@ contract Unit_CollateralJoinFactory_DisableCollateralJoin is Base {
     _mockCollateralJoin(_cType, _collateralJoin);
   }
 
-  function test_Revert_Unauthorized(bytes32 _cType) public {
+  function test_Revert_Unauthorized(
+    bytes32 _cType
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     collateralJoinFactory.disableCollateralJoin(_cType);
   }
 
-  function test_Revert_NotCollateralJoin(bytes32 _cType) public {
+  function test_Revert_NotCollateralJoin(
+    bytes32 _cType
+  ) public {
     vm.startPrank(authorizedAccount);
 
     vm.expectRevert(ICollateralJoinFactory.CollateralJoinFactory_CollateralJoinNonExistent.selector);

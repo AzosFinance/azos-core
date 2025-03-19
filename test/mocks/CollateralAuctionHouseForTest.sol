@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {CollateralAuctionHouse, ICollateralAuctionHouse} from '@contracts/CollateralAuctionHouse.sol';
 
@@ -26,7 +26,9 @@ contract CollateralAuctionHouseForTest is CollateralAuctionHouse {
     CollateralAuctionHouseParams memory _cahParams
   ) CollateralAuctionHouse(_safeEngine, _liquidationEngine, _oracleRelayer, _cType, _cahParams) {}
 
-  function setContractEnabled(bool _contractEnabled) external {
+  function setContractEnabled(
+    bool _contractEnabled
+  ) external {
     contractEnabled = _contractEnabled;
   }
 

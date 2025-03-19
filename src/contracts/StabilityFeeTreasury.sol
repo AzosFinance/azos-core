@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IStabilityFeeTreasury} from '@interfaces/IStabilityFeeTreasury.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -52,7 +52,9 @@ contract StabilityFeeTreasury is Authorizable, Modifiable, Disableable, IStabili
   mapping(address _account => Allowance) public _allowance;
 
   /// @inheritdoc IStabilityFeeTreasury
-  function allowance(address _account) external view returns (Allowance memory __allowance) {
+  function allowance(
+    address _account
+  ) external view returns (Allowance memory __allowance) {
     return _allowance[_account];
   }
 
@@ -66,7 +68,9 @@ contract StabilityFeeTreasury is Authorizable, Modifiable, Disableable, IStabili
    * @param  _account The account to check whether it's the treasury or not
    * @dev    This modifier is used to prevent the treasury from giving funds to itself
    */
-  modifier accountNotTreasury(address _account) {
+  modifier accountNotTreasury(
+    address _account
+  ) {
     if (_account == address(this)) revert SFTreasury_AccountCannotBeTreasury();
     _;
   }

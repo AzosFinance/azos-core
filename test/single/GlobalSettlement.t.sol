@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 import {CoinForTest} from '@test/mocks/CoinForTest.sol';
@@ -33,8 +33,12 @@ import {OracleForTest} from '@test/mocks/OracleForTest.sol';
 import {Math, RAY, WAD} from '@libraries/Math.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
-  function prank(address) external virtual;
+  function warp(
+    uint256
+  ) public virtual;
+  function prank(
+    address
+  ) external virtual;
 }
 
 contract Guy {
@@ -63,7 +67,9 @@ contract Guy {
     safeEngine.transferInternalCoins(_src, _dst, _rad);
   }
 
-  function approveSAFEModification(address usr) public {
+  function approveSAFEModification(
+    address usr
+  ) public {
     safeEngine.approveSAFEModification(usr);
   }
 
@@ -71,11 +77,15 @@ contract Guy {
     _collateralJoin.exit(_usr, _wad);
   }
 
-  function freeCollateral(bytes32 _collateralType) public {
+  function freeCollateral(
+    bytes32 _collateralType
+  ) public {
     globalSettlement.freeCollateral(_collateralType);
   }
 
-  function prepareCoinsForRedeeming(uint256 _rad) public {
+  function prepareCoinsForRedeeming(
+    uint256 _rad
+  ) public {
     globalSettlement.prepareCoinsForRedeeming(_rad);
   }
 
@@ -115,11 +125,15 @@ contract SingleGlobalSettlementTest is DSTest {
   SurplusAuctionHouse surplusAuctionHouseOne;
   DebtAuctionHouse debtAuctionHouse;
 
-  function ray(uint256 _wad) internal pure returns (uint256) {
+  function ray(
+    uint256 _wad
+  ) internal pure returns (uint256) {
     return _wad * 10 ** 9;
   }
 
-  function rad(uint256 _wad) internal pure returns (uint256) {
+  function rad(
+    uint256 _wad
+  ) internal pure returns (uint256) {
     return _wad * RAY;
   }
 

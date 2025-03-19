@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 /*
 
@@ -59,12 +59,16 @@ contract SAFEEngine is Authorizable, Disableable, Modifiable, ModifiablePerColla
   }
 
   /// @inheritdoc ISAFEEngine
-  function cParams(bytes32 _cType) external view returns (SAFEEngineCollateralParams memory _safeEngineCParams) {
+  function cParams(
+    bytes32 _cType
+  ) external view returns (SAFEEngineCollateralParams memory _safeEngineCParams) {
     return _cParams[_cType];
   }
 
   /// @inheritdoc ISAFEEngine
-  function cData(bytes32 _cType) external view returns (SAFEEngineCollateralData memory _safeEngineCData) {
+  function cData(
+    bytes32 _cType
+  ) external view returns (SAFEEngineCollateralData memory _safeEngineCData) {
     return _cData[_cType];
   }
 
@@ -91,7 +95,9 @@ contract SAFEEngine is Authorizable, Disableable, Modifiable, ModifiablePerColla
   /**
    * @param  _safeEngineParams Initial SAFEEngine valid parameters struct
    */
-  constructor(SAFEEngineParams memory _safeEngineParams) Authorizable(msg.sender) validParams {
+  constructor(
+    SAFEEngineParams memory _safeEngineParams
+  ) Authorizable(msg.sender) validParams {
     _params = _safeEngineParams;
   }
 
@@ -261,7 +267,9 @@ contract SAFEEngine is Authorizable, Disableable, Modifiable, ModifiablePerColla
   // --- Settlement ---
 
   /// @inheritdoc ISAFEEngine
-  function settleDebt(uint256 _rad) external {
+  function settleDebt(
+    uint256 _rad
+  ) external {
     address _account = msg.sender;
     debtBalance[_account] -= _rad;
     _modifyInternalCoins(_account, -_rad.toInt());
@@ -315,7 +323,9 @@ contract SAFEEngine is Authorizable, Disableable, Modifiable, ModifiablePerColla
    * @dev    This overriden method avoids adding new authorizations after the contract has been disabled
    * @inheritdoc IAuthorizable
    */
-  function addAuthorization(address _account) external override(Authorizable, IAuthorizable) isAuthorized whenEnabled {
+  function addAuthorization(
+    address _account
+  ) external override(Authorizable, IAuthorizable) isAuthorized whenEnabled {
     _addAuthorization(_account);
   }
 
@@ -323,23 +333,24 @@ contract SAFEEngine is Authorizable, Disableable, Modifiable, ModifiablePerColla
    * @notice Remove auth from an account
    * @param  _account Account to remove auth from
    */
-  function removeAuthorization(address _account)
-    external
-    override(Authorizable, IAuthorizable)
-    isAuthorized
-    whenEnabled
-  {
+  function removeAuthorization(
+    address _account
+  ) external override(Authorizable, IAuthorizable) isAuthorized whenEnabled {
     _removeAuthorization(_account);
   }
 
   /// @inheritdoc ISAFEEngine
-  function approveSAFEModification(address _account) external {
+  function approveSAFEModification(
+    address _account
+  ) external {
     safeRights[msg.sender][_account] = true;
     emit ApproveSAFEModification(msg.sender, _account);
   }
 
   /// @inheritdoc ISAFEEngine
-  function denySAFEModification(address _account) external {
+  function denySAFEModification(
+    address _account
+  ) external {
     safeRights[msg.sender][_account] = false;
     emit DenySAFEModification(msg.sender, _account);
   }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {Ownable} from '@openzeppelin/contracts/access/Ownable2Step.sol';
 import {IGovernor} from '@openzeppelin/contracts/governance/IGovernor.sol';

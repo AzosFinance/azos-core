@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {TestParams, Deploy} from '@test/e2e/Common.t.sol';
@@ -148,7 +148,9 @@ contract SimulationPIDController is TestParams, Deploy, AzosTest {
 
   // --- csv utils ---
 
-  function _logLine(uint256 _day) internal {
+  function _logLine(
+    uint256 _day
+  ) internal {
     IPIDController.DeviationObservation memory _deviationObservation = pidController.deviationObservation();
     _proportionalTerm = _deviationObservation.proportional;
     _integramTerm = _deviationObservation.integral;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
@@ -125,7 +125,9 @@ interface IPIDController is IAuthorizable, IModifiable {
    * @param  _piOutput The raw redemption rate computed from the proportional and integral terms
    * @return _redemptionRate The bounded redemption rate
    */
-  function getBoundedRedemptionRate(int256 _piOutput) external view returns (uint256 _redemptionRate);
+  function getBoundedRedemptionRate(
+    int256 _piOutput
+  ) external view returns (uint256 _redemptionRate);
 
   /**
    * @notice Compute a new redemption rate

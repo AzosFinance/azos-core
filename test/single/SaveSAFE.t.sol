@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 import {CoinForTest} from '@test/mocks/CoinForTest.sol';
@@ -26,8 +26,12 @@ import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
 import {RAY, WAD} from '@libraries/Math.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
-  function prank(address) external virtual;
+  function warp(
+    uint256
+  ) public virtual;
+  function prank(
+    address
+  ) external virtual;
 }
 
 contract Feed {
@@ -41,7 +45,9 @@ contract Feed {
     lastUpdateTime = block.timestamp;
   }
 
-  function updateCollateralPrice(uint256 price_) external {
+  function updateCollateralPrice(
+    uint256 price_
+  ) external {
     price = bytes32(price_);
     lastUpdateTime = block.timestamp;
   }
@@ -55,7 +61,9 @@ contract Feed {
 contract RevertableSaviour {
   address liquidationEngine;
 
-  constructor(address liquidationEngine_) {
+  constructor(
+    address liquidationEngine_
+  ) {
     liquidationEngine = liquidationEngine_;
   }
 
@@ -83,7 +91,9 @@ contract FaultyReturnableSaviour {
 contract ReentrantSaviour {
   address liquidationEngine;
 
-  constructor(address liquidationEngine_) {
+  constructor(
+    address liquidationEngine_
+  ) {
     liquidationEngine = liquidationEngine_;
   }
 
@@ -155,11 +165,15 @@ contract SingleSaveSAFETest is DSTest {
     (ok,) = address(liquidationEngine).call(abi.encodeWithSignature(sig, collateralType, safe));
   }
 
-  function ray(uint256 wad) internal pure returns (uint256) {
+  function ray(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 9;
   }
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 27;
   }
 

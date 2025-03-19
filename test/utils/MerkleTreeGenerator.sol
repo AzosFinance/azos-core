@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 /**
  * Test helper contract to generate Merkle trees and proofs.
  */
 contract MerkleTreeGenerator {
-  function generateMerkleTree(bytes32[] memory leaves) public pure returns (bytes32[] memory) {
+  function generateMerkleTree(
+    bytes32[] memory leaves
+  ) public pure returns (bytes32[] memory) {
     require(leaves.length > 0, 'Expected non-zero number of leaves');
 
     bytes32[] memory tree = new bytes32[](2 * leaves.length - 1);
@@ -25,11 +27,15 @@ contract MerkleTreeGenerator {
     return left < right ? keccak256(bytes.concat(left, right)) : keccak256(bytes.concat(right, left));
   }
 
-  function leftChildIndex(uint256 i) internal pure returns (uint256) {
+  function leftChildIndex(
+    uint256 i
+  ) internal pure returns (uint256) {
     return 2 * i + 1;
   }
 
-  function rightChildIndex(uint256 i) internal pure returns (uint256) {
+  function rightChildIndex(
+    uint256 i
+  ) internal pure returns (uint256) {
     return 2 * i + 2;
   }
 
@@ -48,7 +54,9 @@ contract MerkleTreeGenerator {
     require(index < tree.length, 'Invalid leaf index');
   }
 
-  function siblingIndex(uint256 index) internal pure returns (uint256) {
+  function siblingIndex(
+    uint256 index
+  ) internal pure returns (uint256) {
     if (index % 2 == 0) {
       return index - 1;
     } else {
@@ -56,7 +64,9 @@ contract MerkleTreeGenerator {
     }
   }
 
-  function parentIndex(uint256 index) internal pure returns (uint256) {
+  function parentIndex(
+    uint256 index
+  ) internal pure returns (uint256) {
     return (index - 1) / 2;
   }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {ILiquidationEngine} from '@interfaces/ILiquidationEngine.sol';
@@ -124,7 +124,9 @@ interface ICollateralAuctionHouse is IAuthorizable, IDisableable, IModifiable {
    * @param  _auctionId Id of the auction
    * @return _auction Auction data struct
    */
-  function auctions(uint256 _auctionId) external view returns (Auction memory _auction);
+  function auctions(
+    uint256 _auctionId
+  ) external view returns (Auction memory _auction);
 
   /**
    * @notice Unpacked data of an auction
@@ -136,7 +138,9 @@ interface ICollateralAuctionHouse is IAuthorizable, IDisableable, IModifiable {
    * @return _auctionIncomeRecipient Who receives the coins raised by the auction (usually the AccountingEngine)
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _auctions(uint256 _auctionId)
+  function _auctions(
+    uint256 _auctionId
+  )
     external
     view
     returns (
@@ -195,7 +199,9 @@ interface ICollateralAuctionHouse is IAuthorizable, IDisableable, IModifiable {
    * @param  _id Id of the auction
    * @return _auctionDiscount Current discount of the auction [wad %]
    */
-  function getAuctionDiscount(uint256 _id) external view returns (uint256 _auctionDiscount);
+  function getAuctionDiscount(
+    uint256 _id
+  ) external view returns (uint256 _auctionDiscount);
 
   /**
    * @notice Calculates the amount of collateral that will be bought with a given bid
@@ -240,5 +246,7 @@ interface ICollateralAuctionHouse is IAuthorizable, IDisableable, IModifiable {
    * @dev    Transfers collateral and coins to the authorized caller address
    * @param  _auctionId Id of the auction
    */
-  function terminateAuctionPrematurely(uint256 _auctionId) external;
+  function terminateAuctionPrematurely(
+    uint256 _auctionId
+  ) external;
 }

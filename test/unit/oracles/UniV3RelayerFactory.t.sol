@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {UniV3RelayerFactory} from '@contracts/factories/UniV3RelayerFactory.sol';
 import {UniV3RelayerChild} from '@contracts/factories/UniV3RelayerChild.sol';
@@ -46,20 +46,28 @@ abstract contract Base is AzosTest {
     );
   }
 
-  function _mockToken0(address _token0) internal {
+  function _mockToken0(
+    address _token0
+  ) internal {
     vm.mockCall(address(mockUniV3Pool), abi.encodeCall(mockUniV3Pool.token0, ()), abi.encode(_token0));
   }
 
-  function _mockToken1(address _token1) internal {
+  function _mockToken1(
+    address _token1
+  ) internal {
     vm.mockCall(address(mockUniV3Pool), abi.encodeCall(mockUniV3Pool.token1, ()), abi.encode(_token1));
   }
 
-  function _mockSymbol(string memory _symbol) internal {
+  function _mockSymbol(
+    string memory _symbol
+  ) internal {
     vm.mockCall(address(mockBaseToken), abi.encodeCall(mockBaseToken.symbol, ()), abi.encode(_symbol));
     vm.mockCall(address(mockQuoteToken), abi.encodeCall(mockQuoteToken.symbol, ()), abi.encode(_symbol));
   }
 
-  function _mockDecimals(uint8 _decimals) internal {
+  function _mockDecimals(
+    uint8 _decimals
+  ) internal {
     vm.mockCall(address(mockBaseToken), abi.encodeCall(mockBaseToken.decimals, ()), abi.encode(_decimals));
     vm.mockCall(address(mockQuoteToken), abi.encodeCall(mockQuoteToken.decimals, ()), abi.encode(_decimals));
   }
@@ -94,7 +102,9 @@ contract Unit_UniV3RelayerFactory_DeployUniV3Relayer is Base {
     _;
   }
 
-  function _assumeHappyPath(uint8 _decimals) internal pure {
+  function _assumeHappyPath(
+    uint8 _decimals
+  ) internal pure {
     vm.assume(_decimals <= 18);
   }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 contract MockOracleRelayer {
   // The force that changes the system users' incentives by changing the redemption price
@@ -105,7 +105,9 @@ contract MockOracleRelayer {
     return _redemptionPrice;
   }
 
-  function updateRedemptionRate(uint256 rate) external {
+  function updateRedemptionRate(
+    uint256 rate
+  ) external {
     redemptionRate = rate;
   }
 

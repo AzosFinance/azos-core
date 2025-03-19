@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {DelayedOracleFactory} from '@contracts/factories/DelayedOracleFactory.sol';
 import {DelayedOracleChild} from '@contracts/factories/DelayedOracleChild.sol';
@@ -32,7 +32,9 @@ abstract contract Base is AzosTest {
     vm.stopPrank();
   }
 
-  function _mockSymbol(string memory _symbol) internal {
+  function _mockSymbol(
+    string memory _symbol
+  ) internal {
     vm.mockCall(address(mockPriceSource), abi.encodeCall(mockPriceSource.symbol, ()), abi.encode(_symbol));
   }
 
@@ -72,7 +74,9 @@ contract Unit_DelayedOracleFactory_DeployDelayedOracle is Base {
     _;
   }
 
-  function _assumeHappyPath(uint256 _updateDelay) internal pure {
+  function _assumeHappyPath(
+    uint256 _updateDelay
+  ) internal pure {
     vm.assume(_updateDelay != 0);
   }
 
@@ -81,7 +85,9 @@ contract Unit_DelayedOracleFactory_DeployDelayedOracle is Base {
     _mockGetResultWithValidity(_result, _validity);
   }
 
-  function test_Revert_Unauthorized(uint256 _updateDelay) public {
+  function test_Revert_Unauthorized(
+    uint256 _updateDelay
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     delayedOracleFactory.deployDelayedOracle(mockPriceSource, _updateDelay);

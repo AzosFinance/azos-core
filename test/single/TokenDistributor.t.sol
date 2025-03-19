@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {TokenDistributor, ITokenDistributor} from '@contracts/tokens/TokenDistributor.sol';
 import {ProtocolToken} from '@contracts/tokens/ProtocolToken.sol';
@@ -7,7 +7,9 @@ import {MerkleTreeGenerator} from '@test/utils/MerkleTreeGenerator.sol';
 import {AzosTest} from '@test/utils/AzosTest.t.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
+  function warp(
+    uint256
+  ) public virtual;
 }
 
 contract SingleTokenDistributorTest is AzosTest {

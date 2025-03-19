@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {DenominatedOracleFactory} from '@contracts/factories/DenominatedOracleFactory.sol';
 import {DenominatedOracleChild} from '@contracts/factories/DenominatedOracleChild.sol';
@@ -33,7 +33,9 @@ abstract contract Base is AzosTest {
     vm.stopPrank();
   }
 
-  function _mockSymbol(string memory _symbol) internal {
+  function _mockSymbol(
+    string memory _symbol
+  ) internal {
     vm.mockCall(address(mockPriceSource), abi.encodeCall(mockPriceSource.symbol, ()), abi.encode(_symbol));
     vm.mockCall(
       address(mockDenominationPriceSource), abi.encodeCall(mockDenominationPriceSource.symbol, ()), abi.encode(_symbol)
@@ -62,18 +64,24 @@ contract Unit_DenominatedOracleFactory_DeployDenominatedOracle is Base {
     address indexed _denominatedOracle, address _priceSource, address _denominationPriceSource, bool _inverted
   );
 
-  modifier happyPath(string memory _symbol) {
+  modifier happyPath(
+    string memory _symbol
+  ) {
     vm.startPrank(authorizedAccount);
 
     _mockValues(_symbol);
     _;
   }
 
-  function _mockValues(string memory _symbol) internal {
+  function _mockValues(
+    string memory _symbol
+  ) internal {
     _mockSymbol(_symbol);
   }
 
-  function test_Revert_Unauthorized(bool _inverted) public {
+  function test_Revert_Unauthorized(
+    bool _inverted
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     denominatedOracleFactory.deployDenominatedOracle(mockPriceSource, mockDenominationPriceSource, _inverted);

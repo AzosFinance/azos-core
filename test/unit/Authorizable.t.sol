@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {AuthorizableForTest, IAuthorizable} from '@test/mocks/AuthorizableForTest.sol';
 import {AzosTest} from '@test/utils/AzosTest.t.sol';
@@ -23,7 +23,9 @@ abstract contract Base is AzosTest {
 contract Unit_Authorizable_Constructor is Base {
   event AddAuthorization(address _account);
 
-  function test_Emit_AddAuthorization(address _account) public {
+  function test_Emit_AddAuthorization(
+    address _account
+  ) public {
     vm.expectEmit();
     emit AddAuthorization(_account);
 
@@ -32,7 +34,9 @@ contract Unit_Authorizable_Constructor is Base {
 }
 
 contract Unit_Authorizable_AuthorizedAccounts is Base {
-  function test_Return_IsAuthorized(address _account) public {
+  function test_Return_IsAuthorized(
+    address _account
+  ) public {
     vm.assume(_account != authorizedAccount);
 
     assertEq(authorizable.authorizedAccounts(_account), false);
@@ -58,18 +62,24 @@ contract Unit_Authorizable_AuthorizedAccounts is Base {
 contract Unit_Authorizable_AddAuthorization is Base {
   event AddAuthorization(address _account);
 
-  modifier happyPath(address _account) {
+  modifier happyPath(
+    address _account
+  ) {
     vm.startPrank(authorizedAccount);
 
     _assumeHappyPath(_account);
     _;
   }
 
-  function _assumeHappyPath(address _account) internal view {
+  function _assumeHappyPath(
+    address _account
+  ) internal view {
     vm.assume(_account != authorizedAccount);
   }
 
-  function test_Revert_Unauthorized(address _account) public {
+  function test_Revert_Unauthorized(
+    address _account
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     authorizable.addAuthorization(_account);
@@ -83,13 +93,17 @@ contract Unit_Authorizable_AddAuthorization is Base {
     authorizable.addAuthorization(authorizedAccount);
   }
 
-  function test_Set_AuthorizedAccounts(address _account) public happyPath(_account) {
+  function test_Set_AuthorizedAccounts(
+    address _account
+  ) public happyPath(_account) {
     authorizable.addAuthorization(_account);
 
     assertEq(authorizable.authorizedAccounts(_account), true);
   }
 
-  function test_Emit_AddAuthorization(address _account) public happyPath(_account) {
+  function test_Emit_AddAuthorization(
+    address _account
+  ) public happyPath(_account) {
     vm.expectEmit();
     emit AddAuthorization(_account);
 
@@ -105,13 +119,17 @@ contract Unit_Authorizable_RemoveAuthorization is Base {
     _;
   }
 
-  function test_Revert_Unauthorized(address _account) public {
+  function test_Revert_Unauthorized(
+    address _account
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     authorizable.removeAuthorization(_account);
   }
 
-  function test_Revert_NotAuthorized(address _account) public {
+  function test_Revert_NotAuthorized(
+    address _account
+  ) public {
     vm.startPrank(authorizedAccount);
     vm.assume(_account != authorizedAccount);
 

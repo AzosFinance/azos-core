@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {CoinJoinForTest} from '@test/mocks/CoinJoinForTest.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -35,7 +35,9 @@ abstract contract Base is AzosTest {
     vm.stopPrank();
   }
 
-  function _mockContractEnabled(bool _contractEnabled) internal {
+  function _mockContractEnabled(
+    bool _contractEnabled
+  ) internal {
     // BUG: Accessing packed slots is not supported by Std Storage
     coinJoin.setContractEnabled(_contractEnabled);
   }
@@ -60,14 +62,18 @@ contract Unit_CoinJoin_Constructor is Base {
     assertEq(coinJoin.contractEnabled(), true);
   }
 
-  function test_Set_SafeEngine(address _safeEngine) public happyPath {
+  function test_Set_SafeEngine(
+    address _safeEngine
+  ) public happyPath {
     vm.assume(_safeEngine != address(0));
     coinJoin = new CoinJoinForTest(_safeEngine, address(mockSystemCoin));
 
     assertEq(address(coinJoin.safeEngine()), _safeEngine);
   }
 
-  function test_Set_SystemCoin(address _systemCoin) public happyPath {
+  function test_Set_SystemCoin(
+    address _systemCoin
+  ) public happyPath {
     vm.assume(_systemCoin != address(0));
     coinJoin = new CoinJoinForTest(address(mockSafeEngine), _systemCoin);
 
@@ -94,14 +100,18 @@ contract Unit_CoinJoin_Constructor is Base {
 contract Unit_CoinJoin_Join is Base {
   event Join(address _sender, address _account, uint256 _wad);
 
-  modifier happyPath(uint256 _wad) {
+  modifier happyPath(
+    uint256 _wad
+  ) {
     vm.startPrank(user);
 
     _assumeHappyPath(_wad);
     _;
   }
 
-  function _assumeHappyPath(uint256 _wad) internal pure {
+  function _assumeHappyPath(
+    uint256 _wad
+  ) internal pure {
     vm.assume(notOverflowMul(RAY, _wad));
   }
 
@@ -151,14 +161,18 @@ contract Unit_CoinJoin_Join is Base {
 contract Unit_CoinJoin_Exit is Base {
   event Exit(address _sender, address _account, uint256 _wad);
 
-  modifier happyPath(uint256 _wad) {
+  modifier happyPath(
+    uint256 _wad
+  ) {
     vm.startPrank(user);
 
     _assumeHappyPath(_wad);
     _;
   }
 
-  function _assumeHappyPath(uint256 _wad) internal pure {
+  function _assumeHappyPath(
+    uint256 _wad
+  ) internal pure {
     vm.assume(notOverflowMul(RAY, _wad));
   }
 

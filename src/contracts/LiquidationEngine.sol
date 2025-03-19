@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ICollateralAuctionHouse} from '@interfaces/ICollateralAuctionHouse.sol';
 import {ISAFESaviour} from '@interfaces/external/ISAFESaviour.sol';
@@ -71,7 +71,9 @@ contract LiquidationEngine is
   }
 
   /// @inheritdoc ILiquidationEngine
-  function cParams(bytes32 _cType) external view returns (LiquidationEngineCollateralParams memory _liqEngineCParams) {
+  function cParams(
+    bytes32 _cType
+  ) external view returns (LiquidationEngineCollateralParams memory _liqEngineCParams) {
     return _cParams[_cType];
   }
 
@@ -94,7 +96,9 @@ contract LiquidationEngine is
   }
 
   /// @inheritdoc ILiquidationEngine
-  function connectSAFESaviour(address _saviour) external isAuthorized {
+  function connectSAFESaviour(
+    address _saviour
+  ) external isAuthorized {
     (bool _ok, uint256 _collateralAdded, uint256 _liquidatorReward) =
       ISAFESaviour(_saviour).saveSAFE(address(this), '', address(0));
     if (!_ok) revert LiqEng_SaviourNotOk();
@@ -104,7 +108,9 @@ contract LiquidationEngine is
   }
 
   /// @inheritdoc ILiquidationEngine
-  function disconnectSAFESaviour(address _saviour) external isAuthorized {
+  function disconnectSAFESaviour(
+    address _saviour
+  ) external isAuthorized {
     safeSaviours[_saviour] = false;
     emit DisconnectSAFESaviour(_saviour);
   }
@@ -240,7 +246,9 @@ contract LiquidationEngine is
   }
 
   /// @inheritdoc ILiquidationEngine
-  function removeCoinsFromAuction(uint256 _rad) public isAuthorized {
+  function removeCoinsFromAuction(
+    uint256 _rad
+  ) public isAuthorized {
     currentOnAuctionSystemCoins -= _rad;
     emit UpdateCurrentOnAuctionSystemCoins(currentOnAuctionSystemCoins);
   }
@@ -313,7 +321,9 @@ contract LiquidationEngine is
   }
 
   /// @inheritdoc ModifiablePerCollateral
-  function _validateCParameters(bytes32 _cType) internal view override {
+  function _validateCParameters(
+    bytes32 _cType
+  ) internal view override {
     LiquidationEngineCollateralParams memory __cParams = _cParams[_cType];
     address(__cParams.collateralAuctionHouse).assertHasCode();
     __cParams.liquidationQuantity.assertLtEq(MAX_RAD);

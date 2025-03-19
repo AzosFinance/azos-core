@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
 import {IUniV3Relayer} from '@interfaces/oracles/IUniV3Relayer.sol';
@@ -105,7 +105,9 @@ contract UniV3Relayer is IBaseOracle, IUniV3Relayer {
   }
 
   /// @notice Parses the result from the aggregator into 18 decimals format
-  function _parseResult(uint256 _quoteResult) internal view returns (uint256 _result) {
+  function _parseResult(
+    uint256 _quoteResult
+  ) internal view returns (uint256 _result) {
     return _quoteResult * 10 ** multiplier;
   }
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
@@ -90,7 +90,9 @@ interface IRewardDistributor is IAuthorizable, IModifiable {
    * @param _token Address of the token
    * @return _root Merkle root for the token
    */
-  function merkleRoots(address _token) external view returns (bytes32 _root);
+  function merkleRoots(
+    address _token
+  ) external view returns (bytes32 _root);
 
   /**
    * @notice Mapping of whether a user has claimed rewards for a given merkle root

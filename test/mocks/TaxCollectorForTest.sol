@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {TaxCollector, ITaxCollector, EnumerableSet} from '@contracts/TaxCollector.sol';
 
@@ -27,11 +27,15 @@ contract TaxCollectorForTest is TaxCollector {
     _secondaryReceiverRevenueSources[_receiver].add(_cType);
   }
 
-  function addToCollateralList(bytes32 _cType) external {
+  function addToCollateralList(
+    bytes32 _cType
+  ) external {
     _collateralList.add(_cType);
   }
 
-  function addSecondaryReceiver(address _receiver) external {
+  function addSecondaryReceiver(
+    address _receiver
+  ) external {
     _secondaryReceivers.add(_receiver);
   }
 
@@ -43,11 +47,9 @@ contract TaxCollectorForTest is TaxCollector {
     return _secondaryReceivers.length();
   }
 
-  function secondaryReceiverRevenueSources(address _receiver)
-    external
-    view
-    returns (uint256 _secondaryReceiverRevenueSourcesAmount)
-  {
+  function secondaryReceiverRevenueSources(
+    address _receiver
+  ) external view returns (uint256 _secondaryReceiverRevenueSourcesAmount) {
     return _secondaryReceiverRevenueSources[_receiver].length();
   }
 }

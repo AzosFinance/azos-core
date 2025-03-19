@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {CollateralAuctionHouseForTest, ICollateralAuctionHouse} from '@test/mocks/CollateralAuctionHouseForTest.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -60,44 +60,58 @@ contract Base is AzosTest {
 
   // --- Registry ---
 
-  function _mockLiquidationEngine(address _liquidationEngine) internal {
+  function _mockLiquidationEngine(
+    address _liquidationEngine
+  ) internal {
     stdstore.target(address(collateralAuctionHouse)).sig(ICollateralAuctionHouse.liquidationEngine.selector)
       .checked_write(_liquidationEngine);
   }
 
   // --- Params ---
 
-  function _mockMinimumBid(uint256 _minumumBid) internal {
+  function _mockMinimumBid(
+    uint256 _minumumBid
+  ) internal {
     stdstore.target(address(collateralAuctionHouse)).sig(ICollateralAuctionHouse.params.selector).depth(0).checked_write(
       _minumumBid
     );
   }
 
-  function _mockMinDiscount(uint256 _minDiscount) internal {
+  function _mockMinDiscount(
+    uint256 _minDiscount
+  ) internal {
     stdstore.target(address(collateralAuctionHouse)).sig(ICollateralAuctionHouse.params.selector).depth(1).checked_write(
       _minDiscount
     );
   }
 
-  function _mockMaxDiscount(uint256 _maxDiscount) internal {
+  function _mockMaxDiscount(
+    uint256 _maxDiscount
+  ) internal {
     stdstore.target(address(collateralAuctionHouse)).sig(ICollateralAuctionHouse.params.selector).depth(2).checked_write(
       _maxDiscount
     );
   }
 
-  function _mockPerSecondDiscountUpdateRate(uint256 _perSecondDiscountUpdateRate) internal {
+  function _mockPerSecondDiscountUpdateRate(
+    uint256 _perSecondDiscountUpdateRate
+  ) internal {
     stdstore.target(address(collateralAuctionHouse)).sig(ICollateralAuctionHouse.params.selector).depth(3).checked_write(
       _perSecondDiscountUpdateRate
     );
   }
 
-  function _mockContractEnabled(bool _contractEnabled) internal {
+  function _mockContractEnabled(
+    bool _contractEnabled
+  ) internal {
     collateralAuctionHouse.setContractEnabled(_contractEnabled);
   }
 
   // --- Data ---
 
-  function _mockAuction(CollateralAuction memory _auction) internal {
+  function _mockAuction(
+    CollateralAuction memory _auction
+  ) internal {
     // BUG: Accessing packed slots is not supported by Std Storage
     collateralAuctionHouse.addAuction(
       _auction.id,
@@ -109,7 +123,9 @@ contract Base is AzosTest {
     );
   }
 
-  function _mockAuctionsStarted(uint256 _auctionsStarted) internal {
+  function _mockAuctionsStarted(
+    uint256 _auctionsStarted
+  ) internal {
     stdstore.target(address(collateralAuctionHouse)).sig(ICollateralAuctionHouse.auctionsStarted.selector).checked_write(
       _auctionsStarted
     );
@@ -123,13 +139,17 @@ contract Base is AzosTest {
     );
   }
 
-  function _mockOracleRelayerRedemptionPrice(uint256 _redemptionPrice) internal {
+  function _mockOracleRelayerRedemptionPrice(
+    uint256 _redemptionPrice
+  ) internal {
     vm.mockCall(
       address(mockOracleRelayer), abi.encodeCall(mockOracleRelayer.redemptionPrice, ()), abi.encode(_redemptionPrice)
     );
   }
 
-  function _mockOracleRelayerCalcRedemptionPrice(uint256 _calcRedemptionPrice) internal {
+  function _mockOracleRelayerCalcRedemptionPrice(
+    uint256 _calcRedemptionPrice
+  ) internal {
     vm.mockCall(
       address(mockOracleRelayer),
       abi.encodeCall(mockOracleRelayer.calcRedemptionPrice, ()),
@@ -194,7 +214,9 @@ contract Unit_CollateralAuctionHouse_Constructor is Base {
     assertEq(collateralAuctionHouse.collateralType(), collateralType);
   }
 
-  function test_Set_CAH_Params(ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams) public happyPath {
+  function test_Set_CAH_Params(
+    ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams
+  ) public happyPath {
     vm.assume(_cahParams.minDiscount >= _cahParams.maxDiscount && _cahParams.minDiscount <= WAD);
     vm.assume(_cahParams.maxDiscount > 0);
     vm.assume(_cahParams.perSecondDiscountUpdateRate <= RAY);
@@ -308,11 +330,15 @@ contract Unit_CollateralAuctionHouse_StartAuction is Base {
     vm.assume(_auctionsStarted < type(uint256).max);
   }
 
-  function _mockValues(uint256 _auctionsStarted) internal {
+  function _mockValues(
+    uint256 _auctionsStarted
+  ) internal {
     _mockAuctionsStarted(_auctionsStarted);
   }
 
-  function test_Revert_Unauthorized(CollateralAuction memory _auction) public {
+  function test_Revert_Unauthorized(
+    CollateralAuction memory _auction
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     collateralAuctionHouse.startAuction(
@@ -320,7 +346,9 @@ contract Unit_CollateralAuctionHouse_StartAuction is Base {
     );
   }
 
-  function test_Revert_CAH_NoCollateralForSale(CollateralAuction memory _auction) public {
+  function test_Revert_CAH_NoCollateralForSale(
+    CollateralAuction memory _auction
+  ) public {
     vm.startPrank(authorizedAccount);
     _auction.amountToSell = 0;
 
@@ -331,7 +359,9 @@ contract Unit_CollateralAuctionHouse_StartAuction is Base {
     );
   }
 
-  function test_Revert_CAH_NothingToRaise(CollateralAuction memory _auction) public {
+  function test_Revert_CAH_NothingToRaise(
+    CollateralAuction memory _auction
+  ) public {
     vm.startPrank(authorizedAccount);
     vm.assume(_auction.amountToSell > 0);
     _auction.amountToRaise = 0;
@@ -343,7 +373,9 @@ contract Unit_CollateralAuctionHouse_StartAuction is Base {
     );
   }
 
-  function test_Revert_CAH_DustyAuction(CollateralAuction memory _auction) public {
+  function test_Revert_CAH_DustyAuction(
+    CollateralAuction memory _auction
+  ) public {
     vm.startPrank(authorizedAccount);
     vm.assume(_auction.amountToSell > 0);
     vm.assume(_auction.amountToRaise > 0 && _auction.amountToRaise < RAY);
@@ -355,7 +387,9 @@ contract Unit_CollateralAuctionHouse_StartAuction is Base {
     );
   }
 
-  function test_Revert_Overflow_AuctionsStarted(CollateralAuction memory _auction) public {
+  function test_Revert_Overflow_AuctionsStarted(
+    CollateralAuction memory _auction
+  ) public {
     vm.startPrank(authorizedAccount);
     vm.assume(_auction.amountToSell > 0);
     vm.assume(_auction.amountToRaise >= RAY);
@@ -459,24 +493,29 @@ contract Unit_CollateralAuctionHouse_GetAdjustedBid is Base {
     uint256 bid;
   }
 
-  modifier happyPath(GetAdjustedBidScenario memory _getAdjustedBidScenario) {
+  modifier happyPath(
+    GetAdjustedBidScenario memory _getAdjustedBidScenario
+  ) {
     _assumeHappyPath(_getAdjustedBidScenario);
     _mockValues(_getAdjustedBidScenario);
     _;
   }
 
-  function _assumeHappyPath(GetAdjustedBidScenario memory _getAdjustedBidScenario) internal pure {
+  function _assumeHappyPath(
+    GetAdjustedBidScenario memory _getAdjustedBidScenario
+  ) internal pure {
     vm.assume(notOverflowMul(_getAdjustedBidScenario.bid, RAY));
   }
 
-  function _mockValues(GetAdjustedBidScenario memory _getAdjustedBidScenario) internal {
+  function _mockValues(
+    GetAdjustedBidScenario memory _getAdjustedBidScenario
+  ) internal {
     _mockAuction(_getAdjustedBidScenario.auction);
   }
 
-  function test_Return_InvalidBid_AmountToSell(GetAdjustedBidScenario memory _getAdjustedBidScenario)
-    public
-    happyPath(_getAdjustedBidScenario)
-  {
+  function test_Return_InvalidBid_AmountToSell(
+    GetAdjustedBidScenario memory _getAdjustedBidScenario
+  ) public happyPath(_getAdjustedBidScenario) {
     _getAdjustedBidScenario.auction.amountToSell = 0;
     _mockValues(_getAdjustedBidScenario);
 
@@ -486,10 +525,9 @@ contract Unit_CollateralAuctionHouse_GetAdjustedBid is Base {
     assertEq(__adjustedBid, 0);
   }
 
-  function test_Return_InvalidBid_AmountToRaise(GetAdjustedBidScenario memory _getAdjustedBidScenario)
-    public
-    happyPath(_getAdjustedBidScenario)
-  {
+  function test_Return_InvalidBid_AmountToRaise(
+    GetAdjustedBidScenario memory _getAdjustedBidScenario
+  ) public happyPath(_getAdjustedBidScenario) {
     vm.assume(_getAdjustedBidScenario.auction.amountToSell > 0);
     _getAdjustedBidScenario.auction.amountToRaise = 0;
     _mockValues(_getAdjustedBidScenario);
@@ -500,10 +538,9 @@ contract Unit_CollateralAuctionHouse_GetAdjustedBid is Base {
     assertEq(__adjustedBid, 0);
   }
 
-  function test_Return_InvalidBid_Bid(GetAdjustedBidScenario memory _getAdjustedBidScenario)
-    public
-    happyPath(_getAdjustedBidScenario)
-  {
+  function test_Return_InvalidBid_Bid(
+    GetAdjustedBidScenario memory _getAdjustedBidScenario
+  ) public happyPath(_getAdjustedBidScenario) {
     vm.assume(_getAdjustedBidScenario.auction.amountToSell > 0);
     vm.assume(_getAdjustedBidScenario.auction.amountToRaise > 0);
     _getAdjustedBidScenario.bid = 0;
@@ -514,10 +551,9 @@ contract Unit_CollateralAuctionHouse_GetAdjustedBid is Base {
     assertEq(__adjustedBid, 0);
   }
 
-  function test_Return_ValidAdjustedBid(GetAdjustedBidScenario memory _getAdjustedBidScenario)
-    public
-    happyPath(_getAdjustedBidScenario)
-  {
+  function test_Return_ValidAdjustedBid(
+    GetAdjustedBidScenario memory _getAdjustedBidScenario
+  ) public happyPath(_getAdjustedBidScenario) {
     vm.assume(_getAdjustedBidScenario.auction.amountToSell > 0);
     vm.assume(_getAdjustedBidScenario.auction.amountToRaise > 0);
     vm.assume(_getAdjustedBidScenario.bid != 0);
@@ -531,10 +567,9 @@ contract Unit_CollateralAuctionHouse_GetAdjustedBid is Base {
     assertEq(__adjustedBid, _adjustedBid);
   }
 
-  function test_Return_ValidBid(GetAdjustedBidScenario memory _getAdjustedBidScenario)
-    public
-    happyPath(_getAdjustedBidScenario)
-  {
+  function test_Return_ValidBid(
+    GetAdjustedBidScenario memory _getAdjustedBidScenario
+  ) public happyPath(_getAdjustedBidScenario) {
     vm.assume(_getAdjustedBidScenario.auction.amountToSell > 0);
     vm.assume(_getAdjustedBidScenario.auction.amountToRaise > 0);
     vm.assume(_getAdjustedBidScenario.bid != 0);
@@ -558,13 +593,17 @@ contract Unit_CollateralAuctionHouse_GetCollateralBought is Base {
     bool validCollateralPrice;
   }
 
-  modifier happyPath(GetCollateralBoughtScenario memory _getCollateralBoughtScenario) {
+  modifier happyPath(
+    GetCollateralBoughtScenario memory _getCollateralBoughtScenario
+  ) {
     _assumeHappyPath(_getCollateralBoughtScenario);
     _mockValues(_getCollateralBoughtScenario);
     _;
   }
 
-  function _assumeHappyPath(GetCollateralBoughtScenario memory _getCollateralBoughtScenario) internal view {
+  function _assumeHappyPath(
+    GetCollateralBoughtScenario memory _getCollateralBoughtScenario
+  ) internal view {
     vm.assume(notOverflowMul(_getCollateralBoughtScenario.bid, RAY));
     uint256 _adjustedBid = _computeAdjustedBid(_getCollateralBoughtScenario);
 
@@ -586,7 +625,9 @@ contract Unit_CollateralAuctionHouse_GetCollateralBought is Base {
     }
   }
 
-  function _mockValues(GetCollateralBoughtScenario memory _getCollateralBoughtScenario) internal {
+  function _mockValues(
+    GetCollateralBoughtScenario memory _getCollateralBoughtScenario
+  ) internal {
     _mockAuction(_getCollateralBoughtScenario.auction);
     _mockOracleRelayerCalcRedemptionPrice(_getCollateralBoughtScenario.calcRedemptionPrice);
     _mockOracleRelayerCParams(collateralType, mockDelayedOracle);
@@ -595,11 +636,9 @@ contract Unit_CollateralAuctionHouse_GetCollateralBought is Base {
     );
   }
 
-  function _computeAdjustedBid(GetCollateralBoughtScenario memory _getCollateralBoughtScenario)
-    internal
-    pure
-    returns (uint256 _adjustedBid)
-  {
+  function _computeAdjustedBid(
+    GetCollateralBoughtScenario memory _getCollateralBoughtScenario
+  ) internal pure returns (uint256 _adjustedBid) {
     if (_getCollateralBoughtScenario.bid * RAY > _getCollateralBoughtScenario.auction.amountToRaise) {
       _adjustedBid = _getCollateralBoughtScenario.auction.amountToRaise / RAY + 1;
     } else {
@@ -607,21 +646,17 @@ contract Unit_CollateralAuctionHouse_GetCollateralBought is Base {
     }
   }
 
-  function _computeRemainingToRaise(GetCollateralBoughtScenario memory _getCollateralBoughtScenario)
-    internal
-    pure
-    returns (uint256 _remainingToRaise)
-  {
+  function _computeRemainingToRaise(
+    GetCollateralBoughtScenario memory _getCollateralBoughtScenario
+  ) internal pure returns (uint256 _remainingToRaise) {
     if (_getCollateralBoughtScenario.bid * RAY <= _getCollateralBoughtScenario.auction.amountToRaise) {
       _remainingToRaise = _getCollateralBoughtScenario.auction.amountToRaise - _getCollateralBoughtScenario.bid * RAY;
     }
   }
 
-  function _computeAuctionDiscount(GetCollateralBoughtScenario memory _getCollateralBoughtScenario)
-    internal
-    view
-    returns (uint256 _auctionDiscount)
-  {
+  function _computeAuctionDiscount(
+    GetCollateralBoughtScenario memory _getCollateralBoughtScenario
+  ) internal view returns (uint256 _auctionDiscount) {
     uint256 _timeSinceCreation = block.timestamp - _getCollateralBoughtScenario.auction.initialTimestamp;
     _auctionDiscount = cahParams.perSecondDiscountUpdateRate.rpow(_timeSinceCreation).rmul(cahParams.minDiscount);
 
@@ -674,10 +709,9 @@ contract Unit_CollateralAuctionHouse_GetCollateralBought is Base {
     );
   }
 
-  function test_Return_InvalidAuctionAndBid(GetCollateralBoughtScenario memory _getCollateralBoughtScenario)
-    public
-    happyPath(_getCollateralBoughtScenario)
-  {
+  function test_Return_InvalidAuctionAndBid(
+    GetCollateralBoughtScenario memory _getCollateralBoughtScenario
+  ) public happyPath(_getCollateralBoughtScenario) {
     vm.assume(
       _getCollateralBoughtScenario.auction.amountToSell == 0 || _getCollateralBoughtScenario.auction.amountToRaise == 0
         || _getCollateralBoughtScenario.bid == 0
@@ -691,10 +725,9 @@ contract Unit_CollateralAuctionHouse_GetCollateralBought is Base {
     assertEq(__readjustedBid, 0);
   }
 
-  function test_Return_InvalidCollateralPrice(GetCollateralBoughtScenario memory _getCollateralBoughtScenario)
-    public
-    happyPath(_getCollateralBoughtScenario)
-  {
+  function test_Return_InvalidCollateralPrice(
+    GetCollateralBoughtScenario memory _getCollateralBoughtScenario
+  ) public happyPath(_getCollateralBoughtScenario) {
     vm.assume(_getCollateralBoughtScenario.auction.amountToSell > 0);
     vm.assume(_getCollateralBoughtScenario.auction.amountToRaise > 0);
     vm.assume(_getCollateralBoughtScenario.bid != 0);
@@ -714,10 +747,9 @@ contract Unit_CollateralAuctionHouse_GetCollateralBought is Base {
     assertEq(__readjustedBid, _adjustedBid);
   }
 
-  function test_Return_BoughtCollateral_ReadjustedBid(GetCollateralBoughtScenario memory _getCollateralBoughtScenario)
-    public
-    happyPath(_getCollateralBoughtScenario)
-  {
+  function test_Return_BoughtCollateral_ReadjustedBid(
+    GetCollateralBoughtScenario memory _getCollateralBoughtScenario
+  ) public happyPath(_getCollateralBoughtScenario) {
     vm.assume(_getCollateralBoughtScenario.auction.amountToSell > 0);
     vm.assume(_getCollateralBoughtScenario.auction.amountToRaise > 0);
     vm.assume(_getCollateralBoughtScenario.bid != 0);
@@ -775,35 +807,47 @@ contract Unit_CollateralAuctionHouse_GetCollateralPrice is Base {
 contract Unit_CollateralAuctionHouse_GetAuctionDiscount is Base {
   using Math for uint256;
 
-  modifier happyPath(CollateralAuction memory _auction) {
+  modifier happyPath(
+    CollateralAuction memory _auction
+  ) {
     _assumeHappyPath(_auction);
     _mockValues(_auction);
     _;
   }
 
-  function _assumeHappyPath(CollateralAuction memory _auction) internal view {
+  function _assumeHappyPath(
+    CollateralAuction memory _auction
+  ) internal view {
     vm.assume(block.timestamp >= _auction.initialTimestamp);
   }
 
-  function _mockValues(CollateralAuction memory _auction) internal {
+  function _mockValues(
+    CollateralAuction memory _auction
+  ) internal {
     _mockAuction(_auction);
   }
 
-  function test_Return_AuctionDiscount_NoDiscount(CollateralAuction memory _auction) public happyPath(_auction) {
+  function test_Return_AuctionDiscount_NoDiscount(
+    CollateralAuction memory _auction
+  ) public happyPath(_auction) {
     _auction.initialTimestamp = 0;
     _mockValues(_auction);
 
     assertEq(collateralAuctionHouse.getAuctionDiscount(_auction.id), WAD);
   }
 
-  function test_Return_AuctionDiscount_MinDiscount(CollateralAuction memory _auction) public happyPath(_auction) {
+  function test_Return_AuctionDiscount_MinDiscount(
+    CollateralAuction memory _auction
+  ) public happyPath(_auction) {
     _auction.initialTimestamp = block.timestamp;
     _mockValues(_auction);
 
     assertEq(collateralAuctionHouse.getAuctionDiscount(_auction.id), cahParams.minDiscount);
   }
 
-  function test_Return_AuctionDiscount_MaxDiscount(CollateralAuction memory _auction) public happyPath(_auction) {
+  function test_Return_AuctionDiscount_MaxDiscount(
+    CollateralAuction memory _auction
+  ) public happyPath(_auction) {
     vm.assume(_auction.initialTimestamp > 0);
     uint256 _perSecondDiscountUpdateRate = 0;
     uint256 _timeSinceCreation = block.timestamp - _auction.initialTimestamp;
@@ -814,7 +858,9 @@ contract Unit_CollateralAuctionHouse_GetAuctionDiscount is Base {
     assertEq(collateralAuctionHouse.getAuctionDiscount(_auction.id), cahParams.maxDiscount);
   }
 
-  function test_Return_AuctionDiscount(CollateralAuction memory _auction) public happyPath(_auction) {
+  function test_Return_AuctionDiscount(
+    CollateralAuction memory _auction
+  ) public happyPath(_auction) {
     vm.assume(_auction.initialTimestamp > 0);
     uint256 _timeSinceCreation = block.timestamp - _auction.initialTimestamp;
     uint256 _auctionDiscount =
@@ -836,11 +882,9 @@ contract Unit_CollateralAuctionHouse_GetBoughtCollateral is Base {
     uint256 customDiscount;
   }
 
-  function _assumeHappyPath(GetBoughtCollateralScenario memory _getBoughtCollateralScenario)
-    internal
-    pure
-    returns (uint256 _boughtCollateral)
-  {
+  function _assumeHappyPath(
+    GetBoughtCollateralScenario memory _getBoughtCollateralScenario
+  ) internal pure returns (uint256 _boughtCollateral) {
     vm.assume(notOverflowMul(_getBoughtCollateralScenario.collateralPrice, _getBoughtCollateralScenario.customDiscount));
     vm.assume(
       notOverflowMul(
@@ -862,9 +906,9 @@ contract Unit_CollateralAuctionHouse_GetBoughtCollateral is Base {
     }
   }
 
-  function test_Return_BoughtCollateral_AdjustedBid(GetBoughtCollateralScenario memory _getBoughtCollateralScenario)
-    public
-  {
+  function test_Return_BoughtCollateral_AdjustedBid(
+    GetBoughtCollateralScenario memory _getBoughtCollateralScenario
+  ) public {
     uint256 _boughtCollateral = _assumeHappyPath(_getBoughtCollateralScenario);
     vm.assume(_boughtCollateral <= _getBoughtCollateralScenario.amountToSell);
 
@@ -880,9 +924,9 @@ contract Unit_CollateralAuctionHouse_GetBoughtCollateral is Base {
     assertEq(__readjustedBid, _getBoughtCollateralScenario.adjustedBid);
   }
 
-  function test_Return_AmountToSell_ReadjustedBid(GetBoughtCollateralScenario memory _getBoughtCollateralScenario)
-    public
-  {
+  function test_Return_AmountToSell_ReadjustedBid(
+    GetBoughtCollateralScenario memory _getBoughtCollateralScenario
+  ) public {
     uint256 _boughtCollateral = _assumeHappyPath(_getBoughtCollateralScenario);
     vm.assume(_boughtCollateral > _getBoughtCollateralScenario.amountToSell);
 
@@ -919,14 +963,18 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     uint256 collateralPrice;
   }
 
-  modifier happyPath(BuyCollateralScenario memory _buyCollateralScenario) {
+  modifier happyPath(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) {
     vm.startPrank(user);
     _assumeHappyPath(_buyCollateralScenario);
     _mockValues(_buyCollateralScenario);
     _;
   }
 
-  function _assumeHappyPath(BuyCollateralScenario memory _buyCollateralScenario) internal view {
+  function _assumeHappyPath(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) internal view {
     vm.assume(_buyCollateralScenario.auction.amountToSell > 0); // null auction
     vm.assume(_buyCollateralScenario.auction.amountToRaise > RAY); // not possible to bid (1 wei coin = 1 RAY debt)
 
@@ -955,18 +1003,18 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     vm.assume(_adjustedBid * WAD >= _buyCollateralScenario.collateralPrice.rdiv(_buyCollateralScenario.redemptionPrice));
   }
 
-  function _mockValues(BuyCollateralScenario memory _buyCollateralScenario) internal {
+  function _mockValues(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) internal {
     _mockAuction(_buyCollateralScenario.auction);
     _mockOracleRelayerRedemptionPrice(_buyCollateralScenario.redemptionPrice);
     _mockOracleRelayerCParams(collateralType, mockDelayedOracle);
     _mockDelayedOracleGetResultWithValidity(_buyCollateralScenario.collateralPrice, true);
   }
 
-  function _computeAdjustedBid(BuyCollateralScenario memory _buyCollateralScenario)
-    internal
-    pure
-    returns (uint256 _adjustedBid)
-  {
+  function _computeAdjustedBid(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) internal pure returns (uint256 _adjustedBid) {
     if (_buyCollateralScenario.bid * RAY > _buyCollateralScenario.auction.amountToRaise) {
       _adjustedBid = _buyCollateralScenario.auction.amountToRaise / RAY + 1;
     } else {
@@ -974,11 +1022,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     }
   }
 
-  function _computeAuctionDiscount(BuyCollateralScenario memory _buyCollateralScenario)
-    internal
-    view
-    returns (uint256 _auctionDiscount)
-  {
+  function _computeAuctionDiscount(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) internal view returns (uint256 _auctionDiscount) {
     if (_buyCollateralScenario.auction.initialTimestamp == 0) return WAD;
     if (_buyCollateralScenario.auction.initialTimestamp == block.timestamp) return cahParams.minDiscount;
 
@@ -1032,7 +1078,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     _soldAll = _leftToSell == 0 || _leftToRaise == 0;
   }
 
-  function test_Revert_CAH_InexistentAuction_AmountToSell(BuyCollateralScenario memory _buyCollateralScenario) public {
+  function test_Revert_CAH_InexistentAuction_AmountToSell(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public {
     _buyCollateralScenario.auction.amountToSell = 0;
     vm.assume(_buyCollateralScenario.bid > 0);
 
@@ -1043,7 +1091,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Revert_CAH_InexistentAuction_AmountToRaise(BuyCollateralScenario memory _buyCollateralScenario) public {
+  function test_Revert_CAH_InexistentAuction_AmountToRaise(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public {
     vm.assume(_buyCollateralScenario.auction.amountToSell > 0);
     vm.assume(_buyCollateralScenario.bid > 0);
 
@@ -1055,7 +1105,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Revert_CAH_InvalidBid_Null(BuyCollateralScenario memory _buyCollateralScenario) public {
+  function test_Revert_CAH_InvalidBid_Null(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public {
     vm.assume(_buyCollateralScenario.bid == 0);
     vm.assume(_buyCollateralScenario.auction.amountToSell > 0);
     vm.assume(_buyCollateralScenario.auction.amountToRaise > 0);
@@ -1084,7 +1136,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Revert_CAH_InvalidRedemptionPriceProvided(BuyCollateralScenario memory _buyCollateralScenario) public {
+  function test_Revert_CAH_InvalidRedemptionPriceProvided(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public {
     vm.assume(_buyCollateralScenario.auction.amountToSell > 0);
     vm.assume(_buyCollateralScenario.auction.amountToRaise > 0);
     vm.assume(_buyCollateralScenario.bid != 0);
@@ -1098,7 +1152,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Revert_CAH_CollateralOracleInvalidValue(BuyCollateralScenario memory _buyCollateralScenario) public {
+  function test_Revert_CAH_CollateralOracleInvalidValue(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public {
     vm.assume(_buyCollateralScenario.auction.amountToSell > 0);
     vm.assume(_buyCollateralScenario.auction.amountToRaise > 0);
     vm.assume(_buyCollateralScenario.bid != 0);
@@ -1113,7 +1169,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Revert_CAH_NullBoughtAmount(BuyCollateralScenario memory _buyCollateralScenario) public {
+  function test_Revert_CAH_NullBoughtAmount(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public {
     vm.assume(_buyCollateralScenario.auction.amountToSell > 0);
     vm.assume(_buyCollateralScenario.auction.amountToRaise > 0);
     vm.assume(_buyCollateralScenario.bid != 0);
@@ -1172,10 +1230,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Set_Auctions(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Set_Auctions(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (uint256 _boughtCollateral, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1197,10 +1254,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     assertEq(_auction.auctionIncomeRecipient, _buyCollateralScenario.auction.auctionIncomeRecipient);
   }
 
-  function test_Set_Auctions_SoldAll(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Set_Auctions_SoldAll(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (uint256 _boughtCollateral, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1224,10 +1280,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     assertEq(_auction.auctionIncomeRecipient, address(0));
   }
 
-  function test_Call_SafeEngine_TransferInternalCoins(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Call_SafeEngine_TransferInternalCoins(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1246,10 +1301,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Call_SafeEngine_TransferCollateral(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Call_SafeEngine_TransferCollateral(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (uint256 _boughtCollateral, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1284,10 +1338,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Call_SafeEngine_TransferCollateral_SoldAll(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Call_SafeEngine_TransferCollateral_SoldAll(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (uint256 _boughtCollateral, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1324,10 +1377,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Emit_BuyCollateral(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Emit_BuyCollateral(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (uint256 _boughtCollateral, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1340,10 +1392,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Call_LiquidationEngine_RemoveCoinsFromAuction(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Call_LiquidationEngine_RemoveCoinsFromAuction(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (uint256 _boughtCollateral, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1385,10 +1436,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Emit_SettleAuction(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Emit_SettleAuction(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (uint256 _boughtCollateral, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1410,10 +1460,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function testFail_Emit_SettleAuction(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function testFail_Emit_SettleAuction(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (uint256 _boughtCollateral, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1435,10 +1484,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     collateralAuctionHouse.buyCollateral(_buyCollateralScenario.auction.id, _buyCollateralScenario.bid);
   }
 
-  function test_Return_BoughtCollateral_ReadjustedBid(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Return_BoughtCollateral_ReadjustedBid(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     (uint256 _boughtCollateral, uint256 _readjustedBid) = _computeBoughtCollateral(
       _buyCollateralScenario,
       _computeAdjustedBid(_buyCollateralScenario),
@@ -1452,10 +1500,9 @@ contract Unit_CollateralAuctionHouse_BuyCollateral is Base {
     assertEq(__readjustedBid, _readjustedBid);
   }
 
-  function test_Revert_ContractIsDisabled(BuyCollateralScenario memory _buyCollateralScenario)
-    public
-    happyPath(_buyCollateralScenario)
-  {
+  function test_Revert_ContractIsDisabled(
+    BuyCollateralScenario memory _buyCollateralScenario
+  ) public happyPath(_buyCollateralScenario) {
     _mockContractEnabled(false);
 
     vm.expectRevert(IDisableable.ContractIsDisabled.selector);
@@ -1469,29 +1516,39 @@ contract Unit_CollateralAuctionHouse_TerminateAuctionPrematurely is Base {
     uint256 indexed _id, uint256 _blockTimestamp, address _leftoverReceiver, uint256 _leftoverCollateral
   );
 
-  modifier happyPath(CollateralAuction memory _auction) {
+  modifier happyPath(
+    CollateralAuction memory _auction
+  ) {
     vm.startPrank(authorizedAccount);
     _assumeHappyPath(_auction);
     _mockValues(_auction);
     _;
   }
 
-  function _assumeHappyPath(CollateralAuction memory _auction) internal pure {
+  function _assumeHappyPath(
+    CollateralAuction memory _auction
+  ) internal pure {
     vm.assume(_auction.amountToSell > 0);
     vm.assume(_auction.amountToRaise > 0);
   }
 
-  function _mockValues(CollateralAuction memory _auction) internal {
+  function _mockValues(
+    CollateralAuction memory _auction
+  ) internal {
     _mockAuction(_auction);
   }
 
-  function test_Revert_Unauthorized(CollateralAuction memory _auction) public {
+  function test_Revert_Unauthorized(
+    CollateralAuction memory _auction
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     collateralAuctionHouse.terminateAuctionPrematurely(_auction.id);
   }
 
-  function test_Revert_CAH_InexistentAuction_AmountToSell(CollateralAuction memory _auction) public {
+  function test_Revert_CAH_InexistentAuction_AmountToSell(
+    CollateralAuction memory _auction
+  ) public {
     vm.startPrank(authorizedAccount);
     _auction.amountToSell = 0;
     _mockValues({_auction: _auction});
@@ -1501,7 +1558,9 @@ contract Unit_CollateralAuctionHouse_TerminateAuctionPrematurely is Base {
     collateralAuctionHouse.terminateAuctionPrematurely(_auction.id);
   }
 
-  function test_Revert_CAH_InexistentAuction_AmountToRaise(CollateralAuction memory _auction) public {
+  function test_Revert_CAH_InexistentAuction_AmountToRaise(
+    CollateralAuction memory _auction
+  ) public {
     vm.startPrank(authorizedAccount);
     vm.assume(_auction.amountToSell > 0);
     _auction.amountToRaise = 0;
@@ -1512,10 +1571,9 @@ contract Unit_CollateralAuctionHouse_TerminateAuctionPrematurely is Base {
     collateralAuctionHouse.terminateAuctionPrematurely(_auction.id);
   }
 
-  function test_Call_LiquidationEngine_RemoveCoinsFromAuction(CollateralAuction memory _auction)
-    public
-    happyPath(_auction)
-  {
+  function test_Call_LiquidationEngine_RemoveCoinsFromAuction(
+    CollateralAuction memory _auction
+  ) public happyPath(_auction) {
     vm.expectCall(
       address(mockLiquidationEngine),
       abi.encodeCall(mockLiquidationEngine.removeCoinsFromAuction, (_auction.amountToRaise)),
@@ -1525,7 +1583,9 @@ contract Unit_CollateralAuctionHouse_TerminateAuctionPrematurely is Base {
     collateralAuctionHouse.terminateAuctionPrematurely(_auction.id);
   }
 
-  function test_Call_SafeEngine_TransferCollateral(CollateralAuction memory _auction) public happyPath(_auction) {
+  function test_Call_SafeEngine_TransferCollateral(
+    CollateralAuction memory _auction
+  ) public happyPath(_auction) {
     vm.expectCall(
       address(mockSafeEngine),
       abi.encodeCall(
@@ -1538,14 +1598,18 @@ contract Unit_CollateralAuctionHouse_TerminateAuctionPrematurely is Base {
     collateralAuctionHouse.terminateAuctionPrematurely(_auction.id);
   }
 
-  function test_Emit_TerminateAuctionPrematurely(CollateralAuction memory _auction) public happyPath(_auction) {
+  function test_Emit_TerminateAuctionPrematurely(
+    CollateralAuction memory _auction
+  ) public happyPath(_auction) {
     vm.expectEmit();
     emit TerminateAuctionPrematurely(_auction.id, block.timestamp, authorizedAccount, _auction.amountToSell);
 
     collateralAuctionHouse.terminateAuctionPrematurely(_auction.id);
   }
 
-  function test_Set_Auctions(CollateralAuction memory _auction) public happyPath(_auction) {
+  function test_Set_Auctions(
+    CollateralAuction memory _auction
+  ) public happyPath(_auction) {
     collateralAuctionHouse.terminateAuctionPrematurely(_auction.id);
 
     ICollateralAuctionHouse.Auction memory __auction = collateralAuctionHouse.auctions(_auction.id);
@@ -1567,7 +1631,9 @@ contract Unit_CollateralAuctionHouse_ModifyParameters is Base {
     _;
   }
 
-  function test_Set_Parameters(ICollateralAuctionHouse.CollateralAuctionHouseParams memory _fuzz) public happyPath {
+  function test_Set_Parameters(
+    ICollateralAuctionHouse.CollateralAuctionHouseParams memory _fuzz
+  ) public happyPath {
     vm.assume(_fuzz.minDiscount >= _fuzz.maxDiscount && _fuzz.minDiscount <= WAD);
     vm.assume(_fuzz.maxDiscount > 0);
     vm.assume(_fuzz.perSecondDiscountUpdateRate <= RAY);
@@ -1584,7 +1650,9 @@ contract Unit_CollateralAuctionHouse_ModifyParameters is Base {
     assertEq(abi.encode(_params), abi.encode(_fuzz));
   }
 
-  function test_Set_LiquidationEngine(address _liquidationEngine) public happyPath mockAsContract(_liquidationEngine) {
+  function test_Set_LiquidationEngine(
+    address _liquidationEngine
+  ) public happyPath mockAsContract(_liquidationEngine) {
     vm.assume(_liquidationEngine != address(0));
     vm.assume(_liquidationEngine != deployer);
     vm.assume(_liquidationEngine != authorizedAccount);
@@ -1617,7 +1685,9 @@ contract Unit_CollateralAuctionHouse_ModifyParameters is Base {
     collateralAuctionHouse.modifyParameters('liquidationEngine', abi.encode(_newLiquidationEngine));
   }
 
-  function test_Set_OracleRelayer(address _oracleRelayer) public happyPath mockAsContract(_oracleRelayer) {
+  function test_Set_OracleRelayer(
+    address _oracleRelayer
+  ) public happyPath mockAsContract(_oracleRelayer) {
     vm.assume(_oracleRelayer != address(0));
 
     collateralAuctionHouse.modifyParameters('oracleRelayer', abi.encode(_oracleRelayer));
@@ -1641,7 +1711,9 @@ contract Unit_CollateralAuctionHouse_ModifyParameters is Base {
     collateralAuctionHouse.modifyParameters('oracleRelayer', abi.encode(0));
   }
 
-  function test_Revert_NotGreaterOrEqualThan_MinDiscount(uint256 _minDiscount) public {
+  function test_Revert_NotGreaterOrEqualThan_MinDiscount(
+    uint256 _minDiscount
+  ) public {
     vm.startPrank(authorizedAccount);
     vm.assume(_minDiscount < cahParams.maxDiscount);
 
@@ -1652,7 +1724,9 @@ contract Unit_CollateralAuctionHouse_ModifyParameters is Base {
     collateralAuctionHouse.modifyParameters('minDiscount', abi.encode(_minDiscount));
   }
 
-  function test_Revert_NotLesserOrEqualThan_MinDiscount(uint256 _minDiscount) public {
+  function test_Revert_NotLesserOrEqualThan_MinDiscount(
+    uint256 _minDiscount
+  ) public {
     vm.startPrank(authorizedAccount);
     vm.assume(_minDiscount >= cahParams.maxDiscount && _minDiscount > WAD);
 
@@ -1661,7 +1735,9 @@ contract Unit_CollateralAuctionHouse_ModifyParameters is Base {
     collateralAuctionHouse.modifyParameters('minDiscount', abi.encode(_minDiscount));
   }
 
-  function test_Revert_NotGreaterThan_MaxDiscount(uint256 _maxDiscount) public {
+  function test_Revert_NotGreaterThan_MaxDiscount(
+    uint256 _maxDiscount
+  ) public {
     vm.startPrank(authorizedAccount);
     _maxDiscount = 0;
 
@@ -1670,7 +1746,9 @@ contract Unit_CollateralAuctionHouse_ModifyParameters is Base {
     collateralAuctionHouse.modifyParameters('maxDiscount', abi.encode(_maxDiscount));
   }
 
-  function test_Revert_NotLesserOrEqualThan_PerSecondDiscountUpdateRate(uint256 _perSecondDiscountUpdateRate) public {
+  function test_Revert_NotLesserOrEqualThan_PerSecondDiscountUpdateRate(
+    uint256 _perSecondDiscountUpdateRate
+  ) public {
     vm.startPrank(authorizedAccount);
     vm.assume(_perSecondDiscountUpdateRate > RAY);
 
@@ -1679,7 +1757,9 @@ contract Unit_CollateralAuctionHouse_ModifyParameters is Base {
     collateralAuctionHouse.modifyParameters('perSecondDiscountUpdateRate', abi.encode(_perSecondDiscountUpdateRate));
   }
 
-  function test_Revert_UnrecognizedParam(bytes memory _data) public {
+  function test_Revert_UnrecognizedParam(
+    bytes memory _data
+  ) public {
     vm.startPrank(authorizedAccount);
 
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);

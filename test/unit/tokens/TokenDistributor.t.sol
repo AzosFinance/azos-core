@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {TokenDistributor, ITokenDistributor} from '@contracts/tokens/TokenDistributor.sol';
 import {IProtocolToken} from '@interfaces/tokens/IProtocolToken.sol';
@@ -73,7 +73,9 @@ abstract contract Base is AzosTest {
     validEveProofs = merkleTreeGenerator.getProof(merkleTree, _index);
   }
 
-  function _mockERC20VotesDelegate(address _delegatee) internal {
+  function _mockERC20VotesDelegate(
+    address _delegatee
+  ) internal {
     vm.mockCall(address(token), abi.encodeCall(token.delegate, (_delegatee)), abi.encode(0));
   }
 
@@ -94,7 +96,9 @@ abstract contract Base is AzosTest {
     vm.mockCall(address(token), abi.encodeCall(token.nonces, address(_user)), abi.encode(_nonce));
   }
 
-  function _mockTotalClaimable(uint256 _totalClaimable) internal {
+  function _mockTotalClaimable(
+    uint256 _totalClaimable
+  ) internal {
     stdstore.target(address(tokenDistributor)).sig(ITokenDistributor.totalClaimable.selector).checked_write(
       _totalClaimable
     );
@@ -149,7 +153,9 @@ contract Unit_TokenDistributor_Constructor is Base {
     );
   }
 
-  function test_Revert_ClaimPeriodStart_LtEqTimeStamp(uint256 _claimPeriodStart) public {
+  function test_Revert_ClaimPeriodStart_LtEqTimeStamp(
+    uint256 _claimPeriodStart
+  ) public {
     vm.assume(_claimPeriodStart <= block.timestamp);
 
     vm.expectRevert(abi.encodeWithSelector(Assertions.NotGreaterThan.selector, _claimPeriodStart, block.timestamp));
@@ -480,7 +486,9 @@ contract Unit_TokenDistributor_Sweep is Base {
     vm.warp(claimPeriodEnd + 1);
   }
 
-  function test_Set_TotalClaimable(uint256 _totalClaimable) public authorized {
+  function test_Set_TotalClaimable(
+    uint256 _totalClaimable
+  ) public authorized {
     vm.assume(_totalClaimable > 0);
     _mockTotalClaimable(_totalClaimable);
 
@@ -489,7 +497,9 @@ contract Unit_TokenDistributor_Sweep is Base {
     assertEq(tokenDistributor.totalClaimable(), 0);
   }
 
-  function test_Call_Token_Mint(uint256 _totalClaimable) public authorized {
+  function test_Call_Token_Mint(
+    uint256 _totalClaimable
+  ) public authorized {
     vm.assume(_totalClaimable > 0);
     _mockTotalClaimable(_totalClaimable);
 
@@ -497,7 +507,9 @@ contract Unit_TokenDistributor_Sweep is Base {
     tokenDistributor.sweep(sweepReceiver);
   }
 
-  function test_Emit_Swept(uint256 _totalClaimable) public authorized {
+  function test_Emit_Swept(
+    uint256 _totalClaimable
+  ) public authorized {
     vm.assume(_totalClaimable > 0);
     _mockTotalClaimable(_totalClaimable);
 
@@ -513,7 +525,9 @@ contract Unit_TokenDistributor_Sweep is Base {
     tokenDistributor.sweep(sweepReceiver);
   }
 
-  function test_Revert_ClaimPeriodNotEnded(uint256 _time) public authorized {
+  function test_Revert_ClaimPeriodNotEnded(
+    uint256 _time
+  ) public authorized {
     vm.assume(_time <= claimPeriodEnd);
     vm.warp(_time);
     vm.expectRevert(ITokenDistributor.TokenDistributor_ClaimPeriodNotEnded.selector);

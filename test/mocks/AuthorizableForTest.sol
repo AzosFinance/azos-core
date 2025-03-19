@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {Authorizable, IAuthorizable} from '@contracts/utils/Authorizable.sol';
 
 contract AuthorizableForTest is Authorizable {
   error ModifierError();
 
-  constructor(address _account) Authorizable(_account) {}
+  constructor(
+    address _account
+  ) Authorizable(_account) {}
 
   function isAuthorizedModifier() external isAuthorized {}
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {LiquidationJobForTest, ILiquidationJob} from '@test/mocks/LiquidationJobForTest.sol';
 import {ILiquidationEngine} from '@interfaces/ILiquidationEngine.sol';
@@ -45,11 +45,15 @@ abstract contract Base is AzosTest {
     );
   }
 
-  function _mockRewardAmount(uint256 _rewardAmount) internal {
+  function _mockRewardAmount(
+    uint256 _rewardAmount
+  ) internal {
     stdstore.target(address(liquidationJob)).sig(IJob.rewardAmount.selector).checked_write(_rewardAmount);
   }
 
-  function _mockShouldWork(bool _shouldWork) internal {
+  function _mockShouldWork(
+    bool _shouldWork
+  ) internal {
     // BUG: Accessing packed slots is not supported by Std Storage
     liquidationJob.setShouldWork(_shouldWork);
   }
@@ -78,7 +82,9 @@ contract Unit_LiquidationJob_Constructor is Base {
     assertEq(liquidationJob.rewardAmount(), REWARD_AMOUNT);
   }
 
-  function test_Set_LiquidationEngine(address _liquidationEngine) public happyPath mockAsContract(_liquidationEngine) {
+  function test_Set_LiquidationEngine(
+    address _liquidationEngine
+  ) public happyPath mockAsContract(_liquidationEngine) {
     liquidationJob = new LiquidationJobForTest(_liquidationEngine, address(mockStabilityFeeTreasury), REWARD_AMOUNT);
 
     assertEq(address(liquidationJob.liquidationEngine()), _liquidationEngine);
@@ -148,29 +154,33 @@ contract Unit_LiquidationJob_ModifyParameters is Base {
     _;
   }
 
-  function test_Set_LiquidationEngine(address _liquidationEngine) public happyPath mockAsContract(_liquidationEngine) {
+  function test_Set_LiquidationEngine(
+    address _liquidationEngine
+  ) public happyPath mockAsContract(_liquidationEngine) {
     liquidationJob.modifyParameters('liquidationEngine', abi.encode(_liquidationEngine));
 
     assertEq(address(liquidationJob.liquidationEngine()), _liquidationEngine);
   }
 
-  function test_Set_StabilityFeeTreasury(address _stabilityFeeTreasury)
-    public
-    happyPath
-    mockAsContract(_stabilityFeeTreasury)
-  {
+  function test_Set_StabilityFeeTreasury(
+    address _stabilityFeeTreasury
+  ) public happyPath mockAsContract(_stabilityFeeTreasury) {
     liquidationJob.modifyParameters('stabilityFeeTreasury', abi.encode(_stabilityFeeTreasury));
 
     assertEq(address(liquidationJob.stabilityFeeTreasury()), _stabilityFeeTreasury);
   }
 
-  function test_Set_ShouldWorkPopDebtFromQueue(bool _shouldWork) public happyPath {
+  function test_Set_ShouldWorkPopDebtFromQueue(
+    bool _shouldWork
+  ) public happyPath {
     liquidationJob.modifyParameters('shouldWork', abi.encode(_shouldWork));
 
     assertEq(liquidationJob.shouldWork(), _shouldWork);
   }
 
-  function test_Set_RewardAmount(uint256 _rewardAmount) public happyPath {
+  function test_Set_RewardAmount(
+    uint256 _rewardAmount
+  ) public happyPath {
     vm.assume(_rewardAmount != 0);
 
     liquidationJob.modifyParameters('rewardAmount', abi.encode(_rewardAmount));
@@ -202,7 +212,9 @@ contract Unit_LiquidationJob_ModifyParameters is Base {
     liquidationJob.modifyParameters('rewardAmount', abi.encode(0));
   }
 
-  function test_Revert_UnrecognizedParam(bytes memory _data) public {
+  function test_Revert_UnrecognizedParam(
+    bytes memory _data
+  ) public {
     vm.startPrank(authorizedAccount);
 
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);

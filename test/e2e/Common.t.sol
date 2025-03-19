@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {HAI, HAI_USD_INITIAL_PRICE, WETH} from '@script/Params.s.sol';

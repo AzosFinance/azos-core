@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IProtocolToken} from '@interfaces/tokens/IProtocolToken.sol';
 import {IStakingManager} from '@interfaces/tokens/IStakingManager.sol';
@@ -46,7 +46,9 @@ abstract contract Base is AzosTest {
     vm.stopPrank();
   }
 
-  function _mockPaused(bool _paused) internal {
+  function _mockPaused(
+    bool _paused
+  ) internal {
     stdstore.target(address(stakingToken)).sig(Pausable.paused.selector).checked_write(_paused);
   }
 }
@@ -59,13 +61,17 @@ contract Unit_StakingToken_Constructor is Base {
     _;
   }
 
-  function test_Set_Name(string memory _name) public happyPath {
+  function test_Set_Name(
+    string memory _name
+  ) public happyPath {
     stakingToken = new StakingToken(_name, symbol, address(mockProtocolToken));
 
     assertEq(stakingToken.name(), _name);
   }
 
-  function test_Set_Symbol(string memory _symbol) public happyPath {
+  function test_Set_Symbol(
+    string memory _symbol
+  ) public happyPath {
     stakingToken = new StakingToken(name, _symbol, address(mockProtocolToken));
 
     assertEq(stakingToken.symbol(), _symbol);
@@ -125,7 +131,9 @@ contract Unit_StakingToken_Burn is Base {
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
   event StakingTokenBurn(address indexed _src, uint256 _wad);
 
-  modifier happyPath(uint256 _wad) {
+  modifier happyPath(
+    uint256 _wad
+  ) {
     _assumeHappyPath(_wad);
     _mockPaused(false);
 
@@ -136,11 +144,15 @@ contract Unit_StakingToken_Burn is Base {
     _;
   }
 
-  function _assumeHappyPath(uint256 _wad) internal pure {
+  function _assumeHappyPath(
+    uint256 _wad
+  ) internal pure {
     vm.assume(_wad <= type(uint208).max);
   }
 
-  function test_Emit_Events(uint256 _wad) public happyPath(_wad) {
+  function test_Emit_Events(
+    uint256 _wad
+  ) public happyPath(_wad) {
     vm.expectEmit();
     emit Transfer(user, address(0), _wad);
 

@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 contract InternalCallsWatcher {
-  function calledInternal(bytes memory _encodedCall) external view {}
+  function calledInternal(
+    bytes memory _encodedCall
+  ) external view {}
 }
 
 contract InternalCallsExtension {
@@ -17,7 +19,9 @@ contract InternalCallsExtension {
     watcher = new InternalCallsWatcher();
   }
 
-  function setCallSuper(bool _callSuper) public {
+  function setCallSuper(
+    bool _callSuper
+  ) public {
     callSuper = _callSuper;
   }
 }

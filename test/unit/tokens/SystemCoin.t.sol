@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {SystemCoin, ISystemCoin} from '@contracts/tokens/SystemCoin.sol';
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
@@ -32,7 +32,9 @@ abstract contract Base is AzosTest {
     stdstore.target(address(systemCoin)).sig(IERC20.balanceOf.selector).with_key(_account).checked_write(_balance);
   }
 
-  function _mockTotalSupply(uint256 _totalSupply) internal {
+  function _mockTotalSupply(
+    uint256 _totalSupply
+  ) internal {
     stdstore.target(address(systemCoin)).sig(IERC20.totalSupply.selector).checked_write(_totalSupply);
   }
 }
@@ -45,13 +47,17 @@ contract Unit_SystemCoin_Constructor is Base {
     _;
   }
 
-  function test_Set_Name(string memory _name) public happyPath {
+  function test_Set_Name(
+    string memory _name
+  ) public happyPath {
     systemCoin = new SystemCoin(_name, symbol);
 
     assertEq(systemCoin.name(), _name);
   }
 
-  function test_Set_Symbol(string memory _symbol) public happyPath {
+  function test_Set_Symbol(
+    string memory _symbol
+  ) public happyPath {
     systemCoin = new SystemCoin(name, _symbol);
 
     assertEq(systemCoin.symbol(), _symbol);
@@ -75,7 +81,9 @@ contract Unit_SystemCoin_Mint is Base {
     _;
   }
 
-  function _assumeHappyPath(address _dst) internal pure {
+  function _assumeHappyPath(
+    address _dst
+  ) internal pure {
     vm.assume(_dst != address(0));
   }
 
@@ -96,19 +104,25 @@ contract Unit_SystemCoin_Mint is Base {
 contract Unit_SystemCoin_Burn is Base {
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
-  modifier happyPath(uint256 _wad) {
+  modifier happyPath(
+    uint256 _wad
+  ) {
     vm.startPrank(user);
 
     _mockValues(_wad);
     _;
   }
 
-  function _mockValues(uint256 _wad) internal {
+  function _mockValues(
+    uint256 _wad
+  ) internal {
     _mockBalanceOf(user, _wad);
     _mockTotalSupply(_wad);
   }
 
-  function test_Emit_Transfer(uint256 _wad) public happyPath(_wad) {
+  function test_Emit_Transfer(
+    uint256 _wad
+  ) public happyPath(_wad) {
     vm.expectEmit();
     emit Transfer(user, address(0), _wad);
 

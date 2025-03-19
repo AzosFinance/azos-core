@@ -6,10 +6,10 @@ import {IAzosOwnable2Step} from '@interfaces/utils/IAzosOwnable2Step.sol';
 import {Ownable2Step, Ownable} from '@openzeppelin/contracts/access/Ownable2Step.sol';
 
 /**
- * @title  HaiOwnable2Step
+ * @title  AzosOwnable2Step
  * @notice This abstract contract inherits Ownable2Step
  */
-abstract contract HaiOwnable2Step is Ownable2Step, IAzosOwnable2Step {
+abstract contract AzosOwnable2Step is Ownable2Step, IAzosOwnable2Step {
   // --- Overrides ---
 
   /// @inheritdoc IAzosOwnable2Step

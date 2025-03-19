@@ -89,9 +89,9 @@ abstract contract MainnetDeployment is Contracts, MainnetParams {
     delayedOracle[OP] = IDelayedOracle(0x519011D32806f324364201C5C98579aEC55D9011);
 
     // --- governance ---
-    haiGovernor = AzosGovernor(payable(0xe807f3282f3391d237BA8B9bECb0d8Ea3ba23777));
+    azosGovernor = AzosGovernor(payable(0xe807f3282f3391d237BA8B9bECb0d8Ea3ba23777));
     timelock = TimelockController(payable(0xd68e7D20008a223dD48A6076AAf5EDd4fe80a899));
-    haiDelegatee = AzosDelegatee(0x2C6c638b93bA5a11DBD419305F14749Fc8AA2B63);
+    azosDelegatee = AzosDelegatee(0x2C6c638b93bA5a11DBD419305F14749Fc8AA2B63);
 
     tokenDistributor = TokenDistributor(0xCb96543b9f3657bE103Ba6371aaeD8a711Cc9E02);
 

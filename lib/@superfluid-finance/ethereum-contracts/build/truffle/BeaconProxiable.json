@@ -1,0 +1,278 @@
+{
+  "contractName": "BeaconProxiable",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "version",
+          "type": "uint8"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "castrate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "proxiableUUID",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.26+commit.8a97fa7a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"castrate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"Initialized(uint8)\":{\"details\":\"Triggered when the contract has been initialized or reinitialized.\"}},\"kind\":\"dev\",\"methods\":{\"proxiableUUID()\":{\"details\":\"Proxiable UUID marker function, this would help to avoid wrong logic      contract to be used for upgrading.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/upgradability/BeaconProxiable.sol\":\"BeaconProxiable\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/proxy/utils/Initializable.sol\":{\"keccak256\":\"0x3d6069be9b4c01fb81840fb9c2c4dc58dd6a6a4aafaa2c6837de8699574d84c6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://720d6bb56ea0c4ef781c0bd65c5bd0541f5a46100163b2587170f97658d2deed\",\"dweb:/ipfs/QmTS2biLVPrv8CeeXCaKmkFxonMiRvc1LxiYBRYDAJHQUS\"]},\"@openzeppelin/contracts/utils/Address.sol\":{\"keccak256\":\"0x006dd67219697fe68d7fbfdea512e7c4cb64a43565ed86171d67e844982da6fa\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2455248c8ddd9cc6a7af76a13973cddf222072427e7b0e2a7d1aff345145e931\",\"dweb:/ipfs/QmfYjnjRbWqYpuxurqveE6HtzsY1Xx323J428AKQgtBJZm\"]},\"project:/contracts/upgradability/BeaconProxiable.sol\":{\"keccak256\":\"0x98a5844927c444b8fde6b3755b402ed2a3e4e0c45539eea0c103598ed692806e\",\"license\":\"AGPLv3\",\"urls\":[\"bzz-raw://b3cf24429b7580ab7fecaf8f36e3b089abf57cccda0cbf2d10ed1bc3760a0b55\",\"dweb:/ipfs/QmdHJwiCG4msv4niftcFGqEtP7imyHqtsxx5BQg2gvUL7t\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: AGPLv3\npragma solidity ^0.8.23;\n\nimport { Initializable } from \"@openzeppelin/contracts/proxy/utils/Initializable.sol\";\n\nabstract contract BeaconProxiable is Initializable {\n\n    // allows to mark logic contracts as initialized\n    // solhint-disable-next-line no-empty-blocks\n    function castrate() external initializer { }\n\n    /**\n     * @dev Proxiable UUID marker function, this would help to avoid wrong logic\n     *      contract to be used for upgrading.\n     */\n    function proxiableUUID() public pure virtual returns (bytes32);\n}",
+  "sourcePath": "/home/runner/work/protocol-monorepo/protocol-monorepo/packages/ethereum-contracts/contracts/upgradability/BeaconProxiable.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/upgradability/BeaconProxiable.sol",
+    "exportedSymbols": {
+      "BeaconProxiable": [
+        54177
+      ],
+      "Initializable": [
+        1383
+      ]
+    },
+    "id": 54178,
+    "license": "AGPLv3",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 54160,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".23"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "35:24:120"
+      },
+      {
+        "absolutePath": "@openzeppelin/contracts/proxy/utils/Initializable.sol",
+        "file": "@openzeppelin/contracts/proxy/utils/Initializable.sol",
+        "id": 54162,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 54178,
+        "sourceUnit": 1384,
+        "src": "61:86:120",
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 54161,
+              "name": "Initializable",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "referencedDeclaration": 1383,
+              "src": "70:13:120",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "abstract": true,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 54163,
+              "name": "Initializable",
+              "nameLocations": [
+                "186:13:120"
+              ],
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 1383,
+              "src": "186:13:120"
+            },
+            "id": 54164,
+            "nodeType": "InheritanceSpecifier",
+            "src": "186:13:120"
+          }
+        ],
+        "canonicalName": "BeaconProxiable",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": false,
+        "id": 54177,
+        "linearizedBaseContracts": [
+          54177,
+          1383
+        ],
+        "name": "BeaconProxiable",
+        "nameLocation": "167:15:120",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 54169,
+              "nodeType": "Block",
+              "src": "350:3:120",
+              "statements": []
+            },
+            "functionSelector": "9903ad38",
+            "id": 54170,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "id": 54167,
+                "kind": "modifierInvocation",
+                "modifierName": {
+                  "id": 54166,
+                  "name": "initializer",
+                  "nameLocations": [
+                    "338:11:120"
+                  ],
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 1285,
+                  "src": "338:11:120"
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "338:11:120"
+              }
+            ],
+            "name": "castrate",
+            "nameLocation": "318:8:120",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 54165,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "326:2:120"
+            },
+            "returnParameters": {
+              "id": 54168,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "350:0:120"
+            },
+            "scope": 54177,
+            "src": "309:44:120",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 54171,
+              "nodeType": "StructuredDocumentation",
+              "src": "359:139:120",
+              "text": " @dev Proxiable UUID marker function, this would help to avoid wrong logic\n      contract to be used for upgrading."
+            },
+            "functionSelector": "52d1902d",
+            "id": 54176,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "proxiableUUID",
+            "nameLocation": "512:13:120",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 54172,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "525:2:120"
+            },
+            "returnParameters": {
+              "id": 54175,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 54174,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 54176,
+                  "src": "557:7:120",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 54173,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "557:7:120",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "556:9:120"
+            },
+            "scope": 54177,
+            "src": "503:63:120",
+            "stateMutability": "pure",
+            "virtual": true,
+            "visibility": "public"
+          }
+        ],
+        "scope": 54178,
+        "src": "149:419:120",
+        "usedErrors": [],
+        "usedEvents": [
+          1229
+        ]
+      }
+    ],
+    "src": "35:533:120"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.26+commit.8a97fa7a.Linux.g++"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.16",
+  "updatedAt": "2024-11-25T09:47:04.362Z",
+  "devdoc": {
+    "events": {
+      "Initialized(uint8)": {
+        "details": "Triggered when the contract has been initialized or reinitialized."
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "proxiableUUID()": {
+        "details": "Proxiable UUID marker function, this would help to avoid wrong logic      contract to be used for upgrading."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

@@ -1,0 +1,321 @@
+{
+  "contractName": "IMultiSigWallet",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "destination",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "submitTransaction",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "transactionId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "required",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.26+commit.8a97fa7a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"required\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"destination\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"submitTransaction\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Superfluid\",\"kind\":\"dev\",\"methods\":{},\"title\":\"Partial Multisig wallet interface See https://github.com/gnosis/MultiSigWallet/blob/master/contracts/MultiSigWallet.sol\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/utils/IMultiSigWallet.sol\":\"IMultiSigWallet\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/utils/IMultiSigWallet.sol\":{\"keccak256\":\"0x79cba749d1af3a1595c7c9f480d166ec863b0f3a93a9cdb90134bfd991569551\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://41c0c90afe2df76825997abbacf77cb72e20a4f44e02f18a27363fc2dd5e274c\",\"dweb:/ipfs/QmeXeWWTq355nbwPq9rYBov8Fbo3muNDT7kK2PYn3f6su3\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: UNLICENSED\n\npragma solidity >= 0.8.11;\n/**\n * @title Partial Multisig wallet interface\n * See https://github.com/gnosis/MultiSigWallet/blob/master/contracts/MultiSigWallet.sol\n * @author Superfluid\n */\ninterface IMultiSigWallet {\n    function submitTransaction(address destination, uint value, bytes calldata data)\n        external\n        returns (uint transactionId);\n\n    // used for interface probing\n    function required()\n        external view\n        returns (uint256);\n}\n",
+  "sourcePath": "/home/runner/work/protocol-monorepo/protocol-monorepo/packages/ethereum-contracts/contracts/interfaces/utils/IMultiSigWallet.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/interfaces/utils/IMultiSigWallet.sol",
+    "exportedSymbols": {
+      "IMultiSigWallet": [
+        36105
+      ]
+    },
+    "id": 36106,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 36087,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.8",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:26:80"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IMultiSigWallet",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": {
+          "id": 36088,
+          "nodeType": "StructuredDocumentation",
+          "src": "67:162:80",
+          "text": " @title Partial Multisig wallet interface\n See https://github.com/gnosis/MultiSigWallet/blob/master/contracts/MultiSigWallet.sol\n @author Superfluid"
+        },
+        "fullyImplemented": false,
+        "id": 36105,
+        "linearizedBaseContracts": [
+          36105
+        ],
+        "name": "IMultiSigWallet",
+        "nameLocation": "240:15:80",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "c6427474",
+            "id": 36099,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "submitTransaction",
+            "nameLocation": "271:17:80",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 36095,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 36090,
+                  "mutability": "mutable",
+                  "name": "destination",
+                  "nameLocation": "297:11:80",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36099,
+                  "src": "289:19:80",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 36089,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "289:7:80",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36092,
+                  "mutability": "mutable",
+                  "name": "value",
+                  "nameLocation": "315:5:80",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36099,
+                  "src": "310:10:80",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 36091,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "310:4:80",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36094,
+                  "mutability": "mutable",
+                  "name": "data",
+                  "nameLocation": "337:4:80",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36099,
+                  "src": "322:19:80",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 36093,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "322:5:80",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "288:54:80"
+            },
+            "returnParameters": {
+              "id": 36098,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 36097,
+                  "mutability": "mutable",
+                  "name": "transactionId",
+                  "nameLocation": "382:13:80",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36099,
+                  "src": "377:18:80",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 36096,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "377:4:80",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "376:20:80"
+            },
+            "scope": 36105,
+            "src": "262:135:80",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "dc8452cd",
+            "id": 36104,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "required",
+            "nameLocation": "446:8:80",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 36100,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "454:2:80"
+            },
+            "returnParameters": {
+              "id": 36103,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 36102,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36104,
+                  "src": "496:7:80",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 36101,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "496:7:80",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "495:9:80"
+            },
+            "scope": 36105,
+            "src": "437:68:80",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 36106,
+        "src": "230:277:80",
+        "usedErrors": [],
+        "usedEvents": []
+      }
+    ],
+    "src": "40:468:80"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.26+commit.8a97fa7a.Linux.g++"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.16",
+  "updatedAt": "2024-11-25T09:47:03.943Z",
+  "devdoc": {
+    "author": "Superfluid",
+    "kind": "dev",
+    "methods": {},
+    "title": "Partial Multisig wallet interface See https://github.com/gnosis/MultiSigWallet/blob/master/contracts/MultiSigWallet.sol",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

@@ -1,0 +1,1521 @@
+{
+  "contractName": "CallbackUtils",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.26+commit.8a97fa7a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"## Problem Statement When calling an untrusted external callback (or hook), gas limit is usually provided to prevent grief attack from them. However, such gas limits are nested. From the callback invoking site, one might need to differentiate the cases between the outer-layer induced out-of-gas vs. the callback resulted out-of-gas. This library solves such challenge by safely marking the second case with an explicit flag of insufficient-callback-gas-provided. In order to use this library, one must first understand the concept of callback gas limit zones. ## Definitions: callback gas limit zones +---------------------------+--------------+---------------------+ | insufficient-callback-gas | transitional | out-of-callback-gas | +---------------------------+--------------+---------------------+ - insufficient-callback-gas zone   This zone includes all outer gas limits that are below callback gas limit. The invariance of   this zone is that calling the callback shall return with the insufficient-callback-gas-provided   set to true if more gas is needed to execute the callback. - out-of-callback-gas zone   Within this continuous zone, the invariance is that calling the callback shall never return   with the insufficient-callback-gas-provided flag set to true. - transitional zone   Between the insufficient-callback-gas zone to the out-of-callback-gas zone, there is a zone of   unspecified size where insufficient-callback-gas-provided may be set to true. This is due the   factors of EIP-150 Magic N and callback setup overhead. ## EIP-150 Magic N \\\"If a call asks for more gas than the maximum allowed amount (i.e. the total amount of gas remaining in the parent after subtracting the gas cost of the call and memory expansion), do not return an OOG error; instead, if a call asks for more gas than all but one 64th of the maximum allowed amount, call with all but one 64th of the maximum allowed amount of gas (this is equivalent to a version of EIP-90 plus EIP-114). CREATE only provides all but one 64th of the parent gas to the child call.\\\" Another article about this topic: https://medium.com/%40wighawag/ethereum-the-concept-of-gas-and-its-dangers-28d0eb809bb2\",\"kind\":\"dev\",\"methods\":{},\"title\":\"Callback utilities solidity library\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"An internal library used to handle different types of out of gas errors in callbacks\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/libs/CallbackUtils.sol\":\"CallbackUtils\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/libs/CallbackUtils.sol\":{\"keccak256\":\"0xe66712db6f0c543b58d96f346beb125faee3ea0068b83ec66fe5e38538b87a3a\",\"license\":\"AGPLv3\",\"urls\":[\"bzz-raw://c952691de2d1783452aa41a1caf4f7020bab9546875140d81b85e3a044e67136\",\"dweb:/ipfs/QmWq5tg3gGNWUQca6NkkgwACHQQQ2FocrvPxeYaCqrNhHy\"]}},\"version\":1}",
+  "bytecode": "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220538314a077a052b3914d7408fc7c3e17cbcae1ebea4eb5d3a1c6d4ff3293b7bc64736f6c634300081a0033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220538314a077a052b3914d7408fc7c3e17cbcae1ebea4eb5d3a1c6d4ff3293b7bc64736f6c634300081a0033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "2547:1747:87:-:0;;;;;;;;;;;;;;;-1:-1:-1;;;2547:1747:87;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "2547:1747:87:-:0;;;;;;;;",
+  "source": "// SPDX-License-Identifier: AGPLv3\npragma solidity ^0.8.23;\n\n/**\n * @title Callback utilities solidity library\n * @notice An internal library used to handle different types of out of gas errors in callbacks\n *\n * @dev\n *\n * ## Problem Statement\n *\n * When calling an untrusted external callback (or hook), gas limit is usually provided to prevent\n * grief attack from them. However, such gas limits are nested. From the callback invoking site, one\n * might need to differentiate the cases between the outer-layer induced out-of-gas vs. the callback\n * resulted out-of-gas.\n *\n * This library solves such challenge by safely marking the second case with an explicit flag of\n * insufficient-callback-gas-provided. In order to use this library, one must first understand the\n * concept of callback gas limit zones.\n *\n * ## Definitions: callback gas limit zones\n *\n * +---------------------------+--------------+---------------------+\n * | insufficient-callback-gas | transitional | out-of-callback-gas |\n * +---------------------------+--------------+---------------------+\n *\n * - insufficient-callback-gas zone\n *\n *   This zone includes all outer gas limits that are below callback gas limit. The invariance of\n *   this zone is that calling the callback shall return with the insufficient-callback-gas-provided\n *   set to true if more gas is needed to execute the callback.\n *\n * - out-of-callback-gas zone\n *\n *   Within this continuous zone, the invariance is that calling the callback shall never return\n *   with the insufficient-callback-gas-provided flag set to true.\n *\n * - transitional zone\n *\n *   Between the insufficient-callback-gas zone to the out-of-callback-gas zone, there is a zone of\n *   unspecified size where insufficient-callback-gas-provided may be set to true. This is due the\n *   factors of EIP-150 Magic N and callback setup overhead.\n *\n * ## EIP-150 Magic N\n *\n * \"If a call asks for more gas than the maximum allowed amount (i.e. the total amount of gas\n * remaining in the parent after subtracting the gas cost of the call and memory expansion), do not\n * return an OOG error; instead, if a call asks for more gas than all but one 64th of the maximum\n * allowed amount, call with all but one 64th of the maximum allowed amount of gas (this is\n * equivalent to a version of EIP-90 plus EIP-114). CREATE only provides all but one 64th of the\n * parent gas to the child call.\"\n *\n * Another article about this topic:\n * https://medium.com/%40wighawag/ethereum-the-concept-of-gas-and-its-dangers-28d0eb809bb2\n *\n */\nlibrary CallbackUtils {\n    /// The magic N constant from the EIP-150\n    uint256 internal constant EIP150_MAGIC_N = 64;\n\n    /// Make a call to the target with a callback gas limit.\n    function externalCall(address target, bytes memory callData, uint256 callbackGasLimit) internal\n        returns (bool success, bool insufficientCallbackGasProvided, bytes memory returnedData)\n    {\n        uint256 gasLeftBefore = gasleft();\n        // solhint-disable-next-line avoid-low-level-calls\n        (success, returnedData) = address(target).call{ gas: callbackGasLimit }(callData);\n        if (!success) {\n            if (gasleft() <= gasLeftBefore / EIP150_MAGIC_N) insufficientCallbackGasProvided = true;\n        }\n    }\n\n    /// Make a staticcall to the target with a callback gas limit.\n    function staticCall(address target, bytes memory callData, uint256 callbackGasLimit) internal view\n        returns (bool success, bool insufficientCallbackGasProvided, bytes memory returnedData)\n    {\n        uint256 gasLeftBefore = gasleft();\n        // solhint-disable-next-line avoid-low-level-calls\n        (success, returnedData) = address(target).staticcall{ gas: callbackGasLimit }(callData);\n        if (!success) {\n            if (gasleft() <= gasLeftBefore / EIP150_MAGIC_N) insufficientCallbackGasProvided = true;\n        }\n    }\n\n    /// Reliably consume all the gas given.\n    function consumeAllGas() internal pure {\n        // Neither revert or assert consume all gas since Solidity 0.8.20\n        // https://docs.soliditylang.org/en/v0.8.20/control-structures.html#panic-via-assert-and-error-via-require\n        // @solidity memory-safe-assembly\n        // solhint-disable-next-line no-inline-assembly\n        assembly { invalid() }\n    }\n}\n",
+  "sourcePath": "/home/runner/work/protocol-monorepo/protocol-monorepo/packages/ethereum-contracts/contracts/libs/CallbackUtils.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/libs/CallbackUtils.sol",
+    "exportedSymbols": {
+      "CallbackUtils": [
+        36513
+      ]
+    },
+    "id": 36514,
+    "license": "AGPLv3",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 36399,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".23"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "35:24:87"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "CallbackUtils",
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": {
+          "id": 36400,
+          "nodeType": "StructuredDocumentation",
+          "src": "61:2485:87",
+          "text": " @title Callback utilities solidity library\n @notice An internal library used to handle different types of out of gas errors in callbacks\n @dev\n ## Problem Statement\n When calling an untrusted external callback (or hook), gas limit is usually provided to prevent\n grief attack from them. However, such gas limits are nested. From the callback invoking site, one\n might need to differentiate the cases between the outer-layer induced out-of-gas vs. the callback\n resulted out-of-gas.\n This library solves such challenge by safely marking the second case with an explicit flag of\n insufficient-callback-gas-provided. In order to use this library, one must first understand the\n concept of callback gas limit zones.\n ## Definitions: callback gas limit zones\n +---------------------------+--------------+---------------------+\n | insufficient-callback-gas | transitional | out-of-callback-gas |\n +---------------------------+--------------+---------------------+\n - insufficient-callback-gas zone\n   This zone includes all outer gas limits that are below callback gas limit. The invariance of\n   this zone is that calling the callback shall return with the insufficient-callback-gas-provided\n   set to true if more gas is needed to execute the callback.\n - out-of-callback-gas zone\n   Within this continuous zone, the invariance is that calling the callback shall never return\n   with the insufficient-callback-gas-provided flag set to true.\n - transitional zone\n   Between the insufficient-callback-gas zone to the out-of-callback-gas zone, there is a zone of\n   unspecified size where insufficient-callback-gas-provided may be set to true. This is due the\n   factors of EIP-150 Magic N and callback setup overhead.\n ## EIP-150 Magic N\n \"If a call asks for more gas than the maximum allowed amount (i.e. the total amount of gas\n remaining in the parent after subtracting the gas cost of the call and memory expansion), do not\n return an OOG error; instead, if a call asks for more gas than all but one 64th of the maximum\n allowed amount, call with all but one 64th of the maximum allowed amount of gas (this is\n equivalent to a version of EIP-90 plus EIP-114). CREATE only provides all but one 64th of the\n parent gas to the child call.\"\n Another article about this topic:\n https://medium.com/%40wighawag/ethereum-the-concept-of-gas-and-its-dangers-28d0eb809bb2"
+        },
+        "fullyImplemented": true,
+        "id": 36513,
+        "linearizedBaseContracts": [
+          36513
+        ],
+        "name": "CallbackUtils",
+        "nameLocation": "2555:13:87",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "documentation": {
+              "id": 36401,
+              "nodeType": "StructuredDocumentation",
+              "src": "2575:41:87",
+              "text": "The magic N constant from the EIP-150"
+            },
+            "id": 36404,
+            "mutability": "constant",
+            "name": "EIP150_MAGIC_N",
+            "nameLocation": "2647:14:87",
+            "nodeType": "VariableDeclaration",
+            "scope": 36513,
+            "src": "2621:45:87",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 36402,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "2621:7:87",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3634",
+              "id": 36403,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "2664:2:87",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_64_by_1",
+                "typeString": "int_const 64"
+              },
+              "value": "64"
+            },
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 36454,
+              "nodeType": "Block",
+              "src": "2930:335:87",
+              "statements": [
+                {
+                  "assignments": [
+                    36421
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 36421,
+                      "mutability": "mutable",
+                      "name": "gasLeftBefore",
+                      "nameLocation": "2948:13:87",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 36454,
+                      "src": "2940:21:87",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 36420,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2940:7:87",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 36424,
+                  "initialValue": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 36422,
+                      "name": "gasleft",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": -7,
+                      "src": "2964:7:87",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_gasleft_view$__$returns$_t_uint256_$",
+                        "typeString": "function () view returns (uint256)"
+                      }
+                    },
+                    "id": 36423,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2964:9:87",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2940:33:87"
+                },
+                {
+                  "expression": {
+                    "id": 36437,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "components": [
+                        {
+                          "id": 36425,
+                          "name": "success",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 36414,
+                          "src": "3043:7:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        {
+                          "id": 36426,
+                          "name": "returnedData",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 36418,
+                          "src": "3052:12:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes_memory_ptr",
+                            "typeString": "bytes memory"
+                          }
+                        }
+                      ],
+                      "id": 36427,
+                      "isConstant": false,
+                      "isInlineArray": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "TupleExpression",
+                      "src": "3042:23:87",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_tuple$_t_bool_$_t_bytes_memory_ptr_$",
+                        "typeString": "tuple(bool,bytes memory)"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "arguments": [
+                        {
+                          "id": 36435,
+                          "name": "callData",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 36409,
+                          "src": "3114:8:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes_memory_ptr",
+                            "typeString": "bytes memory"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_bytes_memory_ptr",
+                            "typeString": "bytes memory"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_bytes_memory_ptr",
+                              "typeString": "bytes memory"
+                            }
+                          ],
+                          "expression": {
+                            "arguments": [
+                              {
+                                "id": 36430,
+                                "name": "target",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 36407,
+                                "src": "3076:6:87",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_address",
+                                  "typeString": "address"
+                                }
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": [
+                                {
+                                  "typeIdentifier": "t_address",
+                                  "typeString": "address"
+                                }
+                              ],
+                              "id": 36429,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "nodeType": "ElementaryTypeNameExpression",
+                              "src": "3068:7:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_address_$",
+                                "typeString": "type(address)"
+                              },
+                              "typeName": {
+                                "id": 36428,
+                                "name": "address",
+                                "nodeType": "ElementaryTypeName",
+                                "src": "3068:7:87",
+                                "typeDescriptions": {}
+                              }
+                            },
+                            "id": 36431,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "kind": "typeConversion",
+                            "lValueRequested": false,
+                            "nameLocations": [],
+                            "names": [],
+                            "nodeType": "FunctionCall",
+                            "src": "3068:15:87",
+                            "tryCall": false,
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          },
+                          "id": 36432,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberLocation": "3084:4:87",
+                          "memberName": "call",
+                          "nodeType": "MemberAccess",
+                          "src": "3068:20:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$",
+                            "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                          }
+                        },
+                        "id": 36434,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "names": [
+                          "gas"
+                        ],
+                        "nodeType": "FunctionCallOptions",
+                        "options": [
+                          {
+                            "id": 36433,
+                            "name": "callbackGasLimit",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 36411,
+                            "src": "3095:16:87",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          }
+                        ],
+                        "src": "3068:45:87",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gas",
+                          "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                        }
+                      },
+                      "id": 36436,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "nameLocations": [],
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "3068:55:87",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_tuple$_t_bool_$_t_bytes_memory_ptr_$",
+                        "typeString": "tuple(bool,bytes memory)"
+                      }
+                    },
+                    "src": "3042:81:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 36438,
+                  "nodeType": "ExpressionStatement",
+                  "src": "3042:81:87"
+                },
+                {
+                  "condition": {
+                    "id": 36440,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "UnaryOperation",
+                    "operator": "!",
+                    "prefix": true,
+                    "src": "3137:8:87",
+                    "subExpression": {
+                      "id": 36439,
+                      "name": "success",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 36414,
+                      "src": "3138:7:87",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 36453,
+                  "nodeType": "IfStatement",
+                  "src": "3133:126:87",
+                  "trueBody": {
+                    "id": 36452,
+                    "nodeType": "Block",
+                    "src": "3147:112:87",
+                    "statements": [
+                      {
+                        "condition": {
+                          "commonType": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          "id": 36446,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftExpression": {
+                            "arguments": [],
+                            "expression": {
+                              "argumentTypes": [],
+                              "id": 36441,
+                              "name": "gasleft",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": -7,
+                              "src": "3165:7:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_function_gasleft_view$__$returns$_t_uint256_$",
+                                "typeString": "function () view returns (uint256)"
+                              }
+                            },
+                            "id": 36442,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "kind": "functionCall",
+                            "lValueRequested": false,
+                            "nameLocations": [],
+                            "names": [],
+                            "nodeType": "FunctionCall",
+                            "src": "3165:9:87",
+                            "tryCall": false,
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "<=",
+                          "rightExpression": {
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 36445,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "id": 36443,
+                              "name": "gasLeftBefore",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 36421,
+                              "src": "3178:13:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "/",
+                            "rightExpression": {
+                              "id": 36444,
+                              "name": "EIP150_MAGIC_N",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 36404,
+                              "src": "3194:14:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "3178:30:87",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "src": "3165:43:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "id": 36451,
+                        "nodeType": "IfStatement",
+                        "src": "3161:87:87",
+                        "trueBody": {
+                          "expression": {
+                            "id": 36449,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftHandSide": {
+                              "id": 36447,
+                              "name": "insufficientCallbackGasProvided",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 36416,
+                              "src": "3210:31:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            "nodeType": "Assignment",
+                            "operator": "=",
+                            "rightHandSide": {
+                              "hexValue": "74727565",
+                              "id": 36448,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "bool",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "3244:4:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              "value": "true"
+                            },
+                            "src": "3210:38:87",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bool",
+                              "typeString": "bool"
+                            }
+                          },
+                          "id": 36450,
+                          "nodeType": "ExpressionStatement",
+                          "src": "3210:38:87"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "documentation": {
+              "id": 36405,
+              "nodeType": "StructuredDocumentation",
+              "src": "2673:56:87",
+              "text": "Make a call to the target with a callback gas limit."
+            },
+            "id": 36455,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "externalCall",
+            "nameLocation": "2743:12:87",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 36412,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 36407,
+                  "mutability": "mutable",
+                  "name": "target",
+                  "nameLocation": "2764:6:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36455,
+                  "src": "2756:14:87",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 36406,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2756:7:87",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36409,
+                  "mutability": "mutable",
+                  "name": "callData",
+                  "nameLocation": "2785:8:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36455,
+                  "src": "2772:21:87",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 36408,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2772:5:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36411,
+                  "mutability": "mutable",
+                  "name": "callbackGasLimit",
+                  "nameLocation": "2803:16:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36455,
+                  "src": "2795:24:87",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 36410,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2795:7:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2755:65:87"
+            },
+            "returnParameters": {
+              "id": 36419,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 36414,
+                  "mutability": "mutable",
+                  "name": "success",
+                  "nameLocation": "2852:7:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36455,
+                  "src": "2847:12:87",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 36413,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2847:4:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36416,
+                  "mutability": "mutable",
+                  "name": "insufficientCallbackGasProvided",
+                  "nameLocation": "2866:31:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36455,
+                  "src": "2861:36:87",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 36415,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2861:4:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36418,
+                  "mutability": "mutable",
+                  "name": "returnedData",
+                  "nameLocation": "2912:12:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36455,
+                  "src": "2899:25:87",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 36417,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2899:5:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2846:79:87"
+            },
+            "scope": 36513,
+            "src": "2734:531:87",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 36505,
+              "nodeType": "Block",
+              "src": "3537:341:87",
+              "statements": [
+                {
+                  "assignments": [
+                    36472
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 36472,
+                      "mutability": "mutable",
+                      "name": "gasLeftBefore",
+                      "nameLocation": "3555:13:87",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 36505,
+                      "src": "3547:21:87",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 36471,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "3547:7:87",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 36475,
+                  "initialValue": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 36473,
+                      "name": "gasleft",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": -7,
+                      "src": "3571:7:87",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_gasleft_view$__$returns$_t_uint256_$",
+                        "typeString": "function () view returns (uint256)"
+                      }
+                    },
+                    "id": 36474,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "3571:9:87",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "3547:33:87"
+                },
+                {
+                  "expression": {
+                    "id": 36488,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "components": [
+                        {
+                          "id": 36476,
+                          "name": "success",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 36465,
+                          "src": "3650:7:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        {
+                          "id": 36477,
+                          "name": "returnedData",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 36469,
+                          "src": "3659:12:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes_memory_ptr",
+                            "typeString": "bytes memory"
+                          }
+                        }
+                      ],
+                      "id": 36478,
+                      "isConstant": false,
+                      "isInlineArray": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "TupleExpression",
+                      "src": "3649:23:87",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_tuple$_t_bool_$_t_bytes_memory_ptr_$",
+                        "typeString": "tuple(bool,bytes memory)"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "arguments": [
+                        {
+                          "id": 36486,
+                          "name": "callData",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 36460,
+                          "src": "3727:8:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes_memory_ptr",
+                            "typeString": "bytes memory"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_bytes_memory_ptr",
+                            "typeString": "bytes memory"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_bytes_memory_ptr",
+                              "typeString": "bytes memory"
+                            }
+                          ],
+                          "expression": {
+                            "arguments": [
+                              {
+                                "id": 36481,
+                                "name": "target",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 36458,
+                                "src": "3683:6:87",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_address",
+                                  "typeString": "address"
+                                }
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": [
+                                {
+                                  "typeIdentifier": "t_address",
+                                  "typeString": "address"
+                                }
+                              ],
+                              "id": 36480,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "nodeType": "ElementaryTypeNameExpression",
+                              "src": "3675:7:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_address_$",
+                                "typeString": "type(address)"
+                              },
+                              "typeName": {
+                                "id": 36479,
+                                "name": "address",
+                                "nodeType": "ElementaryTypeName",
+                                "src": "3675:7:87",
+                                "typeDescriptions": {}
+                              }
+                            },
+                            "id": 36482,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "kind": "typeConversion",
+                            "lValueRequested": false,
+                            "nameLocations": [],
+                            "names": [],
+                            "nodeType": "FunctionCall",
+                            "src": "3675:15:87",
+                            "tryCall": false,
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          },
+                          "id": 36483,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberLocation": "3691:10:87",
+                          "memberName": "staticcall",
+                          "nodeType": "MemberAccess",
+                          "src": "3675:26:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_barestaticcall_view$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$",
+                            "typeString": "function (bytes memory) view returns (bool,bytes memory)"
+                          }
+                        },
+                        "id": 36485,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "names": [
+                          "gas"
+                        ],
+                        "nodeType": "FunctionCallOptions",
+                        "options": [
+                          {
+                            "id": 36484,
+                            "name": "callbackGasLimit",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 36462,
+                            "src": "3708:16:87",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          }
+                        ],
+                        "src": "3675:51:87",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_barestaticcall_view$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gas",
+                          "typeString": "function (bytes memory) view returns (bool,bytes memory)"
+                        }
+                      },
+                      "id": 36487,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "nameLocations": [],
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "3675:61:87",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_tuple$_t_bool_$_t_bytes_memory_ptr_$",
+                        "typeString": "tuple(bool,bytes memory)"
+                      }
+                    },
+                    "src": "3649:87:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 36489,
+                  "nodeType": "ExpressionStatement",
+                  "src": "3649:87:87"
+                },
+                {
+                  "condition": {
+                    "id": 36491,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "UnaryOperation",
+                    "operator": "!",
+                    "prefix": true,
+                    "src": "3750:8:87",
+                    "subExpression": {
+                      "id": 36490,
+                      "name": "success",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 36465,
+                      "src": "3751:7:87",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 36504,
+                  "nodeType": "IfStatement",
+                  "src": "3746:126:87",
+                  "trueBody": {
+                    "id": 36503,
+                    "nodeType": "Block",
+                    "src": "3760:112:87",
+                    "statements": [
+                      {
+                        "condition": {
+                          "commonType": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          "id": 36497,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftExpression": {
+                            "arguments": [],
+                            "expression": {
+                              "argumentTypes": [],
+                              "id": 36492,
+                              "name": "gasleft",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": -7,
+                              "src": "3778:7:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_function_gasleft_view$__$returns$_t_uint256_$",
+                                "typeString": "function () view returns (uint256)"
+                              }
+                            },
+                            "id": 36493,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "kind": "functionCall",
+                            "lValueRequested": false,
+                            "nameLocations": [],
+                            "names": [],
+                            "nodeType": "FunctionCall",
+                            "src": "3778:9:87",
+                            "tryCall": false,
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "<=",
+                          "rightExpression": {
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 36496,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "id": 36494,
+                              "name": "gasLeftBefore",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 36472,
+                              "src": "3791:13:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "/",
+                            "rightExpression": {
+                              "id": 36495,
+                              "name": "EIP150_MAGIC_N",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 36404,
+                              "src": "3807:14:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "3791:30:87",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "src": "3778:43:87",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "id": 36502,
+                        "nodeType": "IfStatement",
+                        "src": "3774:87:87",
+                        "trueBody": {
+                          "expression": {
+                            "id": 36500,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftHandSide": {
+                              "id": 36498,
+                              "name": "insufficientCallbackGasProvided",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 36467,
+                              "src": "3823:31:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            "nodeType": "Assignment",
+                            "operator": "=",
+                            "rightHandSide": {
+                              "hexValue": "74727565",
+                              "id": 36499,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "bool",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "3857:4:87",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              "value": "true"
+                            },
+                            "src": "3823:38:87",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bool",
+                              "typeString": "bool"
+                            }
+                          },
+                          "id": 36501,
+                          "nodeType": "ExpressionStatement",
+                          "src": "3823:38:87"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "documentation": {
+              "id": 36456,
+              "nodeType": "StructuredDocumentation",
+              "src": "3271:62:87",
+              "text": "Make a staticcall to the target with a callback gas limit."
+            },
+            "id": 36506,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "staticCall",
+            "nameLocation": "3347:10:87",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 36463,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 36458,
+                  "mutability": "mutable",
+                  "name": "target",
+                  "nameLocation": "3366:6:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36506,
+                  "src": "3358:14:87",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 36457,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3358:7:87",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36460,
+                  "mutability": "mutable",
+                  "name": "callData",
+                  "nameLocation": "3387:8:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36506,
+                  "src": "3374:21:87",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 36459,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3374:5:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36462,
+                  "mutability": "mutable",
+                  "name": "callbackGasLimit",
+                  "nameLocation": "3405:16:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36506,
+                  "src": "3397:24:87",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 36461,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3397:7:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3357:65:87"
+            },
+            "returnParameters": {
+              "id": 36470,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 36465,
+                  "mutability": "mutable",
+                  "name": "success",
+                  "nameLocation": "3459:7:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36506,
+                  "src": "3454:12:87",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 36464,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3454:4:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36467,
+                  "mutability": "mutable",
+                  "name": "insufficientCallbackGasProvided",
+                  "nameLocation": "3473:31:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36506,
+                  "src": "3468:36:87",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 36466,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3468:4:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 36469,
+                  "mutability": "mutable",
+                  "name": "returnedData",
+                  "nameLocation": "3519:12:87",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 36506,
+                  "src": "3506:25:87",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 36468,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3506:5:87",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3453:79:87"
+            },
+            "scope": 36513,
+            "src": "3338:540:87",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 36511,
+              "nodeType": "Block",
+              "src": "3967:325:87",
+              "statements": [
+                {
+                  "AST": {
+                    "nativeSrc": "4273:13:87",
+                    "nodeType": "YulBlock",
+                    "src": "4273:13:87",
+                    "statements": [
+                      {
+                        "expression": {
+                          "arguments": [],
+                          "functionName": {
+                            "name": "invalid",
+                            "nativeSrc": "4275:7:87",
+                            "nodeType": "YulIdentifier",
+                            "src": "4275:7:87"
+                          },
+                          "nativeSrc": "4275:9:87",
+                          "nodeType": "YulFunctionCall",
+                          "src": "4275:9:87"
+                        },
+                        "nativeSrc": "4275:9:87",
+                        "nodeType": "YulExpressionStatement",
+                        "src": "4275:9:87"
+                      }
+                    ]
+                  },
+                  "evmVersion": "paris",
+                  "externalReferences": [],
+                  "id": 36510,
+                  "nodeType": "InlineAssembly",
+                  "src": "4264:22:87"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 36507,
+              "nodeType": "StructuredDocumentation",
+              "src": "3884:39:87",
+              "text": "Reliably consume all the gas given."
+            },
+            "id": 36512,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "consumeAllGas",
+            "nameLocation": "3937:13:87",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 36508,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3950:2:87"
+            },
+            "returnParameters": {
+              "id": 36509,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3967:0:87"
+            },
+            "scope": 36513,
+            "src": "3928:364:87",
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 36514,
+        "src": "2547:1747:87",
+        "usedErrors": [],
+        "usedEvents": []
+      }
+    ],
+    "src": "35:4260:87"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.26+commit.8a97fa7a.Linux.g++"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.16",
+  "updatedAt": "2024-11-25T09:47:03.946Z",
+  "devdoc": {
+    "details": "## Problem Statement When calling an untrusted external callback (or hook), gas limit is usually provided to prevent grief attack from them. However, such gas limits are nested. From the callback invoking site, one might need to differentiate the cases between the outer-layer induced out-of-gas vs. the callback resulted out-of-gas. This library solves such challenge by safely marking the second case with an explicit flag of insufficient-callback-gas-provided. In order to use this library, one must first understand the concept of callback gas limit zones. ## Definitions: callback gas limit zones +---------------------------+--------------+---------------------+ | insufficient-callback-gas | transitional | out-of-callback-gas | +---------------------------+--------------+---------------------+ - insufficient-callback-gas zone   This zone includes all outer gas limits that are below callback gas limit. The invariance of   this zone is that calling the callback shall return with the insufficient-callback-gas-provided   set to true if more gas is needed to execute the callback. - out-of-callback-gas zone   Within this continuous zone, the invariance is that calling the callback shall never return   with the insufficient-callback-gas-provided flag set to true. - transitional zone   Between the insufficient-callback-gas zone to the out-of-callback-gas zone, there is a zone of   unspecified size where insufficient-callback-gas-provided may be set to true. This is due the   factors of EIP-150 Magic N and callback setup overhead. ## EIP-150 Magic N \"If a call asks for more gas than the maximum allowed amount (i.e. the total amount of gas remaining in the parent after subtracting the gas cost of the call and memory expansion), do not return an OOG error; instead, if a call asks for more gas than all but one 64th of the maximum allowed amount, call with all but one 64th of the maximum allowed amount of gas (this is equivalent to a version of EIP-90 plus EIP-114). CREATE only provides all but one 64th of the parent gas to the child call.\" Another article about this topic: https://medium.com/%40wighawag/ethereum-the-concept-of-gas-and-its-dangers-28d0eb809bb2",
+    "kind": "dev",
+    "methods": {},
+    "title": "Callback utilities solidity library",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "notice": "An internal library used to handle different types of out of gas errors in callbacks",
+    "version": 1
+  }
+}

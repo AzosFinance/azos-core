@@ -43,6 +43,7 @@
   "dependencies": {
     "@defi-wonderland/solidity-utils": "0.0.0-4298c6c6",
     "@openzeppelin/contracts": "5.0.1",
+    "@oz-erc777/contracts": "npm:@openzeppelin/contracts@4.9.6",
     "@superfluid-finance/ethereum-contracts": "^1.12.0",
     "@uniswap/v3-periphery": "https://github.com/Uniswap/v3-periphery.git#0.8",
     "ds-test": "https://github.com/dapphub/ds-test.git#e282159d5170298eb2455a6c05280ab5a73a4ef0",

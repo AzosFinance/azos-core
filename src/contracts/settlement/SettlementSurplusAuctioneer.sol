@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISettlementSurplusAuctioneer} from '@interfaces/settlement/ISettlementSurplusAuctioneer.sol';
 import {IAccountingEngine} from '@interfaces/IAccountingEngine.sol';
@@ -76,7 +76,9 @@ contract SettlementSurplusAuctioneer is Authorizable, Modifiable, ISettlementSur
   }
 
   /// @notice Sets the SurplusAuctionHouse, revoking the previous one permissions and approving the new one
-  function _setSurplusAuctionHouse(address _address) internal {
+  function _setSurplusAuctionHouse(
+    address _address
+  ) internal {
     safeEngine.denySAFEModification(address(surplusAuctionHouse));
     surplusAuctionHouse = ISurplusAuctionHouse(_address);
     safeEngine.approveSAFEModification(_address);

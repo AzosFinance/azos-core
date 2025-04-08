@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IProtocolToken} from '@interfaces/tokens/IProtocolToken.sol';
 
@@ -94,11 +94,15 @@ interface ITokenDistributor is IAuthorizable {
    * @param  _user Address of the user to check
    * @return _claimed Boolean indicating if the user has claimed
    */
-  function claimed(address _user) external view returns (bool _claimed);
+  function claimed(
+    address _user
+  ) external view returns (bool _claimed);
 
   /**
    * @notice Withdraws tokens from the distributor to a given address after the claim period has ended
    * @param  _sweepReceiver Address to send the tokens to
    */
-  function sweep(address _sweepReceiver) external;
+  function sweep(
+    address _sweepReceiver
+  ) external;
 }

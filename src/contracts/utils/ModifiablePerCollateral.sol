@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IModifiablePerCollateral} from '@interfaces/utils/IModifiablePerCollateral.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
@@ -62,12 +62,16 @@ abstract contract ModifiablePerCollateral is Authorizable, IModifiablePerCollate
   function _initializeCollateralType(bytes32 _cType, bytes memory _collateralParams) internal virtual;
 
   /// @notice Internal function to be overriden with custom logic to validate collateral parameters
-  function _validateCParameters(bytes32 _cType) internal view virtual {}
+  function _validateCParameters(
+    bytes32 _cType
+  ) internal view virtual {}
 
   // --- Modifiers ---
 
   /// @notice Triggers a routine to validate collateral parameters after a modification
-  modifier validCParams(bytes32 _cType) {
+  modifier validCParams(
+    bytes32 _cType
+  ) {
     _;
     _validateCParameters(_cType);
   }

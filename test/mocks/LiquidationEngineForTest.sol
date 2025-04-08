@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {LiquidationEngine} from '@contracts/LiquidationEngine.sol';
 import {IAccountingEngine} from '@interfaces/IAccountingEngine.sol';
@@ -21,11 +21,15 @@ contract LiquidationEngineForTest is LiquidationEngine {
     _authorizedAccounts.add(_collateralAuctionHouse);
   }
 
-  function setAccountingEngine(address _accountingEngine) external {
+  function setAccountingEngine(
+    address _accountingEngine
+  ) external {
     accountingEngine = IAccountingEngine(_accountingEngine);
   }
 
-  function addToCollateralList(bytes32 _cType) external {
+  function addToCollateralList(
+    bytes32 _cType
+  ) external {
     _collateralList.add(_cType);
   }
 }

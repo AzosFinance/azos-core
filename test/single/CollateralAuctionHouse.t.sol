@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 
 import {ISAFEEngine, SAFEEngine} from '@contracts/SAFEEngine.sol';
 import {CollateralAuctionHouse, ICollateralAuctionHouse} from '@contracts/CollateralAuctionHouse.sol';
@@ -21,11 +21,15 @@ import {Math, WAD, RAY, RAD} from '@libraries/Math.sol';
 contract Guy {
   ICollateralAuctionHouse collateralAuctionHouse;
 
-  constructor(ICollateralAuctionHouse collateralAuctionHouse_) {
+  constructor(
+    ICollateralAuctionHouse collateralAuctionHouse_
+  ) {
     collateralAuctionHouse = collateralAuctionHouse_;
   }
 
-  function approveSAFEModification(address safe) public {
+  function approveSAFEModification(
+    address safe
+  ) public {
     address safeEngine = address(collateralAuctionHouse.safeEngine());
     SAFEEngine(safeEngine).approveSAFEModification(safe);
   }
@@ -39,7 +43,9 @@ contract Guy {
     (ok,) = address(collateralAuctionHouse).call(abi.encodeWithSignature(sig, id, wad));
   }
 
-  function try_terminateAuctionPrematurely(uint256 id) public returns (bool ok) {
+  function try_terminateAuctionPrematurely(
+    uint256 id
+  ) public returns (bool ok) {
     string memory sig = 'terminateAuctionPrematurely(uint256)';
     (ok,) = address(collateralAuctionHouse).call(abi.encodeWithSignature(sig, id));
   }
@@ -48,18 +54,24 @@ contract Guy {
 contract DummyLiquidationEngine {
   uint256 public currentOnAuctionSystemCoins;
 
-  constructor(uint256 rad) {
+  constructor(
+    uint256 rad
+  ) {
     currentOnAuctionSystemCoins = rad;
   }
 
-  function removeCoinsFromAuction(uint256 rad) external {
+  function removeCoinsFromAuction(
+    uint256 rad
+  ) external {
     currentOnAuctionSystemCoins -= rad;
   }
 
-  function addAuthorization(address) external {}
+  function addAuthorization(
+    address
+  ) external {}
 }
 
-abstract contract SingleCollateralAuctionHouseTest is HaiTest {
+abstract contract SingleCollateralAuctionHouseTest is AzosTest {
   using Math for uint256;
 
   DummyLiquidationEngine liquidationEngine;
@@ -77,10 +89,9 @@ abstract contract SingleCollateralAuctionHouseTest is HaiTest {
 
   // --- Virtual methods ---
 
-  function _deployCollateralAuctionHouse(ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams)
-    internal
-    virtual
-    returns (ICollateralAuctionHouse _collateralAuctionHouse);
+  function _deployCollateralAuctionHouse(
+    ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams
+  ) internal virtual returns (ICollateralAuctionHouse _collateralAuctionHouse);
 
   function _modifyParameters(bytes32 _param, bytes memory _data) internal virtual;
   function _modifyParameters(bytes32 _cType, bytes32 _param, bytes memory _data) internal virtual;
@@ -145,7 +156,9 @@ abstract contract SingleCollateralAuctionHouseTest is HaiTest {
   }
 
   // --- Math ---
-  function rad(uint256 wad) internal pure returns (uint256 z) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256 z) {
     z = wad * 10 ** 27;
   }
 
@@ -691,11 +704,9 @@ abstract contract SingleCollateralAuctionHouseTest is HaiTest {
 contract FactorySingleCollateralAuctionHouseTest is SingleCollateralAuctionHouseTest {
   ICollateralAuctionHouseFactory factory;
 
-  function _deployCollateralAuctionHouse(ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams)
-    internal
-    override
-    returns (ICollateralAuctionHouse _collateralAuctionHouse)
-  {
+  function _deployCollateralAuctionHouse(
+    ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams
+  ) internal override returns (ICollateralAuctionHouse _collateralAuctionHouse) {
     factory = new CollateralAuctionHouseFactory(address(safeEngine), address(liquidationEngine), address(oracleRelayer));
     factory.initializeCollateralType('collateralType', abi.encode(_cahParams));
 
@@ -712,11 +723,9 @@ contract FactorySingleCollateralAuctionHouseTest is SingleCollateralAuctionHouse
 }
 
 contract OrphanSingleCollateralAuctionHouseTest is SingleCollateralAuctionHouseTest {
-  function _deployCollateralAuctionHouse(ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams)
-    internal
-    override
-    returns (ICollateralAuctionHouse _collateralAuctionHouse)
-  {
+  function _deployCollateralAuctionHouse(
+    ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams
+  ) internal override returns (ICollateralAuctionHouse _collateralAuctionHouse) {
     return new CollateralAuctionHouse(
       address(safeEngine), address(liquidationEngine), address(oracleRelayer), 'collateralType', _cahParams
     );

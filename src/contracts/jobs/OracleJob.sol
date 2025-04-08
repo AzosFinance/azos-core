@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IOracleJob} from '@interfaces/jobs/IOracleJob.sol';
 import {IOracleRelayer} from '@interfaces/IOracleRelayer.sol';
@@ -60,7 +60,9 @@ contract OracleJob is Authorizable, Modifiable, Job, IOracleJob {
   // --- Job ---
 
   /// @inheritdoc IOracleJob
-  function workUpdateCollateralPrice(bytes32 _cType) external reward {
+  function workUpdateCollateralPrice(
+    bytes32 _cType
+  ) external reward {
     if (!shouldWorkUpdateCollateralPrice) revert NotWorkable();
 
     IDelayedOracle _delayedOracle = IDelayedOracle(address(oracleRelayer.cParams(_cType).oracle));

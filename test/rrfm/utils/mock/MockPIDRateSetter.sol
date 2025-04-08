@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {Math} from '@libraries/Math.sol';
 
@@ -9,11 +9,15 @@ abstract contract OracleLike {
 
 abstract contract OracleRelayerLike {
   function redemptionPrice() external virtual returns (uint256);
-  function updateRedemptionRate(uint256) external virtual;
+  function updateRedemptionRate(
+    uint256
+  ) external virtual;
 }
 
 abstract contract SetterRelayer {
-  function relayRate(uint256) external virtual;
+  function relayRate(
+    uint256
+  ) external virtual;
 }
 
 abstract contract PIDCalculator {
@@ -57,7 +61,9 @@ contract MockPIDRateSetter {
     }
   }
 
-  function updateRate(address) public {
+  function updateRate(
+    address
+  ) public {
     // Get price feed updates
     (uint256 marketPrice, bool hasValidValue) = orcl.getResultWithValidity();
     // If the oracle has a value

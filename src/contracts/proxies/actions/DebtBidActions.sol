@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IERC20Metadata} from '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 import {IAccountingEngine} from '@interfaces/IAccountingEngine.sol';
@@ -68,7 +68,9 @@ contract DebtBidActions is CommonActions, IDebtBidActions {
   }
 
   /// @inheritdoc IDebtBidActions
-  function collectProtocolTokens(address _protocolToken) external onlyDelegateCall {
+  function collectProtocolTokens(
+    address _protocolToken
+  ) external onlyDelegateCall {
     // get the amount of protocol tokens that the proxy has
     uint256 _coinsToCollect = IERC20Metadata(_protocolToken).balanceOf(address(this));
     IERC20Metadata(_protocolToken).safeTransfer(msg.sender, _coinsToCollect);

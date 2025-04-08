@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ICommonActions} from '@interfaces/proxies/actions/ICommonActions.sol';
 
@@ -34,5 +34,7 @@ interface IDebtBidActions is ICommonActions {
    * @param  _protocolToken Address of the protocol token
    * @dev    This method is used to collect protocol tokens from an auction that was settled by another user
    */
-  function collectProtocolTokens(address _protocolToken) external;
+  function collectProtocolTokens(
+    address _protocolToken
+  ) external;
 }

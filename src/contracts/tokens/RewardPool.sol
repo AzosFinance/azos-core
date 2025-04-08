@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
@@ -97,21 +97,27 @@ contract RewardPool is Authorizable, Modifiable, IRewardPool {
   }
 
   /// @inheritdoc IRewardPool
-  function stake(uint256 _wad) external updateReward isAuthorized {
+  function stake(
+    uint256 _wad
+  ) external updateReward isAuthorized {
     if (_wad == 0) revert RewardPool_StakeNullAmount();
     _totalStaked += _wad;
     emit RewardPoolStaked(msg.sender, _wad);
   }
 
   /// @inheritdoc IRewardPool
-  function increaseStake(uint256 _wad) external isAuthorized {
+  function increaseStake(
+    uint256 _wad
+  ) external isAuthorized {
     if (_wad == 0) revert RewardPool_IncreaseStakeNullAmount();
     _totalStaked += _wad;
     emit RewardPoolIncreaseStake(msg.sender, _wad);
   }
 
   /// @inheritdoc IRewardPool
-  function decreaseStake(uint256 _wad) external isAuthorized {
+  function decreaseStake(
+    uint256 _wad
+  ) external isAuthorized {
     if (_wad == 0) revert RewardPool_DecreaseStakeNullAmount();
     if (_wad > _totalStaked) revert RewardPool_InsufficientBalance();
     _totalStaked -= _wad;
@@ -156,7 +162,9 @@ contract RewardPool is Authorizable, Modifiable, IRewardPool {
   }
 
   /// @inheritdoc IRewardPool
-  function queueNewRewards(uint256 _rewardsToQueue) external isAuthorized {
+  function queueNewRewards(
+    uint256 _rewardsToQueue
+  ) external isAuthorized {
     uint256 _totalRewards = _rewardsToQueue + queuedRewards;
 
     if (block.timestamp >= periodFinish) {
@@ -178,7 +186,9 @@ contract RewardPool is Authorizable, Modifiable, IRewardPool {
   }
 
   /// @inheritdoc IRewardPool
-  function notifyRewardAmount(uint256 _reward) public updateReward isAuthorized {
+  function notifyRewardAmount(
+    uint256 _reward
+  ) public updateReward isAuthorized {
     if (_reward == 0) revert RewardPool_InvalidRewardAmount();
     historicalRewards = historicalRewards + _reward;
     if (block.timestamp >= periodFinish) {

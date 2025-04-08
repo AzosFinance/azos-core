@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ICollateralAuctionHouse} from '@interfaces/ICollateralAuctionHouse.sol';
 import {ISAFESaviour} from '@interfaces/external/ISAFESaviour.sol';
@@ -13,13 +13,13 @@ import {IModifiable} from '@interfaces/utils/IModifiable.sol';
 import {LiquidationEngine} from '@contracts/LiquidationEngine.sol';
 import {LiquidationEngineForTest} from '@test/mocks/LiquidationEngineForTest.sol';
 import {DummyCollateralAuctionHouse} from '@test/mocks/CollateralAuctionHouseForTest.sol';
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {StdStorage, stdStorage} from 'forge-std/StdStorage.sol';
 
 import {Math, MAX_RAD, RAY, WAD} from '@libraries/Math.sol';
 import {Assertions} from '@libraries/Assertions.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   uint256 auctionId = 123_456;
@@ -60,12 +60,16 @@ abstract contract Base is HaiTest {
     _;
   }
 
-  function _mockCurrentOnAuctionSystemCoins(uint256 _rad) internal {
+  function _mockCurrentOnAuctionSystemCoins(
+    uint256 _rad
+  ) internal {
     stdstore.target(address(liquidationEngine)).sig(ILiquidationEngine.currentOnAuctionSystemCoins.selector)
       .checked_write(_rad);
   }
 
-  function _mockOnAuctionSystemCoinLimit(uint256 _rad) internal {
+  function _mockOnAuctionSystemCoinLimit(
+    uint256 _rad
+  ) internal {
     stdstore.target(address(liquidationEngine)).sig(ILiquidationEngine.params.selector).depth(0).checked_write(_rad);
   }
 
@@ -90,7 +94,9 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockCollateralList(bytes32 _cType) internal {
+  function _mockCollateralList(
+    bytes32 _cType
+  ) internal {
     LiquidationEngineForTest(address(liquidationEngine)).addToCollateralList(_cType);
   }
 
@@ -176,7 +182,9 @@ abstract contract Base is HaiTest {
       .with_key(_safe).checked_write(_saviour);
   }
 
-  function _mockAccountingEnginePushDebtToQueue(uint256 _debt) internal {
+  function _mockAccountingEnginePushDebtToQueue(
+    uint256 _debt
+  ) internal {
     vm.mockCall(
       address(mockAccountingEngine),
       abi.encodeWithSelector(IAccountingEngine.pushDebtToQueue.selector, _debt),
@@ -184,7 +192,9 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockContractEnabled(bool _enabled) internal {
+  function _mockContractEnabled(
+    bool _enabled
+  ) internal {
     stdstore.target(address(liquidationEngine)).sig(IDisableable.contractEnabled.selector).checked_write(_enabled);
   }
 
@@ -310,9 +320,9 @@ contract Unit_LiquidationEngine_Constructor is Base {
     new LiquidationEngine(address(mockSafeEngine), address(mockAccountingEngine), liquidationEngineParams);
   }
 
-  function test_Set_LiquidationEngine_Param(ILiquidationEngine.LiquidationEngineParams memory _liquidationEngineParams)
-    public
-  {
+  function test_Set_LiquidationEngine_Param(
+    ILiquidationEngine.LiquidationEngineParams memory _liquidationEngineParams
+  ) public {
     liquidationEngine =
       new LiquidationEngine(address(mockSafeEngine), address(mockAccountingEngine), _liquidationEngineParams);
     assertEq(abi.encode(liquidationEngine.params()), abi.encode(_liquidationEngineParams));
@@ -332,7 +342,9 @@ contract Unit_LiquidationEngine_Constructor is Base {
 }
 
 contract Unit_LiquidationEngine_ModifyParameters is Base {
-  function test_ModifyParameters(ILiquidationEngine.LiquidationEngineParams memory _fuzz) public authorized {
+  function test_ModifyParameters(
+    ILiquidationEngine.LiquidationEngineParams memory _fuzz
+  ) public authorized {
     liquidationEngine.modifyParameters('onAuctionSystemCoinLimit', abi.encode(_fuzz.onAuctionSystemCoinLimit));
     liquidationEngine.modifyParameters('saviourGasLimit', abi.encode(_fuzz.saviourGasLimit));
 
@@ -368,11 +380,9 @@ contract Unit_LiquidationEngine_ModifyParameters is Base {
     liquidationEngine.modifyParameters(_cType, 'liquidationQuantity', abi.encode(_liquidationQuantity));
   }
 
-  function test_ModifyParameters_AccountingEngine(address _accountingEngine)
-    public
-    authorized
-    mockAsContract(_accountingEngine)
-  {
+  function test_ModifyParameters_AccountingEngine(
+    address _accountingEngine
+  ) public authorized mockAsContract(_accountingEngine) {
     liquidationEngine.modifyParameters('accountingEngine', abi.encode(_accountingEngine));
 
     assertEq(_accountingEngine, address(liquidationEngine.accountingEngine()));
@@ -407,14 +417,18 @@ contract Unit_LiquidationEngine_ModifyParameters is Base {
     liquidationEngine.modifyParameters('unrecognizedParam', abi.encode(0));
   }
 
-  function test_Revert_ModifyParameters_PerCollateral_UnrecognizedParam(bytes32 _cType) public authorized {
+  function test_Revert_ModifyParameters_PerCollateral_UnrecognizedParam(
+    bytes32 _cType
+  ) public authorized {
     _mockCollateralList(_cType);
 
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);
     liquidationEngine.modifyParameters(_cType, 'unrecognizedParam', abi.encode(0));
   }
 
-  function test_Revert_ModifyParameters_PerCollateral_ContractIsDisabled(bytes32 _cType) public authorized {
+  function test_Revert_ModifyParameters_PerCollateral_ContractIsDisabled(
+    bytes32 _cType
+  ) public authorized {
     _mockContractEnabled(false);
 
     vm.expectRevert();
@@ -763,7 +777,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     );
   }
 
-  function _assumeHappyNumbers(Liquidation memory _liquidation) internal pure {
+  function _assumeHappyNumbers(
+    Liquidation memory _liquidation
+  ) internal pure {
     vm.assume(_liquidation.safeDebt > 0);
     vm.assume(_liquidation.safeCollateral > 0);
     vm.assume(_liquidation.liquidationPenalty > WAD);
@@ -777,7 +793,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     vm.assume(notOverflowMul(_liquidation.safeDebt * _liquidation.accumulatedRate, _liquidation.liquidationPenalty));
   }
 
-  function _assumeHappyPathFullLiquidation(Liquidation memory _liquidation) internal pure {
+  function _assumeHappyPathFullLiquidation(
+    Liquidation memory _liquidation
+  ) internal pure {
     _assumeHappyNumbers(_liquidation);
 
     // unsafe
@@ -794,7 +812,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     vm.assume(_liquidation.safeDebt <= _limitAdjustedDebt + _liquidation.debtFloor / _liquidation.accumulatedRate);
   }
 
-  function _assumeHappyPathPartialLiquidation(Liquidation memory _liquidation) internal pure {
+  function _assumeHappyPathPartialLiquidation(
+    Liquidation memory _liquidation
+  ) internal pure {
     _assumeHappyNumbers(_liquidation);
     vm.assume(_liquidation.liquidationQuantity > _liquidation.liquidationPenalty);
 
@@ -817,7 +837,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     vm.assume(_liquidation.safeCollateral * _limitAdjustedDebt >= _liquidation.safeDebt);
   }
 
-  function _mockValues(Liquidation memory _liquidation) internal {
+  function _mockValues(
+    Liquidation memory _liquidation
+  ) internal {
     _mockLiquidationEngineCollateralType(
       collateralType,
       address(collateralAuctionHouseForTest),
@@ -846,54 +868,61 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     _mockOnAuctionSystemCoinLimit(type(uint256).max);
   }
 
-  modifier happyPathFullLiquidation(Liquidation memory _liquidation) {
+  modifier happyPathFullLiquidation(
+    Liquidation memory _liquidation
+  ) {
     _assumeHappyPathFullLiquidation(_liquidation);
     _mockValues(_liquidation);
     _;
   }
 
-  modifier happyPathPartialLiquidation(Liquidation memory _liquidation) {
+  modifier happyPathPartialLiquidation(
+    Liquidation memory _liquidation
+  ) {
     _assumeHappyPathPartialLiquidation(_liquidation);
     _mockValues(_liquidation);
     _;
   }
 
-  function test_HappyPath_FullLiquidation(Liquidation memory _liquidation)
-    public
-    happyPathFullLiquidation(_liquidation)
-  {
+  function test_HappyPath_FullLiquidation(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_HappyPath_PartialLiquidation(Liquidation memory _liquidation)
-    public
-    happyPathPartialLiquidation(_liquidation)
-  {
+  function test_HappyPath_PartialLiquidation(
+    Liquidation memory _liquidation
+  ) public happyPathPartialLiquidation(_liquidation) {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Call_SafeEngine_CData(Liquidation memory _liquidation) public happyPathFullLiquidation(_liquidation) {
+  function test_Call_SafeEngine_CData(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     vm.expectCall(address(mockSafeEngine), abi.encodeWithSelector(ISAFEEngine.cData.selector, collateralType), 1);
 
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Call_SafeEngine_CParams(Liquidation memory _liquidation) public happyPathFullLiquidation(_liquidation) {
+  function test_Call_SafeEngine_CParams(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     vm.expectCall(address(mockSafeEngine), abi.encodeWithSelector(ISAFEEngine.cParams.selector, collateralType), 1);
 
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Call_SafeEngine_Safes(Liquidation memory _liquidation) public happyPathFullLiquidation(_liquidation) {
+  function test_Call_SafeEngine_Safes(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     vm.expectCall(address(mockSafeEngine), abi.encodeWithSelector(ISAFEEngine.safes.selector, collateralType, safe), 1);
 
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Call_SafeEngine_ConfiscateSAFECollateralAndDebt(Liquidation memory _liquidation)
-    public
-    happyPathFullLiquidation(_liquidation)
-  {
+  function test_Call_SafeEngine_ConfiscateSAFECollateralAndDebt(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     vm.expectCall(
       address(mockSafeEngine),
       abi.encodeCall(
@@ -912,10 +941,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Call_SafeEngine_ConfiscateSAFECollateralAndDebt_PartialLiquidation(Liquidation memory _liquidation)
-    public
-    happyPathPartialLiquidation(_liquidation)
-  {
+  function test_Call_SafeEngine_ConfiscateSAFECollateralAndDebt_PartialLiquidation(
+    Liquidation memory _liquidation
+  ) public happyPathPartialLiquidation(_liquidation) {
     uint256 _limitAdjustedDebt =
       _liquidation.liquidationQuantity * WAD / _liquidation.accumulatedRate / _liquidation.liquidationPenalty;
     uint256 _collateralToSell = _liquidation.safeCollateral * _limitAdjustedDebt / _liquidation.safeDebt;
@@ -938,10 +966,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Call_SafeEngine_PushDebtToQueue(Liquidation memory _liquidation)
-    public
-    happyPathFullLiquidation(_liquidation)
-  {
+  function test_Call_SafeEngine_PushDebtToQueue(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     uint256 _amountToRaise =
       _liquidation.safeDebt * _liquidation.accumulatedRate * _liquidation.liquidationPenalty / WAD;
     _mockAccountingEnginePushDebtToQueue(_amountToRaise);
@@ -956,10 +983,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Call_SafeEngine_PushDebtToQueue_PartialLiquidation(Liquidation memory _liquidation)
-    public
-    happyPathPartialLiquidation(_liquidation)
-  {
+  function test_Call_SafeEngine_PushDebtToQueue_PartialLiquidation(
+    Liquidation memory _liquidation
+  ) public happyPathPartialLiquidation(_liquidation) {
     uint256 _limitAdjustedDebt =
       _liquidation.liquidationQuantity * WAD / _liquidation.accumulatedRate / _liquidation.liquidationPenalty;
     uint256 _amountToRaise = _limitAdjustedDebt * _liquidation.accumulatedRate * _liquidation.liquidationPenalty / WAD;
@@ -974,10 +1000,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Call_CollateralAuctionHouse_StartAuction(Liquidation memory _liquidation)
-    public
-    happyPathFullLiquidation(_liquidation)
-  {
+  function test_Call_CollateralAuctionHouse_StartAuction(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     uint256 _amountToRaise =
       _liquidation.safeDebt * _liquidation.accumulatedRate * _liquidation.liquidationPenalty / WAD;
 
@@ -992,10 +1017,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Call_CollateralAuctionHouse_StartAuction_PartialLiquidation(Liquidation memory _liquidation)
-    public
-    happyPathPartialLiquidation(_liquidation)
-  {
+  function test_Call_CollateralAuctionHouse_StartAuction_PartialLiquidation(
+    Liquidation memory _liquidation
+  ) public happyPathPartialLiquidation(_liquidation) {
     uint256 _limitAdjustedDebt =
       _liquidation.liquidationQuantity * WAD / _liquidation.accumulatedRate / _liquidation.liquidationPenalty;
     uint256 _amountToRaise = _limitAdjustedDebt * _liquidation.accumulatedRate * _liquidation.liquidationPenalty / WAD;
@@ -1075,7 +1099,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Emit_Liquidate(Liquidation memory _liquidation) public happyPathFullLiquidation(_liquidation) {
+  function test_Emit_Liquidate(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     uint256 _amountToRaise =
       _liquidation.safeDebt * _liquidation.accumulatedRate * _liquidation.liquidationPenalty / WAD;
     vm.expectEmit();
@@ -1092,10 +1118,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Emit_Liquidate_PartialLiquidation(Liquidation memory _liquidation)
-    public
-    happyPathPartialLiquidation(_liquidation)
-  {
+  function test_Emit_Liquidate_PartialLiquidation(
+    Liquidation memory _liquidation
+  ) public happyPathPartialLiquidation(_liquidation) {
     uint256 _limitAdjustedDebt =
       _liquidation.liquidationQuantity * WAD / _liquidation.liquidationPenalty / _liquidation.accumulatedRate;
     uint256 _amountToRaise = _limitAdjustedDebt * _liquidation.accumulatedRate * _liquidation.liquidationPenalty / WAD;
@@ -1124,7 +1149,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Revert_SafeNotUnsafe(Liquidation memory _liquidation) public {
+  function test_Revert_SafeNotUnsafe(
+    Liquidation memory _liquidation
+  ) public {
     _assumeHappyNumbers(_liquidation);
 
     // !not-unsafe
@@ -1174,7 +1201,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
   }
 
   // NOTE: NullAction can only be reached if the liquidation is partial
-  function test_Revert_NullAuction_PartialLiquidation(Liquidation memory _liquidation) public {
+  function test_Revert_NullAuction_PartialLiquidation(
+    Liquidation memory _liquidation
+  ) public {
     _assumeHappyNumbers(_liquidation);
 
     // not-null
@@ -1198,7 +1227,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Revert_NullCollateralToSell(Liquidation memory _liquidation) public {
+  function test_Revert_NullCollateralToSell(
+    Liquidation memory _liquidation
+  ) public {
     _assumeHappyNumbers(_liquidation);
 
     // unsafe
@@ -1224,7 +1255,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Revert_NullCollateralToSell_PartialLiquidation(Liquidation memory _liquidation) public {
+  function test_Revert_NullCollateralToSell_PartialLiquidation(
+    Liquidation memory _liquidation
+  ) public {
     _assumeHappyNumbers(_liquidation);
 
     // unsafe
@@ -1273,7 +1306,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function _mockSaveSafeValues(uint256 _collateralAddedOrDebtRepaid) internal {
+  function _mockSaveSafeValues(
+    uint256 _collateralAddedOrDebtRepaid
+  ) internal {
     _mockChosenSafeSaviour(collateralType, safe, mockSaviour);
     _mockSafeSaviours(mockSaviour, 1);
     _mockSafeSaviourSaveSafe(mockSaviour, user, collateralType, safe, true, _collateralAddedOrDebtRepaid, 10);
@@ -1308,7 +1343,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_Emit_FailedSAFESave(Liquidation memory _liquidation) public happyPathFullLiquidation(_liquidation) {
+  function test_Emit_FailedSAFESave(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     ISAFESaviour _testSaveSaviour = new FailorSafeSaviour();
     _mockChosenSafeSaviour(collateralType, safe, address(_testSaveSaviour));
     _mockSafeSaviours(address(_testSaveSaviour), 1);
@@ -1321,10 +1358,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     liquidationEngine.liquidateSAFE(collateralType, safe);
   }
 
-  function test_InternalRevert_InvalidSaviourOperation_IncreaseGeneratedDebt(Liquidation memory _liquidation)
-    public
-    happyPathFullLiquidation(_liquidation)
-  {
+  function test_InternalRevert_InvalidSaviourOperation_IncreaseGeneratedDebt(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     vm.assume(_liquidation.safeDebt < type(uint256).max);
 
     ISAFESaviour _testSaveSaviour = new SAFESaviourIncreaseGeneratedDebtOrDecreaseCollateral(
@@ -1340,10 +1376,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     assertTrue(!SAFESaviourIncreaseGeneratedDebtOrDecreaseCollateral(address(_testSaveSaviour)).wasCalled());
   }
 
-  function test_InternalRevert_InvalidSaviourOperation_DecreaseCollateral(Liquidation memory _liquidation)
-    public
-    happyPathFullLiquidation(_liquidation)
-  {
+  function test_InternalRevert_InvalidSaviourOperation_DecreaseCollateral(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     vm.assume(_liquidation.liquidationQuantity > _liquidation.liquidationPenalty);
     ISAFESaviour _testSaveSaviour = new SAFESaviourIncreaseGeneratedDebtOrDecreaseCollateral(
       _liquidation.safeCollateral, _liquidation.safeDebt, true, true
@@ -1358,10 +1393,9 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
     assertTrue(!SAFESaviourIncreaseGeneratedDebtOrDecreaseCollateral(address(_testSaveSaviour)).wasCalled());
   }
 
-  function test_NotRevert_NewLiquidationPriceIsZero(Liquidation memory _liquidation)
-    public
-    happyPathFullLiquidation(_liquidation)
-  {
+  function test_NotRevert_NewLiquidationPriceIsZero(
+    Liquidation memory _liquidation
+  ) public happyPathFullLiquidation(_liquidation) {
     ISAFESaviour _testSaveSaviour = new SAFESaviourCollateralTypeModifier(
       _liquidation.accumulatedRate, 0, _liquidation.safeCollateral, _liquidation.safeDebt
     );
@@ -1402,21 +1436,24 @@ contract Unit_LiquidationEngine_LiquidateSafe is Base {
 contract Unit_LiquidationEngine_InitializeCollateralType is Base {
   event AddAuthorization(address _account);
 
-  modifier happyPath(ILiquidationEngine.LiquidationEngineCollateralParams memory _liqEngineCParams) {
+  modifier happyPath(
+    ILiquidationEngine.LiquidationEngineCollateralParams memory _liqEngineCParams
+  ) {
     _assumeHappyPath(_liqEngineCParams);
     _mockValues(_liqEngineCParams);
     _;
   }
 
-  function _assumeHappyPath(ILiquidationEngine.LiquidationEngineCollateralParams memory _liqEngineCParams)
-    internal
-    view
-  {
+  function _assumeHappyPath(
+    ILiquidationEngine.LiquidationEngineCollateralParams memory _liqEngineCParams
+  ) internal view {
     vm.assume(_liqEngineCParams.collateralAuctionHouse != deployer);
     vm.assume(_liqEngineCParams.liquidationQuantity <= MAX_RAD);
   }
 
-  function _mockValues(ILiquidationEngine.LiquidationEngineCollateralParams memory _liqEngineCParams) internal {}
+  function _mockValues(
+    ILiquidationEngine.LiquidationEngineCollateralParams memory _liqEngineCParams
+  ) internal {}
 
   function test_Set_CParams(
     bytes32 _cType,

@@ -1,6 +1,6 @@
 # HAI Proxy
 
-See [HaiProxy.sol](/src/contracts/proxies/HaiProxy.sol/contract.HaiProxy.html) for more details.
+See [AzosProxy.sol](/src/contracts/proxies/AzosProxy.sol/contract.AzosProxy.html) for more details.
 
 ## 1. Introduction
 

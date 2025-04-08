@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IAccountingEngine} from '@interfaces/IAccountingEngine.sol';
 import {IDebtAuctionHouse} from '@interfaces/IDebtAuctionHouse.sol';
@@ -31,7 +31,9 @@ contract AccountingEngine is Authorizable, Modifiable, Disableable, IAccountingE
    * @param  _account The account to authorize
    * @inheritdoc IAuthorizable
    */
-  function addAuthorization(address _account) external override(Authorizable, IAuthorizable) isAuthorized whenEnabled {
+  function addAuthorization(
+    address _account
+  ) external override(Authorizable, IAuthorizable) isAuthorized whenEnabled {
     _addAuthorization(_account);
   }
 
@@ -102,14 +104,18 @@ contract AccountingEngine is Authorizable, Modifiable, Disableable, IAccountingE
     return _unqueuedUnauctionedDebt(safeEngine.debtBalance(address(this)));
   }
 
-  function _unqueuedUnauctionedDebt(uint256 _debtBalance) internal view returns (uint256 __unqueuedUnauctionedDebt) {
+  function _unqueuedUnauctionedDebt(
+    uint256 _debtBalance
+  ) internal view returns (uint256 __unqueuedUnauctionedDebt) {
     return (_debtBalance - totalQueuedDebt) - totalOnAuctionDebt;
   }
 
   // --- Debt Queueing ---
 
   /// @inheritdoc IAccountingEngine
-  function pushDebtToQueue(uint256 _debtBlock) external isAuthorized {
+  function pushDebtToQueue(
+    uint256 _debtBlock
+  ) external isAuthorized {
     debtQueue[block.timestamp] = debtQueue[block.timestamp] + _debtBlock;
     totalQueuedDebt = totalQueuedDebt + _debtBlock;
 
@@ -117,7 +123,9 @@ contract AccountingEngine is Authorizable, Modifiable, Disableable, IAccountingE
   }
 
   /// @inheritdoc IAccountingEngine
-  function popDebtFromQueue(uint256 _debtBlockTimestamp) external {
+  function popDebtFromQueue(
+    uint256 _debtBlockTimestamp
+  ) external {
     if (block.timestamp < _debtBlockTimestamp + _params.popDebtDelay) revert AccEng_PopDebtCooldown();
 
     uint256 _debtBlock = debtQueue[_debtBlockTimestamp];
@@ -133,7 +141,9 @@ contract AccountingEngine is Authorizable, Modifiable, Disableable, IAccountingE
   // Debt settlement
 
   /// @inheritdoc IAccountingEngine
-  function settleDebt(uint256 _rad) external {
+  function settleDebt(
+    uint256 _rad
+  ) external {
     _settleDebt(safeEngine.coinBalance(address(this)), safeEngine.debtBalance(address(this)), _rad);
   }
 
@@ -153,7 +163,9 @@ contract AccountingEngine is Authorizable, Modifiable, Disableable, IAccountingE
   }
 
   /// @inheritdoc IAccountingEngine
-  function cancelAuctionedDebtWithSurplus(uint256 _rad) external {
+  function cancelAuctionedDebtWithSurplus(
+    uint256 _rad
+  ) external {
     if (_rad > totalOnAuctionDebt) revert AccEng_InsufficientDebt();
 
     uint256 _coinBalance = safeEngine.coinBalance(address(this));
@@ -304,7 +316,9 @@ contract AccountingEngine is Authorizable, Modifiable, Disableable, IAccountingE
   }
 
   /// @dev Set the surplus auction house, deny permissions on the old one and approve on the new one
-  function _setSurplusAuctionHouse(address _surplusAuctionHouse) internal {
+  function _setSurplusAuctionHouse(
+    address _surplusAuctionHouse
+  ) internal {
     if (address(surplusAuctionHouse) != address(0)) {
       safeEngine.denySAFEModification(address(surplusAuctionHouse));
     }

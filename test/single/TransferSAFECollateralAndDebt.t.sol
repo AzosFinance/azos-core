@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 
@@ -8,7 +8,9 @@ import {ISAFEEngine, SAFEEngine} from '@contracts/SAFEEngine.sol';
 contract Guy {
   SAFEEngine public safeEngine;
 
-  constructor(SAFEEngine safeEngine_) {
+  constructor(
+    SAFEEngine safeEngine_
+  ) {
     safeEngine = safeEngine_;
   }
 
@@ -83,7 +85,9 @@ contract Guy {
     safeEngine.transferSAFECollateralAndDebt(collateralType, src, dst, deltaCollateral, deltaDebt);
   }
 
-  function approveSAFEModification(address usr) public {
+  function approveSAFEModification(
+    address usr
+  ) public {
     safeEngine.approveSAFEModification(usr);
   }
 
@@ -97,11 +101,15 @@ contract SingleTransferSAFECollateralAndDebtTest is DSTest {
   address a;
   address b;
 
-  function ray(uint256 wad) internal pure returns (uint256) {
+  function ray(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 9;
   }
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 27;
   }
 

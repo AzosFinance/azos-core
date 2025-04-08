@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {SAFEEngine, ISAFEEngine, EnumerableSet} from '@contracts/SAFEEngine.sol';
 
@@ -15,7 +15,9 @@ contract DummySAFEEngine {
     debtBalance[_account] = _balance;
   }
 
-  function settleDebt(uint256 _rad) external {
+  function settleDebt(
+    uint256 _rad
+  ) external {
     debtBalance[msg.sender] -= _rad;
     coinBalance[msg.sender] -= _rad;
   }
@@ -28,9 +30,13 @@ contract DummySAFEEngine {
 contract SAFEEngineForTest is SAFEEngine {
   using EnumerableSet for EnumerableSet.Bytes32Set;
 
-  constructor(SAFEEngineParams memory _safeEngineParams) SAFEEngine(_safeEngineParams) {}
+  constructor(
+    SAFEEngineParams memory _safeEngineParams
+  ) SAFEEngine(_safeEngineParams) {}
 
-  function addToCollateralList(bytes32 _cType) external {
+  function addToCollateralList(
+    bytes32 _cType
+  ) external {
     _collateralList.add(_cType);
   }
 }

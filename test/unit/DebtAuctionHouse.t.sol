@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {DebtAuctionHouseForTest, IDebtAuctionHouse} from '@test/mocks/DebtAuctionHouseForTest.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -8,12 +8,12 @@ import {IAccountingEngine} from '@interfaces/IAccountingEngine.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {IDisableable} from '@interfaces/utils/IDisableable.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
 import {Math, WAD} from '@libraries/Math.sol';
 import {Assertions} from '@libraries/Assertions.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   struct DebtAuction {
@@ -53,7 +53,9 @@ abstract contract Base is HaiTest {
     vm.stopPrank();
   }
 
-  function _mockTotalOnAuctionDebt(uint256 _totalOnAuctionDebt) internal {
+  function _mockTotalOnAuctionDebt(
+    uint256 _totalOnAuctionDebt
+  ) internal {
     vm.mockCall(
       address(mockAccountingEngine),
       abi.encodeCall(mockAccountingEngine.totalOnAuctionDebt, ()),
@@ -61,13 +63,17 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockContractEnabled(bool _contractEnabled) internal {
+  function _mockContractEnabled(
+    bool _contractEnabled
+  ) internal {
     stdstore.target(address(debtAuctionHouse)).sig(IDisableable.contractEnabled.selector).checked_write(
       _contractEnabled
     );
   }
 
-  function _mockAuction(DebtAuction memory _auction) internal {
+  function _mockAuction(
+    DebtAuction memory _auction
+  ) internal {
     // BUG: Accessing packed slots is not supported by Std Storage
     debtAuctionHouse.addAuction(
       _auction.id,
@@ -79,44 +85,58 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockAuctionsStarted(uint256 _auctionsStarted) internal {
+  function _mockAuctionsStarted(
+    uint256 _auctionsStarted
+  ) internal {
     stdstore.target(address(debtAuctionHouse)).sig(IDebtAuctionHouse.auctionsStarted.selector).checked_write(
       _auctionsStarted
     );
   }
 
-  function _mockActiveDebtAuctions(uint256 _activeDebtAuctions) internal {
+  function _mockActiveDebtAuctions(
+    uint256 _activeDebtAuctions
+  ) internal {
     stdstore.target(address(debtAuctionHouse)).sig(IDebtAuctionHouse.activeDebtAuctions.selector).checked_write(
       _activeDebtAuctions
     );
   }
 
-  function _mockAccountingEngine(address _accountingEngine) internal {
+  function _mockAccountingEngine(
+    address _accountingEngine
+  ) internal {
     stdstore.target(address(debtAuctionHouse)).sig(IDebtAuctionHouse.accountingEngine.selector).checked_write(
       _accountingEngine
     );
   }
 
   // params
-  function _mockBidDecrease(uint256 _bidDecrease) internal {
+  function _mockBidDecrease(
+    uint256 _bidDecrease
+  ) internal {
     stdstore.target(address(debtAuctionHouse)).sig(IDebtAuctionHouse.params.selector).depth(0).checked_write(
       _bidDecrease
     );
   }
 
-  function _mockAmountSoldIncrease(uint256 _amountSoldIncrease) internal {
+  function _mockAmountSoldIncrease(
+    uint256 _amountSoldIncrease
+  ) internal {
     stdstore.target(address(debtAuctionHouse)).sig(IDebtAuctionHouse.params.selector).depth(1).checked_write(
       _amountSoldIncrease
     );
   }
 
-  function _mockBidDuration(uint256 _bidDuration) internal {
+  function _mockBidDuration(
+    uint256 _bidDuration
+  ) internal {
     stdstore.target(address(debtAuctionHouse)).sig(IDebtAuctionHouse.params.selector).depth(2).checked_write(
       _bidDuration
     );
   }
 
-  function _mockTotalAuctionLength(uint256 _totalAuctionLength) internal {
+  function _mockTotalAuctionLength(
+    uint256 _totalAuctionLength
+  ) internal {
     stdstore.target(address(debtAuctionHouse)).sig(IDebtAuctionHouse.params.selector).depth(3).checked_write(
       _totalAuctionLength
     );
@@ -148,19 +168,25 @@ contract Unit_DebtAuctionHouse_Constructor is Base {
     assertEq(debtAuctionHouse.contractEnabled(), true);
   }
 
-  function test_Set_SafeEngine(address _safeEngine) public happyPath mockAsContract(_safeEngine) {
+  function test_Set_SafeEngine(
+    address _safeEngine
+  ) public happyPath mockAsContract(_safeEngine) {
     debtAuctionHouse = new DebtAuctionHouseForTest(_safeEngine, address(mockProtocolToken), dahParams);
 
     assertEq(address(debtAuctionHouse.safeEngine()), _safeEngine);
   }
 
-  function test_Set_ProtocolToken(address _protocolToken) public happyPath mockAsContract(_protocolToken) {
+  function test_Set_ProtocolToken(
+    address _protocolToken
+  ) public happyPath mockAsContract(_protocolToken) {
     debtAuctionHouse = new DebtAuctionHouseForTest(address(mockSafeEngine), _protocolToken, dahParams);
 
     assertEq(address(debtAuctionHouse.protocolToken()), _protocolToken);
   }
 
-  function test_Set_DAH_Params(IDebtAuctionHouse.DebtAuctionHouseParams memory _dahParams) public happyPath {
+  function test_Set_DAH_Params(
+    IDebtAuctionHouse.DebtAuctionHouseParams memory _dahParams
+  ) public happyPath {
     debtAuctionHouse = new DebtAuctionHouseForTest(address(mockSafeEngine), address(mockProtocolToken), _dahParams);
 
     assertEq(abi.encode(debtAuctionHouse.params()), abi.encode(_dahParams));
@@ -193,7 +219,9 @@ contract Unit_DebtAuctionHouse_DisableContract is Base {
     assertEq(debtAuctionHouse.accountingEngine(), authorizedAccount);
   }
 
-  function test_Set_ActiveDebtAuctions(uint256 _activeDebtAuctions) public happyPath {
+  function test_Set_ActiveDebtAuctions(
+    uint256 _activeDebtAuctions
+  ) public happyPath {
     vm.assume(_activeDebtAuctions != 0);
 
     _mockActiveDebtAuctions(_activeDebtAuctions);
@@ -398,7 +426,9 @@ contract Unit_DebtAuctionHouse_RestartAuction is Base {
     _mockTotalAuctionLength(_totalAuctionLength);
   }
 
-  function test_Revert_AuctionNeverStarted_0(DebtAuction memory _auction) public {
+  function test_Revert_AuctionNeverStarted_0(
+    DebtAuction memory _auction
+  ) public {
     vm.assume(_auction.id == 0);
 
     _mockValues(_auction, 0, 0, 0);
@@ -737,7 +767,9 @@ contract Unit_DebtAuctionHouse_SettleAuction is Base {
     _mockActiveDebtAuctions(_activeDebtAuctions);
   }
 
-  function test_Revert_ContractIsDisabled(DebtAuction memory _auction) public {
+  function test_Revert_ContractIsDisabled(
+    DebtAuction memory _auction
+  ) public {
     _mockContractEnabled(false);
 
     vm.expectRevert(IDisableable.ContractIsDisabled.selector);
@@ -745,7 +777,9 @@ contract Unit_DebtAuctionHouse_SettleAuction is Base {
     debtAuctionHouse.settleAuction(_auction.id);
   }
 
-  function test_Revert_NotFinished_0(DebtAuction memory _auction) public {
+  function test_Revert_NotFinished_0(
+    DebtAuction memory _auction
+  ) public {
     vm.assume(_auction.bidExpiry == 0);
 
     _mockValues(_auction, 0);
@@ -755,7 +789,9 @@ contract Unit_DebtAuctionHouse_SettleAuction is Base {
     debtAuctionHouse.settleAuction(_auction.id);
   }
 
-  function test_Revert_NotFinished_1(DebtAuction memory _auction) public {
+  function test_Revert_NotFinished_1(
+    DebtAuction memory _auction
+  ) public {
     vm.assume(_auction.bidExpiry > block.timestamp);
     vm.assume(_auction.auctionDeadline > block.timestamp);
 
@@ -826,7 +862,9 @@ contract Unit_DebtAuctionHouse_TerminateAuctionPrematurely is Base {
     _;
   }
 
-  function _assumeHappyPath(DebtAuction memory _auction) internal pure {
+  function _assumeHappyPath(
+    DebtAuction memory _auction
+  ) internal pure {
     vm.assume(_auction.highBidder != address(0));
   }
 
@@ -837,13 +875,17 @@ contract Unit_DebtAuctionHouse_TerminateAuctionPrematurely is Base {
     _mockAccountingEngine(address(mockAccountingEngine));
   }
 
-  function test_Revert_ContractIsEnabled(DebtAuction memory _auction) public {
+  function test_Revert_ContractIsEnabled(
+    DebtAuction memory _auction
+  ) public {
     vm.expectRevert(IDisableable.ContractIsEnabled.selector);
 
     debtAuctionHouse.terminateAuctionPrematurely(_auction.id);
   }
 
-  function test_Revert_HighBidderNotSet(DebtAuction memory _auction) public {
+  function test_Revert_HighBidderNotSet(
+    DebtAuction memory _auction
+  ) public {
     _auction.highBidder = address(0);
 
     _mockValues(_auction, 0);
@@ -901,7 +943,9 @@ contract Unit_DebtAuctionHouse_ModifyParameters is Base {
     _;
   }
 
-  function test_Set_Parameters(IDebtAuctionHouse.DebtAuctionHouseParams memory _fuzz) public happyPath {
+  function test_Set_Parameters(
+    IDebtAuctionHouse.DebtAuctionHouseParams memory _fuzz
+  ) public happyPath {
     debtAuctionHouse.modifyParameters('bidDecrease', abi.encode(_fuzz.bidDecrease));
     debtAuctionHouse.modifyParameters('amountSoldIncrease', abi.encode(_fuzz.amountSoldIncrease));
     debtAuctionHouse.modifyParameters('bidDuration', abi.encode(_fuzz.bidDuration));
@@ -912,7 +956,9 @@ contract Unit_DebtAuctionHouse_ModifyParameters is Base {
     assertEq(abi.encode(_params), abi.encode(_fuzz));
   }
 
-  function test_Set_ProtocolToken(address _protocolToken) public happyPath mockAsContract(_protocolToken) {
+  function test_Set_ProtocolToken(
+    address _protocolToken
+  ) public happyPath mockAsContract(_protocolToken) {
     debtAuctionHouse.modifyParameters('protocolToken', abi.encode(_protocolToken));
 
     assertEq(address(debtAuctionHouse.protocolToken()), _protocolToken);
@@ -925,7 +971,9 @@ contract Unit_DebtAuctionHouse_ModifyParameters is Base {
     debtAuctionHouse.modifyParameters('protocolToken', abi.encode(0));
   }
 
-  function test_Revert_UnrecognizedParam(bytes memory _data) public {
+  function test_Revert_UnrecognizedParam(
+    bytes memory _data
+  ) public {
     vm.startPrank(authorizedAccount);
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);
 

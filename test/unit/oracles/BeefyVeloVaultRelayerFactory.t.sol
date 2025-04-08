@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {BeefyVeloVaultRelayerFactory} from '@contracts/factories/BeefyVeloVaultRelayerFactory.sol';
 import {BeefyVeloVaultRelayerChild} from '@contracts/factories/BeefyVeloVaultRelayerChild.sol';
@@ -7,9 +7,9 @@ import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
 import {IBeefyVaultV7} from '@interfaces/external/IBeefyVaultV7.sol';
 import {IVeloPool} from '@interfaces/external/IVeloPool.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   address deployer = label('deployer');
@@ -37,7 +37,9 @@ abstract contract Base is HaiTest {
     vm.stopPrank();
   }
 
-  function _mockSymbol(string memory _symbol) internal {
+  function _mockSymbol(
+    string memory _symbol
+  ) internal {
     vm.mockCall(address(mockToken0PriceSource), abi.encodeCall(mockToken0PriceSource.symbol, ()), abi.encode(_symbol));
     vm.mockCall(address(mockToken1PriceSource), abi.encodeCall(mockToken1PriceSource.symbol, ()), abi.encode(_symbol));
     vm.mockCall(address(mockBeefyVault), abi.encodeCall(mockBeefyVault.symbol, ()), abi.encode(_symbol));
@@ -70,14 +72,18 @@ contract Unit_BeefyVeloVaultRelayerFactory_DeployBeefyVeloVaultRelayer is Base {
     address _veloPool
   );
 
-  modifier happyPath(string memory _symbol) {
+  modifier happyPath(
+    string memory _symbol
+  ) {
     vm.startPrank(authorizedAccount);
 
     _mockValues(_symbol);
     _;
   }
 
-  function _mockValues(string memory _symbol) internal {
+  function _mockValues(
+    string memory _symbol
+  ) internal {
     _mockSymbol(_symbol);
   }
 
@@ -89,7 +95,9 @@ contract Unit_BeefyVeloVaultRelayerFactory_DeployBeefyVeloVaultRelayer is Base {
     );
   }
 
-  function test_Deploy_BeefyVeloVaultRelayerChild(string memory _symbol) public happyPath(_symbol) {
+  function test_Deploy_BeefyVeloVaultRelayerChild(
+    string memory _symbol
+  ) public happyPath(_symbol) {
     beefyVeloVaultRelayerFactory.deployBeefyVeloVaultRelayer(
       mockToken0PriceSource, mockToken1PriceSource, mockBeefyVault, mockVeloPool
     );
@@ -103,7 +111,9 @@ contract Unit_BeefyVeloVaultRelayerFactory_DeployBeefyVeloVaultRelayer is Base {
     assertEq(address(beefyVeloVaultRelayerChild.veloPool()), address(mockVeloPool));
   }
 
-  function test_Set_BeefyVeloVaultRelayers(string memory _symbol) public happyPath(_symbol) {
+  function test_Set_BeefyVeloVaultRelayers(
+    string memory _symbol
+  ) public happyPath(_symbol) {
     beefyVeloVaultRelayerFactory.deployBeefyVeloVaultRelayer(
       mockToken0PriceSource, mockToken1PriceSource, mockBeefyVault, mockVeloPool
     );
@@ -111,7 +121,9 @@ contract Unit_BeefyVeloVaultRelayerFactory_DeployBeefyVeloVaultRelayer is Base {
     assertEq(beefyVeloVaultRelayerFactory.beefyVeloVaultRelayersList()[0], address(beefyVeloVaultRelayerChild));
   }
 
-  function test_Emit_NewBeefyVeloVaultRelayer(string memory _symbol) public happyPath(_symbol) {
+  function test_Emit_NewBeefyVeloVaultRelayer(
+    string memory _symbol
+  ) public happyPath(_symbol) {
     vm.expectEmit();
     emit NewBeefyVeloVaultRelayer(
       address(beefyVeloVaultRelayerChild),
@@ -126,7 +138,9 @@ contract Unit_BeefyVeloVaultRelayerFactory_DeployBeefyVeloVaultRelayer is Base {
     );
   }
 
-  function test_Return_BeefyVeloVaultRelayer(string memory _symbol) public happyPath(_symbol) {
+  function test_Return_BeefyVeloVaultRelayer(
+    string memory _symbol
+  ) public happyPath(_symbol) {
     assertEq(
       address(
         beefyVeloVaultRelayerFactory.deployBeefyVeloVaultRelayer(

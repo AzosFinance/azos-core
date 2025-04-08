@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import '@script/Contracts.s.sol';
 import '@script/Params.s.sol';
@@ -17,14 +17,14 @@ abstract contract Common is Contracts, Params {
   }
 
   function deployGovernance() public updateParams {
-    IHaiGovernor.HaiGovernorParams memory _emptyGovernorParams;
+    IAzosGovernor.AzosGovernorParams memory _emptyGovernorParams;
     // if governor params are not empty, deploy governor
     if (keccak256(abi.encode(_governorParams)) != keccak256(abi.encode(_emptyGovernorParams))) {
-      haiGovernor = new HaiGovernor(protocolToken, 'HaiGovernor', _governorParams);
+      haiGovernor = new AzosGovernor(protocolToken, 'AzosGovernor', _governorParams);
 
       timelock = TimelockController(payable(haiGovernor.timelock()));
 
-      haiDelegatee = new HaiDelegatee(address(timelock));
+      haiDelegatee = new AzosDelegatee(address(timelock));
 
       // sets timelock as protocol governor
       governor = address(timelock);
@@ -153,7 +153,9 @@ abstract contract Common is Contracts, Params {
     stabilityFeeTreasury.setTotalAllowance(address(oracleJob), type(uint256).max);
   }
 
-  function deployCollateralContracts(bytes32 _cType) public updateParams {
+  function deployCollateralContracts(
+    bytes32 _cType
+  ) public updateParams {
     // deploy CollateralJoin and CollateralAuctionHouse
     address _delegatee = delegatee[_cType];
     if (_delegatee == address(0)) {
@@ -172,7 +174,9 @@ abstract contract Common is Contracts, Params {
       ICollateralAuctionHouse(collateralAuctionHouseFactory.collateralAuctionHouses(_cType));
   }
 
-  function _setupCollateral(bytes32 _cType) internal {
+  function _setupCollateral(
+    bytes32 _cType
+  ) internal {
     safeEngine.initializeCollateralType(_cType, abi.encode(_safeEngineCParams[_cType]));
     oracleRelayer.initializeCollateralType(_cType, abi.encode(_oracleRelayerCParams[_cType]));
     liquidationEngine.initializeCollateralType(_cType, abi.encode(_liquidationEngineCParams[_cType]));
@@ -187,9 +191,11 @@ abstract contract Common is Contracts, Params {
     oracleRelayer.updateCollateralPrice(_cType);
   }
 
-  function deployProxyContracts(address _safeEngine) public updateParams {
-    proxyFactory = new HaiProxyFactory();
-    safeManager = new HaiSafeManager(_safeEngine);
+  function deployProxyContracts(
+    address _safeEngine
+  ) public updateParams {
+    proxyFactory = new AzosProxyFactory();
+    safeManager = new AzosSafeManager(_safeEngine);
     _deployProxyActions();
   }
 
@@ -243,7 +249,9 @@ abstract contract Common is Contracts, Params {
     }
   }
 
-  function _revokeDeployerToAll(address _governor) internal {
+  function _revokeDeployerToAll(
+    address _governor
+  ) internal {
     if (!_shouldRevoke()) return;
 
     _toAllAuthorizableContracts(_revokeDeployerTo, _governor);
@@ -258,7 +266,9 @@ abstract contract Common is Contracts, Params {
     return governor != deployer && governor != address(0);
   }
 
-  function _delegateToAll(address _delegate) internal {
+  function _delegateToAll(
+    address _delegate
+  ) internal {
     _toAllAuthorizableContracts(_delegateTo, _delegate);
   }
 

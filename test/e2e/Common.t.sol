@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {HAI, HAI_USD_INITIAL_PRICE, WETH} from '@script/Params.s.sol';
 import {Deploy} from '@script/Deploy.s.sol';
 import {TestParams, TKN, TEST_ETH_PRICE, TEST_TKN_PRICE} from '@test/e2e/TestParams.t.sol';
@@ -72,7 +72,7 @@ contract DeployForTest is TestParams, Deploy {
  * @notice Abstract contract that contains for test methods, and triggers DeployForTest routine
  * @dev    Used to be inherited by different test contracts with different scopes
  */
-abstract contract Common is DeployForTest, HaiTest {
+abstract contract Common is DeployForTest, AzosTest {
   address alice = address(0x420);
   address bob = address(0x421);
   address carol = address(0x422);

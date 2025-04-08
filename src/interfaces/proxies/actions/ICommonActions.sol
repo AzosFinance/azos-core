@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 interface ICommonActions {
   // --- Errors ---
@@ -28,7 +28,9 @@ interface ICommonActions {
    * @notice Exits all system coins from the safeEngine
    * @param  _coinJoin Address of the CoinJoin contract
    */
-  function exitAllSystemCoins(address _coinJoin) external;
+  function exitAllSystemCoins(
+    address _coinJoin
+  ) external;
 
   /**
    * @notice Exits collateral tokens from the safeEngine

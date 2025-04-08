@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 contract WETH9 {
   string public name = 'Wrapped Ether';
@@ -23,7 +23,9 @@ contract WETH9 {
     emit Deposit(msg.sender, msg.value);
   }
 
-  function withdraw(uint256 _wad) public {
+  function withdraw(
+    uint256 _wad
+  ) public {
     require(balanceOf[msg.sender] >= _wad);
     balanceOf[msg.sender] -= _wad;
     payable(msg.sender).transfer(_wad);

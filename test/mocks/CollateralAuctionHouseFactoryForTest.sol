@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {
   CollateralAuctionHouseFactory,
@@ -17,11 +17,15 @@ contract CollateralAuctionHouseFactoryForTest is CollateralAuctionHouseFactory {
     address _oracleRelayer
   ) CollateralAuctionHouseFactory(_safeEngine, _liquidationEngine, _oracleRelayer) {}
 
-  function addToCollateralList(bytes32 _cType) external {
+  function addToCollateralList(
+    bytes32 _cType
+  ) external {
     _collateralList.add(_cType);
   }
 
-  function setContractEnabled(bool _contractEnabled) external {
+  function setContractEnabled(
+    bool _contractEnabled
+  ) external {
     contractEnabled = _contractEnabled;
   }
 }

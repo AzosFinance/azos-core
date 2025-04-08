@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {ICoinJoin} from '@interfaces/utils/ICoinJoin.sol';
@@ -113,7 +113,9 @@ interface IStabilityFeeTreasury is IAuthorizable, IDisableable, IModifiable {
    * @param  _account The account to query
    * @return __allowance Data structure containing total and per hour allowance for the given account
    */
-  function allowance(address _account) external view returns (Allowance memory __allowance);
+  function allowance(
+    address _account
+  ) external view returns (Allowance memory __allowance);
 
   /**
    * @notice Getter for the unpacked allowance struct of a given account
@@ -123,7 +125,9 @@ interface IStabilityFeeTreasury is IAuthorizable, IDisableable, IModifiable {
    * @dev    A null per hour allowance means that the account has no per hour limit
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _allowance(address _account) external view returns (uint256 _total, uint256 _perHour);
+  function _allowance(
+    address _account
+  ) external view returns (uint256 _total, uint256 _perHour);
 
   /**
    * @notice Modify an address' total allowance in order to withdraw SF from the treasury

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ICommonSurplusAuctionHouse} from '@interfaces/ICommonSurplusAuctionHouse.sol';
 
@@ -71,5 +71,7 @@ interface ISurplusAuctionHouse is IAuthorizable, IDisableable, IModifiable, ICom
    * @notice Terminate an auction prematurely.
    * @param  _id ID of the auction to settle/terminate
    */
-  function terminateAuctionPrematurely(uint256 _id) external;
+  function terminateAuctionPrematurely(
+    uint256 _id
+  ) external;
 }

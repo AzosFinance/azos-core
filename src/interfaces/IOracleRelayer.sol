@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -95,7 +95,9 @@ interface IOracleRelayer is IAuthorizable, IDisableable, IModifiable, IModifiabl
    * @param  _cType Bytes32 representation of the collateral type
    * @return _oracleRelayerCParams An OracleRelayerCollateralParams struct
    */
-  function cParams(bytes32 _cType) external view returns (OracleRelayerCollateralParams memory _oracleRelayerCParams);
+  function cParams(
+    bytes32 _cType
+  ) external view returns (OracleRelayerCollateralParams memory _oracleRelayerCParams);
 
   /**
    * @notice Getter for the unpacked collateral parameters struct
@@ -105,10 +107,9 @@ interface IOracleRelayer is IAuthorizable, IDisableable, IModifiable, IModifiabl
    * @return  _liquidationCRatio CRatio used to compute the 'liquidationPrice' - the price used when liquidating SAFEs [ray]
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _cParams(bytes32 _cType)
-    external
-    view
-    returns (IBaseOracle _oracle, uint256 _safetyCRatio, uint256 _liquidationCRatio);
+  function _cParams(
+    bytes32 _cType
+  ) external view returns (IBaseOracle _oracle, uint256 _safetyCRatio, uint256 _liquidationCRatio);
 
   // --- Data ---
 
@@ -152,12 +153,16 @@ interface IOracleRelayer is IAuthorizable, IDisableable, IModifiable, IModifiabl
    * @dev    Usually called by a keeper, incentivized by the system to keep the prices up to date
    * @param  _cType Bytes32 representation of the collateral type
    */
-  function updateCollateralPrice(bytes32 _cType) external;
+  function updateCollateralPrice(
+    bytes32 _cType
+  ) external;
 
   /**
    * @notice Update the system redemption rate, the rate at which the redemption price changes over time
    * @dev    Usually called by the PIDRateSetter
    * @param  _redemptionRate The newly calculated redemption rate [ray]
    */
-  function updateRedemptionRate(uint256 _redemptionRate) external;
+  function updateRedemptionRate(
+    uint256 _redemptionRate
+  ) external;
 }

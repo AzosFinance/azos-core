@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IProtocolToken} from '@interfaces/tokens/IProtocolToken.sol';
 import {IStakingToken} from '@interfaces/tokens/IStakingToken.sol';
@@ -205,7 +205,9 @@ interface IStakingManager is IAuthorizable, IModifiable {
    * @param  _id Id of the reward type
    * @return _rewardTypeInfo RewardTypeInfo data struct containing non-mapping fields
    */
-  function rewardTypes(uint256 _id) external view returns (RewardTypeInfo memory _rewardTypeInfo);
+  function rewardTypes(
+    uint256 _id
+  ) external view returns (RewardTypeInfo memory _rewardTypeInfo);
 
   /**
    * @notice Unpacked data of a reward type
@@ -217,7 +219,9 @@ interface IStakingManager is IAuthorizable, IModifiable {
    * @return _rewardRemaining Total amount of rewards remaining to be claimed
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _rewardTypes(uint256 _id)
+  function _rewardTypes(
+    uint256 _id
+  )
     external
     view
     returns (
@@ -249,14 +253,18 @@ interface IStakingManager is IAuthorizable, IModifiable {
    * @param  _account Address of the user
    * @return _stakedBalance User's staked balance [wad]
    */
-  function stakedBalances(address _account) external view returns (uint256 _stakedBalance);
+  function stakedBalances(
+    address _account
+  ) external view returns (uint256 _stakedBalance);
 
   /**
    * @notice Data of a pending withdrawal
    * @param  _account Address of the user
    * @return _pendingWithdrawal PendingWithdrawal type data struct
    */
-  function pendingWithdrawals(address _account) external view returns (PendingWithdrawal memory _pendingWithdrawal);
+  function pendingWithdrawals(
+    address _account
+  ) external view returns (PendingWithdrawal memory _pendingWithdrawal);
 
   /**
    * @notice Unpacked data of a pending withdrawal
@@ -265,7 +273,9 @@ interface IStakingManager is IAuthorizable, IModifiable {
    * @return _timestamp Timestamp of when withdrawal was initiated
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _pendingWithdrawals(address _account) external view returns (uint256 _amount, uint256 _timestamp);
+  function _pendingWithdrawals(
+    address _account
+  ) external view returns (uint256 _amount, uint256 _timestamp);
 
   // --- Methods ---
 
@@ -280,7 +290,9 @@ interface IStakingManager is IAuthorizable, IModifiable {
    * @notice Initiates a pending withdrawal
    * @param _wad Amount of $KITE being withdrawn [wad]
    */
-  function initiateWithdrawal(uint256 _wad) external;
+  function initiateWithdrawal(
+    uint256 _wad
+  ) external;
 
   /**
    * @notice Cancels a pending withdrawal
@@ -311,7 +323,9 @@ interface IStakingManager is IAuthorizable, IModifiable {
    * @notice Claims earned rewards
    * @param _account Address of the account that will receive the rewards
    */
-  function getReward(address _account) external;
+  function getReward(
+    address _account
+  ) external;
 
   /**
    * @notice Claims and forwards earned rewards
@@ -331,29 +345,39 @@ interface IStakingManager is IAuthorizable, IModifiable {
    * @notice Activate an existing reward type
    * @param _id ID of the reward type
    */
-  function activateRewardType(uint256 _id) external;
+  function activateRewardType(
+    uint256 _id
+  ) external;
 
   /**
    * @notice Deactivate an existing reward type
    * @param _id ID of the reward type
    */
-  function deactivateRewardType(uint256 _id) external;
+  function deactivateRewardType(
+    uint256 _id
+  ) external;
 
   /**
    * @notice Check rewards earned for an account
    * @param _account Account to check
    */
-  function earned(address _account) external returns (EarnedData[] memory _claimable);
+  function earned(
+    address _account
+  ) external returns (EarnedData[] memory _claimable);
 
   /**
    * @notice Checkpoint account balances
    * @param _accounts Accounts to checkpoint
    */
-  function checkpoint(address[2] memory _accounts) external;
+  function checkpoint(
+    address[2] memory _accounts
+  ) external;
 
   /**
    * @notice Checkpoint account balance
    * @param _account Account to checkpoint
    */
-  function userCheckpoint(address _account) external;
+  function userCheckpoint(
+    address _account
+  ) external;
 }

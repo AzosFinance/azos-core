@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IOracleRelayer} from '@interfaces/IOracleRelayer.sol';
 import {IDelayedOracle} from '@interfaces/oracles/IDelayedOracle.sol';
@@ -36,7 +36,9 @@ interface IOracleJob is IAuthorizable, IModifiable, IJob {
    * @notice Rewarded method to update a collateral price
    * @param _cType Bytes32 representation of the collateral type
    */
-  function workUpdateCollateralPrice(bytes32 _cType) external;
+  function workUpdateCollateralPrice(
+    bytes32 _cType
+  ) external;
 
   /// @notice Rewarded method to update the redemption rate
   function workUpdateRate() external;

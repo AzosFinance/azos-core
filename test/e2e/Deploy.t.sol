@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {Deploy, DeployMainnet, DeployTestnet} from '@script/Deploy.s.sol';
 
 import {
@@ -24,7 +24,7 @@ import {TestnetDeployment} from '@script/TestnetDeployment.s.sol';
 import {MainnetDeployment} from '@script/MainnetDeployment.s.sol';
 import 'forge-std/console.sol';
 
-abstract contract CommonDeploymentTest is HaiTest, Deploy {
+abstract contract CommonDeploymentTest is AzosTest, Deploy {
   uint256 _governorAccounts;
 
   // SAFEEngine
@@ -448,12 +448,12 @@ abstract contract CommonDeploymentTest is HaiTest, Deploy {
     assertEq(timelock.getMinDelay(), _governorParams.timelockMinDelay);
   }
 
-  // function test_HaiGovernor_Bytecode_MANUAL_CHECK() public {
+  // function test_AzosGovernor_Bytecode_MANUAL_CHECK() public {
   //     // Not possible to check bytecode because it has immutable storage
   //     // Needs to be manually checked
   // }
 
-  function test_HaiGovernor_Params() public {
+  function test_AzosGovernor_Params() public {
     assertEq(haiGovernor.votingDelay(), _governorParams.votingDelay);
     assertEq(haiGovernor.votingPeriod(), _governorParams.votingPeriod);
     assertEq(haiGovernor.proposalThreshold(), _governorParams.proposalThreshold);

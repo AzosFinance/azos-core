@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ICollateralAuctionHouse} from '@interfaces/ICollateralAuctionHouse.sol';
 
@@ -24,10 +24,9 @@ interface ICollateralAuctionHouseFactory is IAuthorizable, IModifiable, IModifia
    * @param _cType Bytes32 representation of the collateral type
    * @return _cahParams CollateralAuctionHouse parameters struct
    */
-  function cParams(bytes32 _cType)
-    external
-    view
-    returns (ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams);
+  function cParams(
+    bytes32 _cType
+  ) external view returns (ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams);
 
   /**
    * @notice Getter for the unpacked collateral parameters struct
@@ -38,7 +37,9 @@ interface ICollateralAuctionHouseFactory is IAuthorizable, IModifiable, IModifia
    * @return _perSecondDiscountUpdateRate Per second rate at which the discount is updated [ray]
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _cParams(bytes32 _cType)
+  function _cParams(
+    bytes32 _cType
+  )
     external
     view
     returns (uint256 _minimumBid, uint256 _minDiscount, uint256 _maxDiscount, uint256 _perSecondDiscountUpdateRate);
@@ -59,7 +60,9 @@ interface ICollateralAuctionHouseFactory is IAuthorizable, IModifiable, IModifia
    * @param _cType Bytes32 representation of the collateral type
    * @return _collateralAuctionHouse Address of the CollateralAuctionHouse contract
    */
-  function collateralAuctionHouses(bytes32 _cType) external view returns (address _collateralAuctionHouse);
+  function collateralAuctionHouses(
+    bytes32 _cType
+  ) external view returns (address _collateralAuctionHouse);
 
   /**
    * @notice Getter for the list of CollateralAuctionHouse contracts

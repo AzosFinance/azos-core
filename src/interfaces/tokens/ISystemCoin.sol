@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IERC20Metadata} from '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 
@@ -18,5 +18,7 @@ interface ISystemCoin is IERC20Metadata, IAuthorizable {
    * @notice Burn an amount of tokens from the sender
    * @param _amount Amount of tokens to burn [wad]
    */
-  function burn(uint256 _amount) external;
+  function burn(
+    uint256 _amount
+  ) external;
 }

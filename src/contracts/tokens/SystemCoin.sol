@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISystemCoin} from '@interfaces/tokens/ISystemCoin.sol';
 
@@ -32,7 +32,9 @@ contract SystemCoin is ERC20, ERC20Permit, Authorizable, ISystemCoin {
   }
 
   /// @inheritdoc ISystemCoin
-  function burn(uint256 _wad) external {
+  function burn(
+    uint256 _wad
+  ) external {
     _burn(msg.sender, _wad);
   }
 }

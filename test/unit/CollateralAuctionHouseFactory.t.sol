@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {
   CollateralAuctionHouseFactoryForTest,
@@ -15,9 +15,9 @@ import {IModifiablePerCollateral} from '@interfaces/utils/IModifiablePerCollater
 import {IFactoryChild} from '@interfaces/factories/IFactoryChild.sol';
 import {WAD} from '@libraries/Math.sol';
 import {Assertions} from '@libraries/Assertions.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   address deployer = label('deployer');
@@ -58,7 +58,9 @@ abstract contract Base is HaiTest {
     vm.stopPrank();
   }
 
-  function _mockLiquidationEngine(address _liquidationEngine) internal {
+  function _mockLiquidationEngine(
+    address _liquidationEngine
+  ) internal {
     stdstore.target(address(collateralAuctionHouseFactory)).sig(
       ICollateralAuctionHouseFactory.liquidationEngine.selector
     ).checked_write(_liquidationEngine);
@@ -70,11 +72,15 @@ abstract contract Base is HaiTest {
     ).with_key(_cType).checked_write(_collateralAuctionHouse);
   }
 
-  function _mockCollateralList(bytes32 _cType) internal {
+  function _mockCollateralList(
+    bytes32 _cType
+  ) internal {
     collateralAuctionHouseFactory.addToCollateralList(_cType);
   }
 
-  function _mockContractEnabled(bool _contractEnabled) internal {
+  function _mockContractEnabled(
+    bool _contractEnabled
+  ) internal {
     collateralAuctionHouseFactory.setContractEnabled(_contractEnabled);
   }
 }
@@ -127,13 +133,17 @@ contract Unit_CollateralAuctionHouseFactory_DeployCollateralAuctionHouse is Base
     _;
   }
 
-  function test_Revert_Unauthorized(bytes32 _cType) public {
+  function test_Revert_Unauthorized(
+    bytes32 _cType
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     collateralAuctionHouseFactory.initializeCollateralType(_cType, abi.encode(cahParams));
   }
 
-  function test_Revert_ContractIsDisabled(bytes32 _cType) public {
+  function test_Revert_ContractIsDisabled(
+    bytes32 _cType
+  ) public {
     vm.startPrank(authorizedAccount);
 
     _mockContractEnabled(false);
@@ -143,7 +153,9 @@ contract Unit_CollateralAuctionHouseFactory_DeployCollateralAuctionHouse is Base
     collateralAuctionHouseFactory.initializeCollateralType(_cType, abi.encode(cahParams));
   }
 
-  function test_Revert_CAHExists(bytes32 _cType) public happyPath {
+  function test_Revert_CAHExists(
+    bytes32 _cType
+  ) public happyPath {
     collateralAuctionHouseFactory.initializeCollateralType(_cType, abi.encode(cahParams));
 
     vm.expectRevert(IModifiablePerCollateral.CollateralTypeAlreadyInitialized.selector);
@@ -151,7 +163,9 @@ contract Unit_CollateralAuctionHouseFactory_DeployCollateralAuctionHouse is Base
     collateralAuctionHouseFactory.initializeCollateralType(_cType, abi.encode(cahParams));
   }
 
-  function test_Deploy_CollateralAuctionHouseChild(bytes32 _cType) public happyPath {
+  function test_Deploy_CollateralAuctionHouseChild(
+    bytes32 _cType
+  ) public happyPath {
     collateralAuctionHouseFactory.initializeCollateralType(_cType, abi.encode(cahParams));
 
     assertEq(address(collateralAuctionHouseChild).code, type(CollateralAuctionHouseChild).runtimeCode);
@@ -165,26 +179,34 @@ contract Unit_CollateralAuctionHouseFactory_DeployCollateralAuctionHouse is Base
     assertEq(abi.encode(collateralAuctionHouseFactory.cParams(_cType)), abi.encode(cahParams));
   }
 
-  function test_Set_CollateralList(bytes32 _cType) public happyPath {
+  function test_Set_CollateralList(
+    bytes32 _cType
+  ) public happyPath {
     collateralAuctionHouseFactory.initializeCollateralType(_cType, abi.encode(cahParams));
 
     assertEq(collateralAuctionHouseFactory.collateralList()[0], _cType);
   }
 
-  function test_Set_CollateralAuctionHouses(bytes32 _cType) public happyPath {
+  function test_Set_CollateralAuctionHouses(
+    bytes32 _cType
+  ) public happyPath {
     collateralAuctionHouseFactory.initializeCollateralType(_cType, abi.encode(cahParams));
 
     assertEq(collateralAuctionHouseFactory.collateralAuctionHousesList()[0], address(collateralAuctionHouseChild));
   }
 
-  function test_Emit_DeployCollateralAuctionHouse(bytes32 _cType) public happyPath {
+  function test_Emit_DeployCollateralAuctionHouse(
+    bytes32 _cType
+  ) public happyPath {
     vm.expectEmit();
     emit DeployCollateralAuctionHouse(_cType, address(collateralAuctionHouseChild));
 
     collateralAuctionHouseFactory.initializeCollateralType(_cType, abi.encode(cahParams));
   }
 
-  function test_Return_CollateralAuctionHouse(bytes32 _cType) public happyPath {
+  function test_Return_CollateralAuctionHouse(
+    bytes32 _cType
+  ) public happyPath {
     collateralAuctionHouseFactory.initializeCollateralType(_cType, abi.encode(cahParams));
     assertEq(
       address(collateralAuctionHouseFactory.collateralAuctionHouses(_cType)), address(collateralAuctionHouseChild)
@@ -201,7 +223,9 @@ contract Unit_CollateralAuctionHouseFactory_ModifyParameters is Base {
     _;
   }
 
-  function test_Set_LiquidationEngine(address _liquidationEngine) public happyPath mockAsContract(_liquidationEngine) {
+  function test_Set_LiquidationEngine(
+    address _liquidationEngine
+  ) public happyPath mockAsContract(_liquidationEngine) {
     vm.assume(_liquidationEngine != address(0));
     vm.assume(_liquidationEngine != deployer);
     vm.assume(_liquidationEngine != authorizedAccount);
@@ -235,7 +259,9 @@ contract Unit_CollateralAuctionHouseFactory_ModifyParameters is Base {
     collateralAuctionHouseFactory.modifyParameters('liquidationEngine', abi.encode(_newLiquidationEngine));
   }
 
-  function test_Set_OracleRelayer(address _oracleRelayer) public happyPath mockAsContract(_oracleRelayer) {
+  function test_Set_OracleRelayer(
+    address _oracleRelayer
+  ) public happyPath mockAsContract(_oracleRelayer) {
     vm.assume(_oracleRelayer != address(0));
 
     collateralAuctionHouseFactory.modifyParameters('oracleRelayer', abi.encode(_oracleRelayer));
@@ -259,7 +285,9 @@ contract Unit_CollateralAuctionHouseFactory_ModifyParameters is Base {
     collateralAuctionHouseFactory.modifyParameters('oracleRelayer', abi.encode(0));
   }
 
-  function test_Revert_UnrecognizedParam(bytes memory _data) public {
+  function test_Revert_UnrecognizedParam(
+    bytes memory _data
+  ) public {
     vm.startPrank(authorizedAccount);
 
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);
@@ -269,14 +297,18 @@ contract Unit_CollateralAuctionHouseFactory_ModifyParameters is Base {
 }
 
 contract Unit_CollateralAuctionHouseFactory_ModifyParametersPerCollateral is Base {
-  modifier happyPath(bytes32 _cType) {
+  modifier happyPath(
+    bytes32 _cType
+  ) {
     vm.startPrank(authorizedAccount);
 
     _mockValues(_cType);
     _;
   }
 
-  function _mockValues(bytes32 _cType) internal {
+  function _mockValues(
+    bytes32 _cType
+  ) internal {
     _mockCollateralAuctionHouse(_cType, address(mockCollateralAuctionHouse));
     _mockCollateralList(_cType);
   }

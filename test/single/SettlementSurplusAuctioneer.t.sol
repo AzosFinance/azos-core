@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 import {CoinForTest} from '@test/mocks/CoinForTest.sol';
@@ -14,7 +14,9 @@ import {IAccountingEngine, AccountingEngine} from '@contracts/AccountingEngine.s
 import {CoinJoin} from '@contracts/utils/CoinJoin.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
+  function warp(
+    uint256
+  ) public virtual;
 }
 
 contract SingleSettlementSurplusAuctioneerTest is DSTest {
@@ -28,7 +30,9 @@ contract SingleSettlementSurplusAuctioneerTest is DSTest {
 
   uint256 constant ONE = 10 ** 27;
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * ONE;
   }
 

@@ -1,28 +1,32 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {Ownable} from '@openzeppelin/contracts/access/Ownable2Step.sol';
 import {IGovernor} from '@openzeppelin/contracts/governance/IGovernor.sol';
-import {IHaiDelegatee} from '@interfaces/governance/IHaiDelegatee.sol';
+import {IAzosDelegatee} from '@interfaces/governance/IAzosDelegatee.sol';
 
 /**
- * @title  HaiDelegatee
+ * @title  AzosDelegatee
  * @notice This contract is used to proxy the voting power delegated to it to a delegatee
  * @dev    Compatible with OpenZeppelin's Governor contract
  */
-contract HaiDelegatee is IHaiDelegatee, Ownable {
-  /// @inheritdoc IHaiDelegatee
+contract AzosDelegatee is IAzosDelegatee, Ownable {
+  /// @inheritdoc IAzosDelegatee
   address public delegatee;
 
-  constructor(address _owner) Ownable(_owner) {}
+  constructor(
+    address _owner
+  ) Ownable(_owner) {}
 
-  /// @inheritdoc IHaiDelegatee
-  function setDelegatee(address _delegatee) external onlyOwner {
+  /// @inheritdoc IAzosDelegatee
+  function setDelegatee(
+    address _delegatee
+  ) external onlyOwner {
     delegatee = _delegatee;
     emit DelegateeSet(_delegatee);
   }
 
-  /// @inheritdoc IHaiDelegatee
+  /// @inheritdoc IAzosDelegatee
   function castVote(
     IGovernor _governor,
     uint256 _proposalId,
@@ -31,7 +35,7 @@ contract HaiDelegatee is IHaiDelegatee, Ownable {
     return _governor.castVote(_proposalId, _support);
   }
 
-  /// @inheritdoc IHaiDelegatee
+  /// @inheritdoc IAzosDelegatee
   function castVoteWithReason(
     IGovernor _governor,
     uint256 _proposalId,
@@ -41,7 +45,7 @@ contract HaiDelegatee is IHaiDelegatee, Ownable {
     return _governor.castVoteWithReason(_proposalId, _support, _reason);
   }
 
-  /// @inheritdoc IHaiDelegatee
+  /// @inheritdoc IAzosDelegatee
   function castVoteWithReasonAndParams(
     IGovernor _governor,
     uint256 _proposalId,

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ICollateralAuctionHouseChild} from '@interfaces/factories/ICollateralAuctionHouseChild.sol';
 import {ICollateralAuctionHouseFactory} from '@interfaces/factories/ICollateralAuctionHouseFactory.sol';
@@ -85,22 +85,23 @@ contract CollateralAuctionHouseChild is
    * @param  _newLiquidationEngine Ignored parameter (read from factory)
    * @inheritdoc CollateralAuctionHouse
    */
-  function _setLiquidationEngine(address _newLiquidationEngine) internal override {}
+  function _setLiquidationEngine(
+    address _newLiquidationEngine
+  ) internal override {}
 
   /**
    * @dev    Modifying oracleRelayer's address results in a no-operation (is read from factory)
    * @param  _newOracleRelayer Ignored parameter (read from factory)
    * @inheritdoc CollateralAuctionHouse
    */
-  function _setOracleRelayer(address _newOracleRelayer) internal override {}
+  function _setOracleRelayer(
+    address _newOracleRelayer
+  ) internal override {}
 
   /// @inheritdoc AuthorizableChild
-  function _isAuthorized(address _account)
-    internal
-    view
-    override(AuthorizableChild, Authorizable)
-    returns (bool _authorized)
-  {
+  function _isAuthorized(
+    address _account
+  ) internal view override(AuthorizableChild, Authorizable) returns (bool _authorized) {
     return super._isAuthorized(_account);
   }
 

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {WrappedToken, IWrappedToken} from '@contracts/tokens/WrappedToken.sol';
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   address deployer = label('deployer');
@@ -42,12 +42,16 @@ contract Unit_WrappedToken_Constructor is Base {
     _;
   }
 
-  function test_Set_Name(string memory _name) public happyPath {
+  function test_Set_Name(
+    string memory _name
+  ) public happyPath {
     wrappedToken = new WrappedToken(_name, symbol, address(mockBaseToken), baseTokenManager);
     assertEq(wrappedToken.name(), _name);
   }
 
-  function test_Set_Symbol(string memory _symbol) public happyPath {
+  function test_Set_Symbol(
+    string memory _symbol
+  ) public happyPath {
     wrappedToken = new WrappedToken(name, _symbol, address(mockBaseToken), baseTokenManager);
     assertEq(wrappedToken.symbol(), _symbol);
   }
@@ -93,7 +97,9 @@ contract Unit_WrappedToken_Deposit is Base {
     vm.assume(_wad <= type(uint208).max);
   }
 
-  function test_Revert_NullReceiver(uint256 _wad) public {
+  function test_Revert_NullReceiver(
+    uint256 _wad
+  ) public {
     vm.startPrank(user);
     vm.assume(_wad > 0);
 
@@ -101,7 +107,9 @@ contract Unit_WrappedToken_Deposit is Base {
     wrappedToken.deposit(address(0), _wad);
   }
 
-  function test_Revert_NullAmount(address _account) public {
+  function test_Revert_NullAmount(
+    address _account
+  ) public {
     vm.startPrank(user);
     vm.assume(_account != address(0));
 
@@ -143,17 +151,17 @@ contract Unit_WrappedToken_ModifyParameters is Base {
     _;
   }
 
-  function test_ModifyParameters_Set_BaseTokenManager_Contract(address _baseTokenManager)
-    public
-    happyPath
-    mockAsContract(_baseTokenManager)
-  {
+  function test_ModifyParameters_Set_BaseTokenManager_Contract(
+    address _baseTokenManager
+  ) public happyPath mockAsContract(_baseTokenManager) {
     wrappedToken.modifyParameters('baseTokenManager', abi.encode(_baseTokenManager));
 
     assertEq(wrappedToken.baseTokenManager(), _baseTokenManager);
   }
 
-  function test_ModifyParameters_Set_BaseTokenManager_EOA(address _baseTokenManager) public happyPath {
+  function test_ModifyParameters_Set_BaseTokenManager_EOA(
+    address _baseTokenManager
+  ) public happyPath {
     vm.assume(_baseTokenManager != address(0));
     wrappedToken.modifyParameters('baseTokenManager', abi.encode(_baseTokenManager));
 

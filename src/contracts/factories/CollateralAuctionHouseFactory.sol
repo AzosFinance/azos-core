@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ICollateralAuctionHouseFactory} from '@interfaces/factories/ICollateralAuctionHouseFactory.sol';
 import {ICollateralAuctionHouse} from '@interfaces/ICollateralAuctionHouse.sol';
@@ -45,17 +45,17 @@ contract CollateralAuctionHouseFactory is
   // --- Data ---
 
   /// @inheritdoc ICollateralAuctionHouseFactory
-  function cParams(bytes32 _cType)
-    external
-    view
-    returns (ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams)
-  {
+  function cParams(
+    bytes32 _cType
+  ) external view returns (ICollateralAuctionHouse.CollateralAuctionHouseParams memory _cahParams) {
     return ICollateralAuctionHouse(collateralAuctionHouses[_cType]).params();
   }
 
   /// @inheritdoc ICollateralAuctionHouseFactory
   // solhint-disable-next-line private-vars-leading-underscore
-  function _cParams(bytes32 _cType)
+  function _cParams(
+    bytes32 _cType
+  )
     external
     view
     returns (uint256 _minimumBid, uint256 _minDiscount, uint256 _maxDiscount, uint256 _perSecondDiscountUpdateRate)
@@ -130,7 +130,9 @@ contract CollateralAuctionHouseFactory is
   }
 
   /// @dev Sets the LiquidationEngine contract address, revoking the previous, and granting the new one authorization
-  function _setLiquidationEngine(address _newLiquidationEngine) internal {
+  function _setLiquidationEngine(
+    address _newLiquidationEngine
+  ) internal {
     if (liquidationEngine != address(0)) _removeAuthorization(liquidationEngine);
     liquidationEngine = _newLiquidationEngine;
     _addAuthorization(_newLiquidationEngine);

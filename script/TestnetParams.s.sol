@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import '@script/Params.s.sol';
 
@@ -157,7 +157,7 @@ abstract contract TestnetParams is Contracts, Params {
     _collateralAuctionHouseParams[OP].maxDiscount = 0.5e18; // -50%
 
     // --- Governance Params ---
-    _governorParams = IHaiGovernor.HaiGovernorParams({
+    _governorParams = IAzosGovernor.AzosGovernorParams({
       votingDelay: 12 hours, // 43_200
       votingPeriod: 36 hours, // 129_600
       proposalThreshold: 5000 * WAD, // 5k KITE

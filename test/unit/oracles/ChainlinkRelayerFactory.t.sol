@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ChainlinkRelayerFactory, IChainlinkRelayerFactory} from '@contracts/factories/ChainlinkRelayerFactory.sol';
 import {ChainlinkRelayerChild} from '@contracts/factories/ChainlinkRelayerChild.sol';
 import {IChainlinkOracle} from '@interfaces/oracles/IChainlinkOracle.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   address deployer = label('deployer');
@@ -33,11 +33,15 @@ abstract contract Base is HaiTest {
     vm.stopPrank();
   }
 
-  function _mockDecimals(uint8 _decimals) internal {
+  function _mockDecimals(
+    uint8 _decimals
+  ) internal {
     vm.mockCall(address(mockPriceFeed), abi.encodeCall(mockPriceFeed.decimals, ()), abi.encode(_decimals));
   }
 
-  function _mockDescription(string memory _description) internal {
+  function _mockDescription(
+    string memory _description
+  ) internal {
     vm.mockCall(address(mockPriceFeed), abi.encodeCall(mockPriceFeed.description, ()), abi.encode(_description));
   }
 }
@@ -91,7 +95,9 @@ contract Unit_ChainlinkRelayerFactory_DeployChainlinkRelayer is Base {
     _mockDescription(_description);
   }
 
-  function test_Revert_Unauthorized(uint256 _staleThreshold) public {
+  function test_Revert_Unauthorized(
+    uint256 _staleThreshold
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     chainlinkRelayerFactory.deployChainlinkRelayer(address(mockPriceFeed), _staleThreshold);
@@ -148,18 +154,24 @@ contract Unit_ChainlinkRelayerFactory_DeployChainlinkRelayer is Base {
 }
 
 contract Unit_ChainlinkRelayerFactory_SetSequencerUptimeFeed is Base {
-  modifier happyPath(address _sequencerUptimeFeed) {
+  modifier happyPath(
+    address _sequencerUptimeFeed
+  ) {
     vm.startPrank(authorizedAccount);
 
     _assumeHappyPath(_sequencerUptimeFeed);
     _;
   }
 
-  function _assumeHappyPath(address _sequencerUptimeFeed) internal pure {
+  function _assumeHappyPath(
+    address _sequencerUptimeFeed
+  ) internal pure {
     vm.assume(_sequencerUptimeFeed != address(0));
   }
 
-  function test_Revert_Unauthorized(address _sequencerUptimeFeed) public {
+  function test_Revert_Unauthorized(
+    address _sequencerUptimeFeed
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     chainlinkRelayerFactory.setSequencerUptimeFeed(_sequencerUptimeFeed);
@@ -172,13 +184,17 @@ contract Unit_ChainlinkRelayerFactory_SetSequencerUptimeFeed is Base {
     chainlinkRelayerFactory.setSequencerUptimeFeed(address(0));
   }
 
-  function test_Set_SequencerUptimeFeed(address _sequencerUptimeFeed) public happyPath(_sequencerUptimeFeed) {
+  function test_Set_SequencerUptimeFeed(
+    address _sequencerUptimeFeed
+  ) public happyPath(_sequencerUptimeFeed) {
     chainlinkRelayerFactory.setSequencerUptimeFeed(_sequencerUptimeFeed);
 
     assertEq(address(chainlinkRelayerFactory.sequencerUptimeFeed()), _sequencerUptimeFeed);
   }
 
-  function test_Propagate_SequencerUptimeFeed(address _sequencerUptimeFeed) public happyPath(_sequencerUptimeFeed) {
+  function test_Propagate_SequencerUptimeFeed(
+    address _sequencerUptimeFeed
+  ) public happyPath(_sequencerUptimeFeed) {
     _mockDecimals(18);
     _mockDescription('ChainlinkPriceFeed');
 

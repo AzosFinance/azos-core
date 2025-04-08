@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 import {ERC20ForTest} from '@test/mocks/ERC20ForTest.sol';
@@ -16,7 +16,9 @@ import {SettlementSurplusAuctioneer} from '@contracts/settlement/SettlementSurpl
 import {CoinJoin} from '@contracts/utils/CoinJoin.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
+  function warp(
+    uint256
+  ) public virtual;
 }
 
 contract SingleAccountingEngineTest is DSTest {
@@ -79,7 +81,9 @@ contract SingleAccountingEngineTest is DSTest {
     safeEngine.approveSAFEModification(address(debtAuctionHouse));
   }
 
-  function _try_popDebtFromQueue(uint256 era) internal returns (bool ok) {
+  function _try_popDebtFromQueue(
+    uint256 era
+  ) internal returns (bool ok) {
     string memory sig = 'popDebtFromQueue(uint256)';
     (ok,) = address(accountingEngine).call(abi.encodeWithSignature(sig, era));
   }
@@ -135,11 +139,15 @@ contract SingleAccountingEngineTest is DSTest {
 
   uint256 constant ONE = 10 ** 27;
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * ONE;
   }
 
-  function _popDebtFromQueue(uint256 wad) internal {
+  function _popDebtFromQueue(
+    uint256 wad
+  ) internal {
     accountingEngine.pushDebtToQueue(rad(wad));
     ISAFEEngine.SAFEEngineCollateralParams memory _safeEngineCollateralParams =
       ISAFEEngine.SAFEEngineCollateralParams({debtCeiling: 0, debtFloor: 0});

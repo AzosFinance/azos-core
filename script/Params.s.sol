@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {Contracts} from '@script/Contracts.s.sol';
 
@@ -18,7 +18,7 @@ import {
   ITaxCollector,
   IGlobalSettlement,
   IPostSettlementSurplusAuctionHouse,
-  IHaiGovernor,
+  IAzosGovernor,
   ITokenDistributor,
   IModifiable
 } from '@script/Contracts.s.sol';
@@ -139,7 +139,7 @@ abstract contract Params {
   IPostSettlementSurplusAuctionHouse.PostSettlementSAHParams _postSettlementSAHParams;
 
   // --- Governor params ---
-  IHaiGovernor.HaiGovernorParams _governorParams;
+  IAzosGovernor.AzosGovernorParams _governorParams;
   ITokenDistributor.TokenDistributorParams _tokenDistributorParams;
 }
 

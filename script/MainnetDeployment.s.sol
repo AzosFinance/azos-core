@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import '@script/Contracts.s.sol';
 import {MainnetParams, WETH, WSTETH, OP} from '@script/MainnetParams.s.sol';
@@ -70,8 +70,8 @@ abstract contract MainnetDeployment is Contracts, MainnetParams {
     oracleJob = OracleJob(0xF4F18205D8D46638489865e42c0a71a3d4F9FC22);
 
     // --- proxies ---
-    proxyFactory = HaiProxyFactory(0xBAfbCDbFbB1569722253ED4D491D2fB3b5E03a27);
-    safeManager = HaiSafeManager(0xB0FF82D8322f6Fa9C28Ec46eF0A5C343e95106C3);
+    proxyFactory = AzosProxyFactory(0xBAfbCDbFbB1569722253ED4D491D2fB3b5E03a27);
+    safeManager = AzosSafeManager(0xB0FF82D8322f6Fa9C28Ec46eF0A5C343e95106C3);
 
     basicActions = BasicActions(0x7Bd5fBa59E6FF3ad5c6937CdD83f5cAf7aA49669);
     debtBidActions = DebtBidActions(0xFC55B886a2619bd8645549f7Cb672872479F8117);
@@ -89,9 +89,9 @@ abstract contract MainnetDeployment is Contracts, MainnetParams {
     delayedOracle[OP] = IDelayedOracle(0x519011D32806f324364201C5C98579aEC55D9011);
 
     // --- governance ---
-    haiGovernor = HaiGovernor(payable(0xe807f3282f3391d237BA8B9bECb0d8Ea3ba23777));
+    haiGovernor = AzosGovernor(payable(0xe807f3282f3391d237BA8B9bECb0d8Ea3ba23777));
     timelock = TimelockController(payable(0xd68e7D20008a223dD48A6076AAf5EDd4fe80a899));
-    haiDelegatee = HaiDelegatee(0x2C6c638b93bA5a11DBD419305F14749Fc8AA2B63);
+    haiDelegatee = AzosDelegatee(0x2C6c638b93bA5a11DBD419305F14749Fc8AA2B63);
 
     tokenDistributor = TokenDistributor(0xCb96543b9f3657bE103Ba6371aaeD8a711Cc9E02);
 

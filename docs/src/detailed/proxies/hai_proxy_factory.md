@@ -1,6 +1,6 @@
 # Proxy Factory
 
-See [HaiProxyFactory.sol](/src/contracts/proxies/HaiProxyFactory.sol/contract.HaiProxyFactory.html) and [HaiProxyRegistry.sol](/src/contracts/proxies/HaiProxyRegistry.sol/contract.HaiProxyRegistry.html) for more details.
+See [AzosProxyFactory.sol](/src/contracts/proxies/AzosProxyFactory.sol/contract.AzosProxyFactory.html) and [AzosProxyRegistry.sol](/src/contracts/proxies/AzosProxyRegistry.sol/contract.AzosProxyRegistry.html) for more details.
 
 ## 1. Introduction
 

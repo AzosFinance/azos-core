@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {ILiquidationEngine} from '@interfaces/ILiquidationEngine.sol';
@@ -132,35 +132,45 @@ interface IGlobalSettlement is IAuthorizable, IDisableable, IModifiable {
    * @param _cType Bytes32 representation of the collateral type
    * @return _finalCoinPerCollateralPrice The final amount of collateral that a system coin can redeem [rad]
    */
-  function finalCoinPerCollateralPrice(bytes32 _cType) external view returns (uint256 _finalCoinPerCollateralPrice);
+  function finalCoinPerCollateralPrice(
+    bytes32 _cType
+  ) external view returns (uint256 _finalCoinPerCollateralPrice);
 
   /**
    * @notice The total amount of bad debt for a collateral type computed during the settlement process
    * @param _cType Bytes32 representation of the collateral type
    * @return _collateralShortfall The total amount of bad debt for a collateral type [wad]
    */
-  function collateralShortfall(bytes32 _cType) external view returns (uint256 _collateralShortfall);
+  function collateralShortfall(
+    bytes32 _cType
+  ) external view returns (uint256 _collateralShortfall);
 
   /**
    * @notice The total amount of debt for a collateral type computed during the settlement process
    * @param _cType Bytes32 representation of the collateral type
    * @return _collateralTotalDebt The total amount of debt for a collateral type [wad]
    */
-  function collateralTotalDebt(bytes32 _cType) external view returns (uint256 _collateralTotalDebt);
+  function collateralTotalDebt(
+    bytes32 _cType
+  ) external view returns (uint256 _collateralTotalDebt);
 
   /**
    * @notice Final collateral cash price computed during the settlement process, accounting for surplus / shortfall
    * @param _cType Bytes32 representation of the collateral type
    * @return _collateralCashPrice The final collateral cash price [ray]
    */
-  function collateralCashPrice(bytes32 _cType) external view returns (uint256 _collateralCashPrice);
+  function collateralCashPrice(
+    bytes32 _cType
+  ) external view returns (uint256 _collateralCashPrice);
 
   /**
    * @notice Mapping containing the total amount of coins a user has prepared for redeeming
    * @param _coinHolder The address of the user
    * @return _coinBag Amount of coins prepared for redeeming [wad]
    */
-  function coinBag(address _coinHolder) external view returns (uint256 _coinBag);
+  function coinBag(
+    address _coinHolder
+  ) external view returns (uint256 _coinBag);
 
   /**
    * @notice Mapping containing the total amount of coins a user has used to redeem collateral
@@ -202,7 +212,9 @@ interface IGlobalSettlement is IAuthorizable, IDisableable, IModifiable {
    * @notice Calculate a collateral type's final price according to the latest system coin redemption price
    * @param _cType The collateral type to calculate the price for
    */
-  function freezeCollateralType(bytes32 _cType) external;
+  function freezeCollateralType(
+    bytes32 _cType
+  ) external;
 
   /**
    * @notice Fast track an ongoing collateral auction
@@ -222,7 +234,9 @@ interface IGlobalSettlement is IAuthorizable, IDisableable, IModifiable {
    * @notice Remove collateral from the caller's SAFE (requires SAFE to have no debt)
    * @param _cType The collateral type to free
    */
-  function freeCollateral(bytes32 _cType) external;
+  function freeCollateral(
+    bytes32 _cType
+  ) external;
 
   /**
    * @notice Set the final outstanding supply of system coins
@@ -234,13 +248,17 @@ interface IGlobalSettlement is IAuthorizable, IDisableable, IModifiable {
    * @notice Calculate a collateral's price taking into consideration system surplus/deficit and the finalCoinPerCollateralPrice
    * @param _cType The collateral whose cash price will be calculated
    */
-  function calculateCashPrice(bytes32 _cType) external;
+  function calculateCashPrice(
+    bytes32 _cType
+  ) external;
 
   /**
    * @notice Add coins into a 'bag' so that you can use them to redeem collateral
    * @param _coinAmount The amount of internal system coins to add into the bag
    */
-  function prepareCoinsForRedeeming(uint256 _coinAmount) external;
+  function prepareCoinsForRedeeming(
+    uint256 _coinAmount
+  ) external;
 
   /**
    * @notice Redeem a specific collateral type using an amount of internal system coins from your bag

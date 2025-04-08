@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IPIDController, PIDController} from '@contracts/PIDController.sol';
 import {InternalCallsWatcher, InternalCallsExtension} from '@test/utils/InternalCallsWatcher.sol';
@@ -17,7 +17,9 @@ contract PIDControllerForTest is PIDController, InternalCallsExtension {
     mockPIDController = _mockPIDController;
   }
 
-  function _getBoundedPIOutput(int256 _piOutput) internal view virtual override returns (int256 _boundedPIOutput) {
+  function _getBoundedPIOutput(
+    int256 _piOutput
+  ) internal view virtual override returns (int256 _boundedPIOutput) {
     watcher.calledInternal(abi.encodeWithSignature('_getBoundedPIOutput(int256)', _piOutput));
     if (callSuper) {
       return super._getBoundedPIOutput(_piOutput);
@@ -26,7 +28,9 @@ contract PIDControllerForTest is PIDController, InternalCallsExtension {
     }
   }
 
-  function call_getBoundedPIOutput(int256 _piOutput) external view returns (int256 _boundedPIOutput) {
+  function call_getBoundedPIOutput(
+    int256 _piOutput
+  ) external view returns (int256 _boundedPIOutput) {
     return super._getBoundedPIOutput(_piOutput);
   }
 
@@ -46,7 +50,9 @@ contract PIDControllerForTest is PIDController, InternalCallsExtension {
 
   bool callSupper_getNextDeviationCumulative = true;
 
-  function setCallSupper_getNextDeviationCumulative(bool _callSuper) external {
+  function setCallSupper_getNextDeviationCumulative(
+    bool _callSuper
+  ) external {
     callSupper_getNextDeviationCumulative = _callSuper;
   }
 
@@ -72,7 +78,9 @@ contract PIDControllerForTest is PIDController, InternalCallsExtension {
 
   bool callSupper_getGainAdjustedPIOutput = true;
 
-  function setCallSupper_getGainAdjustedPIOutput(bool _callSuper) external {
+  function setCallSupper_getGainAdjustedPIOutput(
+    bool _callSuper
+  ) external {
     callSupper_getGainAdjustedPIOutput = _callSuper;
   }
 
@@ -118,11 +126,15 @@ contract PIDControllerForTest is PIDController, InternalCallsExtension {
 
   bool callSupper_getBoundedRedemptionRate = true;
 
-  function setCallSupper_getBoundedRedemptionRate(bool _callSuper) external {
+  function setCallSupper_getBoundedRedemptionRate(
+    bool _callSuper
+  ) external {
     callSupper_getBoundedRedemptionRate = _callSuper;
   }
 
-  function _getBoundedRedemptionRate(int256 _piOutput) internal view virtual override returns (uint256) {
+  function _getBoundedRedemptionRate(
+    int256 _piOutput
+  ) internal view virtual override returns (uint256) {
     watcher.calledInternal(abi.encodeWithSignature('_getBoundedRedemptionRate(int256)', _piOutput));
     if (callSuper || callSupper_getBoundedRedemptionRate) {
       return super._getBoundedRedemptionRate(_piOutput);
@@ -133,7 +145,9 @@ contract PIDControllerForTest is PIDController, InternalCallsExtension {
 
   bool callSupper_updateDeviation = true;
 
-  function setCallSupper_updateDeviation(bool _callSuper) external {
+  function setCallSupper_updateDeviation(
+    bool _callSuper
+  ) external {
     callSupper_updateDeviation = _callSuper;
   }
 
@@ -163,13 +177,17 @@ contract PIDControllerForTest is PIDController, InternalCallsExtension {
   }
 
   // stdstore not available for address
-  function setSeedProposer(address _seedProposer) external {
+  function setSeedProposer(
+    address _seedProposer
+  ) external {
     seedProposer = _seedProposer;
   }
 }
 
 contract MockPIDController {
-  function mock_getBoundedPIOutput(int256 _piOutput) external view returns (int256 _boundedPIOutput) {}
+  function mock_getBoundedPIOutput(
+    int256 _piOutput
+  ) external view returns (int256 _boundedPIOutput) {}
 
   function mock_getProportionalTerm(
     uint256 marketPrice,
@@ -191,7 +209,9 @@ contract MockPIDController {
     uint256 _redemptionPrice
   ) external view virtual returns (bool _breaks) {}
 
-  function mock_getBoundedRedemptionRate(int256 _piOutput) external view virtual returns (uint256) {}
+  function mock_getBoundedRedemptionRate(
+    int256 _piOutput
+  ) external view virtual returns (uint256) {}
 
   function mock_getGainAdjustedTerms(
     int256 proportionalTerm,

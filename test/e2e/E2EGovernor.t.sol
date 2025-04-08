@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {Deploy, DeployMainnet} from '@script/Deploy.s.sol';
 import {Governor, IGovernor} from '@openzeppelin/contracts/governance/Governor.sol';
 import {TimelockController} from '@openzeppelin/contracts/governance/TimelockController.sol';
 
-abstract contract E2EGovernorTest is HaiTest, Deploy {
+abstract contract E2EGovernorTest is AzosTest, Deploy {
   address whale = address(0x420);
   address random = address(0x42069);
 

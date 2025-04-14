@@ -4,7 +4,7 @@ See [AzosSafeManager.sol](/src/contracts/proxies/AzosSafeManager.sol/contract.Az
 
 ## 1. Introduction
 
-The SAFE Manager Contract serves as an interface for interacting with the SAFE Engine, which is the core contract responsible for managing SAFEs in the HAI ecosystem. While the SAFE Engine handles the intricate logic and state changes for SAFEs, the SAFE Manager simplifies and streamlines user interactions with their SAFEs. Essentially, it provides an abstraction layer that facilitates operations such as depositing collateral, withdrawing, and managing debt positions in a user-friendly manner.
+The SAFE Manager Contract serves as an interface for interacting with the SAFE Engine, which is the core contract responsible for managing SAFEs in the Azos ecosystem. While the SAFE Engine handles the intricate logic and state changes for SAFEs, the SAFE Manager simplifies and streamlines user interactions with their SAFEs. Essentially, it provides an abstraction layer that facilitates operations such as depositing collateral, withdrawing, and managing debt positions in a user-friendly manner.
 
 ## 2. Contract Details
 
@@ -29,7 +29,7 @@ The SAFE Engine identifies each SAFE by its unique contract address and the type
 
 ### Understanding the SAFE Handler
 
-The SAFE Handler is a specialized contract that acts as an intermediary between the SAFE Engine and the SAFE Manager in the HAI system. Spawned when a new SAFE is created from the SAFE Manager, this contract communicates directly with the SAFE Engine from its unique address, to grant the SAFE Manager authorization to manage its corresponding SAFE, allowing for simplified user interactions and enhanced security. Essentially, each SAFE Handler represents a single-collateral SAFE and is managed by the SAFE Manager, which also controls any further authorizations for it.
+The SAFE Handler is a specialized contract that acts as an intermediary between the SAFE Engine and the SAFE Manager in the Azos system. Spawned when a new SAFE is created from the SAFE Manager, this contract communicates directly with the SAFE Engine from its unique address, to grant the SAFE Manager authorization to manage its corresponding SAFE, allowing for simplified user interactions and enhanced security. Essentially, each SAFE Handler represents a single-collateral SAFE and is managed by the SAFE Manager, which also controls any further authorizations for it.
 
 ### User Authorization
 

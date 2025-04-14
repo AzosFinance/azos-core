@@ -1,11 +1,11 @@
 {
-  "name": "hai",
+  "name": "azos",
   "version": "1.0.7",
   "description": "Multicollateral debt backed stablecoin",
-  "homepage": "https://github.com/hai-on-op/core#readme",
+  "homepage": "https://azos.finance",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hai-on-op/core.git"
+    "url": "git+https://github.com/azosFinance/hai-core.git"
   },
   "license": "MIT",
   "author": "Wonderland",

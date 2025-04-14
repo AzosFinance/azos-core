@@ -1,0 +1,42 @@
+# Introduction to Azos
+
+## Introduction to Azos: A Framework for Stablecoin Systems
+
+Azos serves as a framework for creating systems capable of issuing stablecoins. These stablecoins not only act as a reliable source of collateral for other DeFi protocols—when compared to assets like ETH or BTC—but also function as a store of value, complete with an integrated funding rate.
+
+For a comprehensive understanding of the Azos framework, this documentation aims to detail each of its components. We strongly recommend reviewing Reflexer's original [whitepaper](https://github.com/reflexer-labs/whitepapers/blob/master/English/rai-english.pdf) as a precursor to this documentation.
+
+### Core Differentiators of Azos from GEB
+
+Azos is an enhanced fork of [GEB](https://github.com/reflexer-labs/geb), but it comes with several key distinctions:
+
+- **Advanced System Parameter Controls**: Azos features refined mechanisms for managing system parameters, offering superior flexibility and control.
+- **Enhanced Deployment and Upgradeability**: The framework allows for streamlined deployment and upgrades, simplifying system maintenance.
+- **Robust Testing and Simulation Suite**: Azos includes an upgraded testing and simulation environment, aiding in the identification and mitigation of system risks.
+- **Emphasis on Multi-Collateral Operations**: Azos is designed with a focus on handling multiple types of collateral, broadening its application scope.
+- **Inclusion of Factories for Common Contract Types**: The framework comes with pre-built factories for commonly used contract types, reducing the operations needed for collateral setup.
+- **Standardized Methods and Contract Utilities**: Azos standardizes the way contracts and methods are utilized, making it easier for developers to generate changes across the system.
+- **Revamped Contract Interactions**: The framework restructures the way contracts communicate with each other, leading to more efficient and reliable operations.
+
+By incorporating these features, Azos aims to provide a more advanced, reliable, and user-friendly stablecoin system.
+
+### Chainlink Oracles
+
+Azos uses the industry-standard decentralized oracle Chainlink as its primary oracle which provides highly secure and reliable, tamper-resistant data feeds.
+
+Chainlink oracles are used across our Optimism instance:
+
+| **Asset**  |
+| ---------- |
+| WETH-USD   |
+| wstETH-USD |
+| tBTC-USD   |
+| rETH-USD   |
+| OP-USD     |
+| SNX-USD    |
+| VELO-USD   |
+| LINK-USD   |
+
+### DIA Oracles
+
+Azos uses DIA Oracles as one of its solutions for crypto assets pricing. DIA is a Modular Oracle that delivers frequently updated, reliable, and diverse data feeds in a few models. Azos utilizes Push model which ensures that data is pushed into on-chain storage via a relayer with set conditions. (heartbeat and deviation threshold)

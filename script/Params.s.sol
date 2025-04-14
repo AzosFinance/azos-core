@@ -27,14 +27,14 @@ import {WAD, RAY, RAD} from '@libraries/Math.sol';
 
 // --- Utils ---
 
-// HAI Params
-bytes32 constant HAI = bytes32('HAI'); // 0x4841490000000000000000000000000000000000000000000000000000000000
-uint256 constant HAI_USD_INITIAL_PRICE = 1e18; // 1 HAI = 1 USD
-uint256 constant HAI_ETH_INITIAL_PRICE = 0.0005e18; // 2000 HAI = 1 ETH
-int24 constant HAI_ETH_INITIAL_TICK = 76_013; // ~2000 HAI = 1 ETH
+// AZUSD Params
+bytes32 constant AZUSD = bytes32('AZUSD'); // 0x4841490000000000000000000000000000000000000000000000000000000000
+uint256 constant AZUSD_USD_INITIAL_PRICE = 1e18; // 1 AZUSD = 1 USD
+uint256 constant AZUSD_ETH_INITIAL_PRICE = 0.0005e18; // 2000 AZUSD = 1 ETH
+int24 constant AZUSD_ETH_INITIAL_TICK = 76_013; // ~2000 AZUSD = 1 ETH
 
-uint24 constant HAI_POOL_FEE_TIER = 3000; // 0.3 %
-uint16 constant HAI_POOL_OBSERVATION_CARDINALITY = 5000; // Safest cardinality would be 43.2k (at 2s per block, 1d TWAP)
+uint24 constant AZUSD_POOL_FEE_TIER = 3000; // 0.3 %
+uint16 constant AZUSD_POOL_OBSERVATION_CARDINALITY = 5000; // Safest cardinality would be 43.2k (at 2s per block, 1d TWAP)
 
 // Collateral Names
 bytes32 constant ETH_A = bytes32('ETH-A'); // 0x4554482d41000000000000000000000000000000000000000000000000000000
@@ -100,7 +100,7 @@ uint256 constant PROPORTIONAL_GAIN = 154_712_579_997;
 uint256 constant INTEGRAL_GAIN = 13_785;
 
 // Job Params
-uint256 constant JOB_REWARD = 1 * WAD; // 1 HAI
+uint256 constant JOB_REWARD = 1 * WAD; // 1 AZUSD
 
 /**
  * @title Params

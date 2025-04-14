@@ -48,9 +48,9 @@ The Oracle Relayer is the module that handles the quoting mechanism of the syste
 
 ### Quoting Mechanism
 
-Each collateral type needs to have an associated oracle that quotes the collateral in terms of the denomination currency (in HAI, US Dollars). The System Coin Oracle needs to be also denominated in the same currency.
+Each collateral type needs to have an associated oracle that quotes the collateral in terms of the denomination currency (in Azos, US Dollars). The System Coin Oracle needs to be also denominated in the same currency.
 
-The Oracle Relayer handles the quoting mechanism, in which collateral types are quoted in terms of HAI, applying a variable rate to HAI price. The collateral price is calculated as follows:
+The Oracle Relayer handles the quoting mechanism, in which collateral types are quoted in terms of Azos, applying a variable rate to Azos price. The collateral price is calculated as follows:
 
 ```
 collateralPrice = oraclePrice / redemptionPrice

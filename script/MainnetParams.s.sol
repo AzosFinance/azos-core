@@ -21,10 +21,10 @@ abstract contract MainnetParams is Contracts, Params {
       surplusDelay: 1 days,
       popDebtDelay: 14 days,
       disableCooldown: 3 days,
-      surplusAmount: 42_000 * RAD, // 42k HAI
-      surplusBuffer: 100_000 * RAD, // 100k HAI
-      debtAuctionMintedTokens: 10_000 * WAD, // 10k KITE
-      debtAuctionBidSize: 10_000 * RAD // 10k HAI
+      surplusAmount: 42_000 * RAD, // 42k AZUSD
+      surplusBuffer: 100_000 * RAD, // 100k AZUSD
+      debtAuctionMintedTokens: 10_000 * WAD, // 10k AZOS
+      debtAuctionBidSize: 10_000 * RAD // 10k AZUSD
     });
 
     _debtAuctionHouseParams = IDebtAuctionHouse.DebtAuctionHouseParams({
@@ -43,12 +43,12 @@ abstract contract MainnetParams is Contracts, Params {
     });
 
     _liquidationEngineParams = ILiquidationEngine.LiquidationEngineParams({
-      onAuctionSystemCoinLimit: 10_000_000 * RAD, // 10M HAI
+      onAuctionSystemCoinLimit: 10_000_000 * RAD, // 10M AZUSD
       saviourGasLimit: 10_000_000 // 10M gas
     });
 
     _stabilityFeeTreasuryParams = IStabilityFeeTreasury.StabilityFeeTreasuryParams({
-      treasuryCapacity: 1_000_000 * RAD, // 1M HAI
+      treasuryCapacity: 1_000_000 * RAD, // 1M AZUSD
       pullFundsMinThreshold: 0, // no threshold
       surplusTransferDelay: 1 days
     });

@@ -40,7 +40,7 @@ The Stability Fee Treasury functions as a specialized contract designed for mana
 
 - **SAFEEngine**: Query and settle the treasury's coin and debt balance.
 - **Extra Surplus Receiver**: Who receives the funds that are above the treasury's capacity (usually Accounting Engine).
-- **CoinJoin**: Used to join ERC20 HAI into the system.
+- **CoinJoin**: Used to join ERC20 AZUSD into the system.
 - `treasuryCapacity`: Maximum amount of funds that the treasury can hold (before transferring to the extra surplus receiver).
 - `pullFundsMinThreshold`: Minimum amount of funds that the treasury must hold to be able to pull funds from it.
 - `surplusTransferDelay`: Minimum delay between transfers of funds to the extra surplus receiver.

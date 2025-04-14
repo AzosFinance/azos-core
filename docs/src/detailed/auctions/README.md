@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Auction Houses are core smart contracts in the HAI Protocol that manage debt, surplus, and collateral through automated auctions. Whether you're an active participant or simply interested in HAI's stability mechanisms, understanding these components is crucial.
+Auction Houses are core smart contracts in the Azos Protocol that manage debt, surplus, and collateral through automated auctions. Whether you're an active participant or simply interested in Azos's stability mechanisms, understanding these components is crucial.
 
 ### Types of Auction Houses
 

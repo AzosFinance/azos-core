@@ -22,7 +22,7 @@ Maintaining the protocol's overall health often involves executing key maintenan
 
 ### Payment Flow
 
-In the HAI ecosystem, when users interact with Jobs contracts for performing key maintenance tasks, the rewards for these actions come from the Stability Fee Treasury. Upon successful execution of a job, the treasury transfers these rewards internally to the user's account within the protocol. Following this, a proxy action is triggered, designed specifically to "burn" these internal coins. This burning process essentially converts the internal balance into ERC20 HAI tokens, which are then withdrawn to the user's external wallet. Thus, the process seamlessly ensures that users are rewarded in a liquid form of HAI tokens that can be freely used or traded.
+In the Azos ecosystem, when users interact with Jobs contracts for performing key maintenance tasks, the rewards for these actions come from the Stability Fee Treasury. Upon successful execution of a job, the treasury transfers these rewards internally to the user's account within the protocol. Following this, a proxy action is triggered, designed specifically to "burn" these internal coins. This burning process essentially converts the internal balance into ERC20 AZUSD tokens, which are then withdrawn to the user's external wallet. Thus, the process seamlessly ensures that users are rewarded in a liquid form of AZUSD tokens that can be freely used or traded.
 
 ## 4. Gotchas
 

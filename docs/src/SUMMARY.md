@@ -5,8 +5,8 @@
 # Documentation
 
 - [❱ Getting Started](detailed/intro/README.md)
-  - [Introduction to HAI](detailed/intro/hai.md)
-  - [HAI Protocol 101](detailed/intro/protocol.md)
+  - [Introduction to Azos](detailed/intro/azos.md)
+  - [Azos Protocol 101](detailed/intro/protocol.md)
 - [❱ Core Modules](detailed/modules/README.md)
   - [SAFE Engine](detailed/modules/safe_engine.md)
   - [Accounting Engine](detailed/modules/acc_engine.md)
@@ -36,9 +36,9 @@
     - [Authorizable Child](detailed/utils/factory/authorizable_child.md)
     - [Disableable Child](detailed/utils/factory/disableable_child.md)
 - [❱ Proxy Utils](detailed/proxies/README.md)
-  - [HAI Proxy](detailed/proxies/hai_proxy.md)
-  - [Proxy Factory](detailed/proxies/hai_proxy_factory.md)
-  - [SAFE Manager](detailed/proxies/hai_safe_manager.md)
+  - [Azos Proxy](detailed/proxies/azos_proxy)
+  - [Proxy Factory](detailed/proxies/azos_proxy_factory.md)
+  - [SAFE Manager](detailed/proxies/azos_safe_manager.md)
   - [❱ Actions](detailed/proxies/actions/README.md)
     - [Basic Actions](detailed/proxies/actions/basic_actions.md)
     - [Rewarded Actions](detailed/proxies/actions/rewarded_actions.md)

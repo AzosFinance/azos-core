@@ -10,7 +10,7 @@ abstract contract TestnetParams is Contracts, Params {
 
   function _getEnvironmentParams() internal override {
     // Setup delegated collateral joins
-    delegatee[OP] = address(haiDelegatee);
+    delegatee[OP] = address(azosDelegate);
 
     _safeEngineParams = ISAFEEngine.SAFEEngineParams({
       safeDebtCeiling: 1_000_000 * WAD, // WAD
@@ -18,7 +18,7 @@ abstract contract TestnetParams is Contracts, Params {
     });
 
     _accountingEngineParams = IAccountingEngine.AccountingEngineParams({
-      surplusIsTransferred: 0, // surplus is auctioned
+      surplusIsTransferred: 1, // surplus is auctioned
       surplusDelay: 1 days,
       popDebtDelay: 0,
       disableCooldown: 3 days,

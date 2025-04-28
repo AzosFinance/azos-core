@@ -33,6 +33,7 @@ import {DelayedOracle, IDelayedOracle} from '@contracts/oracles/DelayedOracle.so
 import {DenominatedOracle} from '@contracts/oracles/DenominatedOracle.sol';
 import {ChainlinkRelayer} from '@contracts/oracles/ChainlinkRelayer.sol';
 import {UniV3Relayer, IUniV3Relayer} from '@contracts/oracles/UniV3Relayer.sol';
+import {DIARelayerV2} from '@contracts/oracles/DIARelayerV2.sol';
 
 // --- Testnet contracts ---
 import {MintableERC20} from '@contracts/for-test/MintableERC20.sol';
@@ -53,6 +54,8 @@ import {ChainlinkRelayerFactory, IChainlinkRelayerFactory} from '@contracts/fact
 import {UniV3RelayerFactory, IUniV3RelayerFactory} from '@contracts/factories/UniV3RelayerFactory.sol';
 import {DenominatedOracleFactory, IDenominatedOracleFactory} from '@contracts/factories/DenominatedOracleFactory.sol';
 import {DelayedOracleFactory, IDelayedOracleFactory} from '@contracts/factories/DelayedOracleFactory.sol';
+import {IAerodromeFactory} from '@interfaces/external/IAerodromeFactory.sol';
+import {AerodromeRelayerFactory, IAerodromeRelayerFactory} from '@contracts/factories/AerodromeRelayerFactory.sol';
 
 // --- Jobs ---
 import {AccountingJob, IAccountingJob} from '@contracts/jobs/AccountingJob.sol';
@@ -156,7 +159,12 @@ abstract contract Contracts {
 
   // --- Governance contracts ---
   TimelockController public timelock;
-  AzosGovernor public haiGovernor;
+  AzosGovernor public azosGovernor;
   TokenDistributor public tokenDistributor;
-  AzosDelegatee public haiDelegatee;
+  AzosDelegatee public azosDelegate;
+
+  // --- New contracts ---
+  IAerodromeFactory public aerodromeFactory;
+  IAerodromeRelayerFactory public aerodromeRelayerFactory;
+  DIARelayerV2 public diaRelayerV2;
 }

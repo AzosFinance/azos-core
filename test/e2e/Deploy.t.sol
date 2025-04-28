@@ -439,9 +439,9 @@ abstract contract CommonDeploymentTest is AzosTest, Deploy {
   // }
 
   function test_Timelock_Auth() public {
-    assertEq(timelock.hasRole(keccak256('PROPOSER_ROLE'), address(haiGovernor)), true);
-    assertEq(timelock.hasRole(keccak256('CANCELLER_ROLE'), address(haiGovernor)), true);
-    assertEq(timelock.hasRole(keccak256('EXECUTOR_ROLE'), address(haiGovernor)), true);
+    assertEq(timelock.hasRole(keccak256('PROPOSER_ROLE'), address(azosGovernor)), true);
+    assertEq(timelock.hasRole(keccak256('CANCELLER_ROLE'), address(azosGovernor)), true);
+    assertEq(timelock.hasRole(keccak256('EXECUTOR_ROLE'), address(azosGovernor)), true);
   }
 
   function test_Timelock_Params() public {
@@ -454,12 +454,12 @@ abstract contract CommonDeploymentTest is AzosTest, Deploy {
   // }
 
   function test_AzosGovernor_Params() public {
-    assertEq(haiGovernor.votingDelay(), _governorParams.votingDelay);
-    assertEq(haiGovernor.votingPeriod(), _governorParams.votingPeriod);
-    assertEq(haiGovernor.proposalThreshold(), _governorParams.proposalThreshold);
+    assertEq(azosGovernor.votingDelay(), _governorParams.votingDelay);
+    assertEq(azosGovernor.votingPeriod(), _governorParams.votingPeriod);
+    assertEq(azosGovernor.proposalThreshold(), _governorParams.proposalThreshold);
 
-    assertEq(address(haiGovernor.token()), address(protocolToken));
-    assertEq(address(haiGovernor.timelock()), address(timelock));
+    assertEq(address(azosGovernor.token()), address(protocolToken));
+    assertEq(address(azosGovernor.timelock()), address(timelock));
   }
 
   // TokenDistributor
@@ -485,7 +485,7 @@ abstract contract CommonDeploymentTest is AzosTest, Deploy {
   // }
 
   function test_Delegated_OP() public {
-    assertEq(ERC20Votes(OP_OPTIMISM).delegates(address(collateralJoin[OP])), address(haiDelegatee));
+    assertEq(ERC20Votes(OP_OPTIMISM).delegates(address(collateralJoin[OP])), address(azosDelegate));
   }
 
   function _test_Authorizations(address _target, bool _permission) internal {

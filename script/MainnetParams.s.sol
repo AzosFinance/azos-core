@@ -4,20 +4,21 @@ pragma solidity ^0.8.20;
 import '@script/Params.s.sol';
 
 abstract contract MainnetParams is Contracts, Params {
-  address constant OP_ADMIN_SAFE = 0x468c572c41DB8B206B3919AC9a41ad8dE2eAc822;
+  address constant BASE_ADMIN_SAFE = 0xBdAF85b594C7Cb802ECBBcF0C64e0959b6Cf3629;
 
   // --- Mainnet Params ---
   function _getEnvironmentParams() internal override {
     // Setup delegated collateral joins
-    delegatee[OP] = address(haiDelegatee);
+    delegatee[OP] = address(azosDelegate);
+    delegatee[USDGLO] = address(azosDelegate);
 
     _safeEngineParams = ISAFEEngine.SAFEEngineParams({
       safeDebtCeiling: 1_000_000 * WAD, // WAD
-      globalDebtCeiling: 55_000_000 * RAD // initially disabled
+      globalDebtCeiling: 5_000_000 * RAD // initially disabled
     });
 
     _accountingEngineParams = IAccountingEngine.AccountingEngineParams({
-      surplusIsTransferred: 0, // surplus is auctioned
+      surplusIsTransferred: 1, // surplus is not auctioned
       surplusDelay: 1 days,
       popDebtDelay: 14 days,
       disableCooldown: 3 days,
@@ -72,7 +73,7 @@ abstract contract MainnetParams is Contracts, Params {
 
     _taxCollectorSecondaryTaxReceiver.push(
       ITaxCollector.TaxReceiver({
-        receiver: OP_ADMIN_SAFE,
+        receiver: BASE_ADMIN_SAFE,
         canTakeBackTax: true, // [bool]
         taxPercentage: 0.21e18 // 21%
       })
@@ -133,7 +134,7 @@ abstract contract MainnetParams is Contracts, Params {
       minimumBid: 100 * WAD, // 100 HAI
       minDiscount: 1e18, // no discount
       maxDiscount: 0.9e18, // -10%
-      perSecondDiscountUpdateRate: MINUS_10_PERCENT_IN_2_HOURS // -10% / 2hs
+      perSecondDiscountUpdateRate: MINUS_10_PERCENT_IN_2_HOURS_CORRECT // -10% / 2hs
     });
 
     // ------------ WSTETH ------------

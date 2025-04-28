@@ -20,11 +20,11 @@ abstract contract Common is Contracts, Params {
     IAzosGovernor.AzosGovernorParams memory _emptyGovernorParams;
     // if governor params are not empty, deploy governor
     if (keccak256(abi.encode(_governorParams)) != keccak256(abi.encode(_emptyGovernorParams))) {
-      haiGovernor = new AzosGovernor(protocolToken, 'AzosGovernor', _governorParams);
+      azosGovernor = new AzosGovernor(protocolToken, 'AzosGovernor', _governorParams);
 
-      timelock = TimelockController(payable(haiGovernor.timelock()));
+      timelock = TimelockController(payable(azosGovernor.timelock()));
 
-      haiDelegatee = new AzosDelegatee(address(timelock));
+      azosDelegate = new AzosDelegatee(address(timelock));
 
       // sets timelock as protocol governor
       governor = address(timelock);

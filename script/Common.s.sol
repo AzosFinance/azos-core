@@ -13,7 +13,7 @@ abstract contract Common is Contracts, Params {
 
   function deployTokens() public updateParams {
     systemCoin = new SystemCoin('Azos Stablecoin', 'AZUSD');
-    protocolToken = new ProtocolToken('Azos Protocol Token', 'KITE');
+    protocolToken = new ProtocolToken('Azos Protocol Token', 'AZOS');
   }
 
   function deployGovernance() public updateParams {

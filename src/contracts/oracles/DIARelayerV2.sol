@@ -1,32 +1,61 @@
 // SPDX-License-Identifier: GPL-3.0
+//                      OO
+//                     OOOO
+//                    OOOOOO
+//                   OOO  OOO
+//                 +OOO    OOO
+//                ,OOO     ,OOO,
+//               ~OOO       ~OOO.
+//        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+//       AAAAAAAAAAAAA AZOS AAAAAAAAAAAAA
+//            ZZZZZ            SSSSS
+//           ZZZZZ              SSSSS   @Azos Labs 2025
+//          ZZZZZ                SSSSS  @author penguin@azos.tech
+//         ZZZZZ                  SSSSS
+//        ZZZZZZZZZZZZZ    SSSSSSSSSSSSS
+//       ZZZZZZZZZZZZZZ    SSSSSSSSSSSSSS
+//
 pragma solidity ^0.8.20;
 
 import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
 import {IDIAOraclev2} from '@interfaces/oracles/IDIAOracleV2.sol';
 
-/**
- * @title  DIARelayerV2
- * @notice This contract relays prices from DIA Oracle V2
- */
+/// @title DIA Oracle V2 Relayer
+/// @notice Relays and validates price data from DIA Oracle V2 while ensuring freshness and proper decimal conversion
+/// @dev Implements price staleness checks and converts DIA's 8 decimal precision to 18 decimals
+/// @custom:security-contact security@azos.tech
 contract DIARelayerV2 is IBaseOracle {
-  // --- Immutable Variables ---
+  /// @notice The DIA Oracle V2 contract reference
+  /// @dev Immutable reference to the main DIA price feed contract
   IDIAOraclev2 public immutable DIA_ORACLE;
+
+  /// @notice Maximum age of price data before it's considered stale
+  /// @dev Time in seconds after which price data is considered invalid
   uint256 public immutable STALE_THRESHOLD;
+
+  /// @notice The price feed identifier used in DIA Oracle
+  /// @dev Format should be "TOKEN/DENOMINATION" (e.g., "KLIMA/USD")
   string public key;
 
-  // --- State Variables ---
+  /// @notice Mapping of price feed keys to their current values
+  /// @dev Values are stored with 18 decimal precision
   mapping(bytes32 => uint256) public values;
+
+  /// @notice Mapping of price feed keys to their last update timestamps
   mapping(bytes32 => uint256) public timestamps;
+
+  /// @notice Mapping of price feed keys to their authorized updaters
   mapping(bytes32 => address) public oracleUpdaters;
 
-  // --- Events ---
+  /// @notice Emitted when the stale threshold is updated
+  /// @param _threshold New threshold value in seconds
   event NewStaleThreshold(uint256 _threshold);
 
-  /**
-   * @param  _diaOracle The address of the DIA Oracle V2 contract
-   * @param  _key The key for the DIA price feed (e.g., 'WBTC/USD')
-   * @param  _staleThreshold The threshold in seconds after which the price is considered stale
-   */
+  /// @notice Initializes the relayer with a specific DIA Oracle feed
+  /// @param _diaOracle Address of the DIA Oracle V2 contract
+  /// @param _key The price feed identifier (e.g., "KLIMA/USD")
+  /// @param _staleThreshold Maximum age of price data in seconds
+  /// @dev Validates inputs and sets up initial state
   constructor(address _diaOracle, string memory _key, uint256 _staleThreshold) {
     require(_diaOracle != address(0), 'Invalid oracle address');
     require(_staleThreshold > 0, 'Invalid stale threshold');
@@ -35,7 +64,10 @@ contract DIARelayerV2 is IBaseOracle {
     oracleUpdaters[keccak256(abi.encodePacked(_key))] = msg.sender;
   }
 
-  /// @inheritdoc IBaseOracle
+  /// @notice Retrieves the latest price and validates its freshness
+  /// @dev Converts DIA's 8 decimal precision to 18 decimals and checks staleness
+  /// @return _price The current price with 18 decimal precision
+  /// @return _validity True if the price is fresh and valid, false otherwise
   function getResultWithValidity() external view returns (uint256 _price, bool _validity) {
     uint128 _value;
     uint128 _timestamp;
@@ -53,7 +85,10 @@ contract DIARelayerV2 is IBaseOracle {
     return (_price, _validity);
   }
 
-  /// @inheritdoc IBaseOracle
+  /// @notice Reads the current price, reverting if invalid
+  /// @dev This is a convenience wrapper around getResultWithValidity
+  /// @return _price The current price with 18 decimal precision
+  /// @custom:throws If price is stale or invalid
   function read() external view returns (uint256 _price) {
     bool _validity;
     (_price, _validity) = this.getResultWithValidity();
@@ -61,8 +96,9 @@ contract DIARelayerV2 is IBaseOracle {
     return _price;
   }
 
-  /// @inheritdoc IBaseOracle
-  function symbol() external view returns (string memory _key) {
+  /// @notice Returns the symbol/key of this price feed
+  /// @return _symbol The price feed identifier (e.g., "KLIMA/USD")
+  function symbol() external view returns (string memory _symbol) {
     return key;
   }
 }

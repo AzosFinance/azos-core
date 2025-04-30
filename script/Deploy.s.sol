@@ -97,7 +97,6 @@ contract DeployMainnet is MainnetParams, Deploy {
     collateral[KLIMA] = IERC20Metadata(address(BASE_KLIMA));
     collateral[CELO] = IERC20Metadata(address(BASE_CELO));
     collateral[USDGLO] = IERC20Metadata(address(BASE_USDGLO));
-    collateral[USDC] = IERC20Metadata(address(BASE_USDC));
 
     // Setup collateral types
     collateralTypes.push(KLIMA);
@@ -109,27 +108,7 @@ contract DeployMainnet is MainnetParams, Deploy {
   }
 
   function setupPostEnvironment() public virtual override updateParams {
-    // Deploy AZUSD/USDC Aerodrome stable pool (uninitialized)
-    IAerodromeFactory(AERODROME_FACTORY).createPool({
-      _tokenA: address(systemCoin), // AZUSD
-      _tokenB: address(collateral[USDC]), // USDC
-      _stable: true // Use stable pool since both are stablecoins
-    });
-
-    // Setup AZUSD/USDC oracle feed
-    IBaseOracle _azusdUsdcOracle = aerodromeRelayerFactory.deployAerodromeRelayer({
-      _baseToken: address(systemCoin),
-      _quoteToken: address(collateral[USDC]),
-      _stable: true,
-      _quotePeriod: 1 hours
-    });
-
-    // Setup AZUSD/USD oracle feed
-    denominatedOracleFactory.deployDenominatedOracle({
-      _priceSource: _azusdUsdcOracle,
-      _denominationPriceSource: delayedOracle[USDC].priceSource(),
-      _inverted: false
-    });
+    // NOTE: Deploying the PID Controller turned off until governance action
   }
 }
 

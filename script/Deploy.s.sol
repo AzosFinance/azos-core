@@ -86,8 +86,8 @@ contract DeployMainnet is MainnetParams, Deploy {
     // Setup oracle system with DIA Oracle V2
     address diaOracleV2 = 0x997b09Fb3AB03b06506E2eFBc10b19345A283D09;
     // Setup oracle feeds
-    IBaseOracle _klimaUsdOracle = new DIARelayerV2(diaOracleV2, 'KLIMA/USD', 1 hours);
-    IBaseOracle _celoUsdOracle = new DIARelayerV2(diaOracleV2, 'CELO/USD', 1 hours);
+    IBaseOracle _klimaUsdOracle = new DIARelayerV2(diaOracleV2, 'KLIMA/USD', 1 hours, azosGovernor);
+    IBaseOracle _celoUsdOracle = new DIARelayerV2(diaOracleV2, 'CELO/USD', 1 hours, azosGovernor);
     IBaseOracle _usdgloUsdOracle = new HardcodedOracle('USDGLO/USD', 1e18); // 1 USDGLO = 1 USD, hardcoded for usd redemptions
 
     delayedOracle[KLIMA] = delayedOracleFactory.deployDelayedOracle(_klimaUsdOracle, 1 hours);

@@ -52,18 +52,18 @@ contract DIARelayerV2 is IBaseOracle {
     /// @notice Emitted when the stale threshold is updated
     /// @param _threshold New threshold value in seconds
     /// @param _setter Address of the person setting the threshold
-    event NewStaleThreshold(uint256 _threshold, address setter);
+    event NewStaleThreshold(uint256 _threshold, address _setter);
 
     /// @notice Emitted when a new authorized updater is set
     /// @param _updater Address of the authorized updater
     /// @param _key The price feed identifier
     /// @param _setter Address of the person setting the updater
-    event NewOracleUpdater(address _updater, string _key, address setter);
+    event NewOracleUpdater(address _updater, string _key, address _setter);
 
     /// @notice Emitted when a new key is set
     /// @param _key The new key
     /// @param _setter Address of the person setting the key
-    event NewKeySet(string _key, address setter);
+    event NewKeySet(string _key, address _setter);
 
     error InvalidOracleAddress();
     error InvalidStaleThreshold();

@@ -77,7 +77,7 @@ contract DeployMainnet is MainnetParams, Deploy {
   }
 
   function setupEnvironment() public virtual override updateParams {
-    delegate = 0xd9Bc04Fb848e0bF3EfCFc7e43039cb37F281E4B3; // Deployer EOA Public Key
+    delegate = 0x44E568e07d08821a12cA9A076984102759e53d5d; // Deployer EOA Public Key
 
     // Deploy oracle factories
     denominatedOracleFactory = new DenominatedOracleFactory();
@@ -87,20 +87,20 @@ contract DeployMainnet is MainnetParams, Deploy {
     address diaOracleV2 = 0x997b09Fb3AB03b06506E2eFBc10b19345A283D09;
     // Setup oracle feeds
     IBaseOracle _klimaUsdOracle = new DIARelayerV2(diaOracleV2, 'KLIMA/USD', 1 hours);
-    IBaseOracle _celoUsdOracle = new DIARelayerV2(diaOracleV2, 'CELO/USD', 1 hours);
     IBaseOracle _usdgloUsdOracle = new HardcodedOracle('USDGLO/USD', 1e18); // 1 USDGLO = 1 USD, hardcoded for usd redemptions
+    IBaseOracle _hlspUsdOracle = new HardcodedOracle('HLSP/USD', 1e18); // 1 HLSP = 1 USD, hardcoded for usd redemptions
 
     delayedOracle[KLIMA] = delayedOracleFactory.deployDelayedOracle(_klimaUsdOracle, 1 hours);
-    delayedOracle[CELO] = delayedOracleFactory.deployDelayedOracle(_celoUsdOracle, 1 hours);
+    delayedOracle[HLSP] = delayedOracleFactory.deployDelayedOracle(_hlspUsdOracle, 1 hours);
     delayedOracle[USDGLO] = delayedOracleFactory.deployDelayedOracle(_usdgloUsdOracle, 1 hours);
 
     collateral[KLIMA] = IERC20Metadata(address(BASE_KLIMA));
-    collateral[CELO] = IERC20Metadata(address(BASE_CELO));
+    collateral[HLSP] = IERC20Metadata(address(BASE_HLSP));
     collateral[USDGLO] = IERC20Metadata(address(BASE_USDGLO));
 
     // Setup collateral types
     collateralTypes.push(KLIMA);
-    collateralTypes.push(CELO);
+    collateralTypes.push(HLSP);
     collateralTypes.push(USDGLO);
 
     // NOTE: Deploying the PID Controller turned off until governance action

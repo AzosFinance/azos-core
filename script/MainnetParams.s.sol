@@ -172,8 +172,8 @@ abstract contract MainnetParams is Contracts, Params {
 
     _oracleRelayerCParams[KLIMA] = IOracleRelayer.OracleRelayerCollateralParams({
       oracle: delayedOracle[KLIMA],
-      safetyCRatio: 1.50e27, // 150%
-      liquidationCRatio: 1.20e27 // 120%
+      safetyCRatio: 1.5e27, // 150%
+      liquidationCRatio: 1.2e27 // 120%
     });
 
     _taxCollectorCParams[KLIMA].stabilityFee = PLUS_5_PERCENT_PER_YEAR; // 5%/yr
@@ -199,8 +199,8 @@ abstract contract MainnetParams is Contracts, Params {
 
     _oracleRelayerCParams[WETH] = IOracleRelayer.OracleRelayerCollateralParams({
       oracle: delayedOracle[WETH],
-      safetyCRatio: 1.50e27, // 150%
-      liquidationCRatio: 1.20e27 // 120%
+      safetyCRatio: 1.5e27, // 150%
+      liquidationCRatio: 1.2e27 // 120%
     });
 
     _taxCollectorCParams[WETH].stabilityFee = PLUS_5_PERCENT_PER_YEAR; // 5%/yr
@@ -209,7 +209,7 @@ abstract contract MainnetParams is Contracts, Params {
       collateralAuctionHouse: address(collateralAuctionHouse[WETH]),
       liquidationPenalty: 1.05e18, // 5%
       liquidationQuantity: 50_000 * RAD // 50k AZUSD
-    })
+    });
 
     // --- Governance Params ---
     _governorParams = IAzosGovernor.AzosGovernorParams({
@@ -220,8 +220,5 @@ abstract contract MainnetParams is Contracts, Params {
       quorumVoteExtension: 1 days, // 86_400
       timelockMinDelay: 1 days // 86_400
     });
-
-  // add weth 15k debt limit
-
   }
 }

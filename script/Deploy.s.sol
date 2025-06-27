@@ -87,19 +87,23 @@ contract DeployMainnet is MainnetParams, Deploy {
     address diaOracleV2 = 0x997b09Fb3AB03b06506E2eFBc10b19345A283D09;
     // Setup oracle feeds
     IBaseOracle _klimaUsdOracle = new DIARelayerV2(diaOracleV2, 'KLIMA/USD', 1 hours);
+    IBaseOracle _ethUsdOracle = new DIARelayerV2(diaOracleV2, 'ETH/USD', 1 hours);
     IBaseOracle _usdgloUsdOracle = new HardcodedOracle('USDGLO/USD', 1e18); // 1 USDGLO = 1 USD, hardcoded for usd redemptions
     IBaseOracle _hlspUsdOracle = new HardcodedOracle('HLSP/USD', 1e18); // 1 HLSP = 1 USD, hardcoded for usd redemptions
 
     delayedOracle[KLIMA] = delayedOracleFactory.deployDelayedOracle(_klimaUsdOracle, 1 hours);
+    delayedOracle[WETH] = delayedOracleFactory.deployDelayedOracle(_ethUsdOracle, 1 hours);
     delayedOracle[HLSP] = delayedOracleFactory.deployDelayedOracle(_hlspUsdOracle, 1 hours);
     delayedOracle[USDGLO] = delayedOracleFactory.deployDelayedOracle(_usdgloUsdOracle, 1 hours);
 
     collateral[KLIMA] = IERC20Metadata(address(BASE_KLIMA));
+    collateral[WETH] = IERC20Metadata(address(BASE_WETH));
     collateral[HLSP] = IERC20Metadata(address(BASE_HLSP));
     collateral[USDGLO] = IERC20Metadata(address(BASE_USDGLO));
 
     // Setup collateral types
     collateralTypes.push(KLIMA);
+    collateralTypes.push(WETH);
     collateralTypes.push(HLSP);
     collateralTypes.push(USDGLO);
 

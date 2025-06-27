@@ -14,7 +14,7 @@ abstract contract MainnetParams is Contracts, Params {
 
     _safeEngineParams = ISAFEEngine.SAFEEngineParams({
       safeDebtCeiling: 55_000 * WAD, // WAD
-      globalDebtCeiling: 100_000 * RAD // initially disabled
+      globalDebtCeiling: 200_000 * RAD // initially disabled
     });
 
     _accountingEngineParams = IAccountingEngine.AccountingEngineParams({
@@ -112,7 +112,7 @@ abstract contract MainnetParams is Contracts, Params {
     // --- Collateral Specific Params ---
     // ------------ USDGLO ------------
     _safeEngineCParams[USDGLO] = ISAFEEngine.SAFEEngineCollateralParams({
-      debtCeiling: 40_000 * RAD, // 60k AZUSD
+      debtCeiling: 40_000 * RAD, // 40k AZUSD
       debtFloor: 150 * RAD // 150 HAI
     });
 
@@ -191,6 +191,26 @@ abstract contract MainnetParams is Contracts, Params {
       perSecondDiscountUpdateRate: MINUS_15_PERCENT_IN_2_HOURS // -15% / 2hs
     });
 
+    // WETH
+    _safeEngineCParams[WETH] = ISAFEEngine.SAFEEngineCollateralParams({
+      debtCeiling: 20_000 * RAD, // 20k AZUSD
+      debtFloor: 150 * RAD // 150 AZUSD
+    });
+
+    _oracleRelayerCParams[WETH] = IOracleRelayer.OracleRelayerCollateralParams({
+      oracle: delayedOracle[WETH],
+      safetyCRatio: 1.50e27, // 150%
+      liquidationCRatio: 1.20e27 // 120%
+    });
+
+    _taxCollectorCParams[WETH].stabilityFee = PLUS_5_PERCENT_PER_YEAR; // 5%/yr
+
+    _liquidationEngineCParams[WETH] = ILiquidationEngine.LiquidationEngineCollateralParams({
+      collateralAuctionHouse: address(collateralAuctionHouse[WETH]),
+      liquidationPenalty: 1.05e18, // 5%
+      liquidationQuantity: 50_000 * RAD // 50k AZUSD
+    })
+
     // --- Governance Params ---
     _governorParams = IAzosGovernor.AzosGovernorParams({
       votingDelay: 12 hours, // 43_200
@@ -201,6 +221,7 @@ abstract contract MainnetParams is Contracts, Params {
       timelockMinDelay: 1 days // 86_400
     });
 
+  // add weth 15k debt limit
 
   }
 }

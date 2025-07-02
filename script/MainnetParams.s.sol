@@ -4,12 +4,13 @@ pragma solidity ^0.8.20;
 import '@script/Params.s.sol';
 
 abstract contract MainnetParams is Contracts, Params {
+  // # TODO fix base admin safe address
   address constant BASE_ADMIN_SAFE = 0xBdAF85b594C7Cb802ECBBcF0C64e0959b6Cf3629;
 
   // --- Mainnet Params ---
   function _getEnvironmentParams() internal override {
     // Setup delegated collateral joins
-    delegatee[OP] = address(azosDelegate);
+//    delegatee[OP] = address(azosDelegate);
     delegatee[USDGLO] = address(azosDelegate);
 
     _safeEngineParams = ISAFEEngine.SAFEEngineParams({
@@ -113,7 +114,7 @@ abstract contract MainnetParams is Contracts, Params {
     // ------------ USDGLO ------------
     _safeEngineCParams[USDGLO] = ISAFEEngine.SAFEEngineCollateralParams({
       debtCeiling: 40_000 * RAD, // 40k AZUSD
-      debtFloor: 150 * RAD // 150 HAI
+      debtFloor: 150 * RAD // 150 AZUSD
     });
 
     _oracleRelayerCParams[USDGLO] = IOracleRelayer.OracleRelayerCollateralParams({
@@ -140,7 +141,7 @@ abstract contract MainnetParams is Contracts, Params {
     // ------------ HLSP ------------
     _safeEngineCParams[HLSP] = ISAFEEngine.SAFEEngineCollateralParams({
       debtCeiling: 60_000 * RAD, // 60k AZUSD
-      debtFloor: 150 * RAD // 150 HAI
+      debtFloor: 150 * RAD // 150 AZUSD
     });
 
     _oracleRelayerCParams[HLSP] = IOracleRelayer.OracleRelayerCollateralParams({
@@ -149,7 +150,7 @@ abstract contract MainnetParams is Contracts, Params {
       liquidationCRatio: 1.07e27 // 107%
     });
 
-    _taxCollectorCParams[HLSP].stabilityFee = PLUS_5_PERCENT_PER_YEAR; // 2%/yr
+    _taxCollectorCParams[HLSP].stabilityFee = PLUS_5_PERCENT_PER_YEAR; // 5%/yr
 
     _liquidationEngineCParams[HLSP] = ILiquidationEngine.LiquidationEngineCollateralParams({
       collateralAuctionHouse: address(collateralAuctionHouse[HLSP]),
@@ -209,6 +210,13 @@ abstract contract MainnetParams is Contracts, Params {
       collateralAuctionHouse: address(collateralAuctionHouse[WETH]),
       liquidationPenalty: 1.05e18, // 5%
       liquidationQuantity: 50_000 * RAD // 50k AZUSD
+    });
+
+    _collateralAuctionHouseParams[WETH] = ICollateralAuctionHouse.CollateralAuctionHouseParams({
+      minimumBid: 100 * WAD, // 100 AZUSD
+      minDiscount: 1e18, // no discount
+      maxDiscount: 0.85e18, // -15%
+      perSecondDiscountUpdateRate: MINUS_15_PERCENT_IN_2_HOURS // -15% / 2hs
     });
 
     // --- Governance Params ---

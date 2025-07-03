@@ -9,10 +9,6 @@ abstract contract MainnetParams is Contracts, Params {
 
   // --- Mainnet Params ---
   function _getEnvironmentParams() internal override {
-    // Setup delegated collateral joins
-//    delegatee[OP] = address(azosDelegate);
-    delegatee[USDGLO] = address(azosDelegate);
-
     _safeEngineParams = ISAFEEngine.SAFEEngineParams({
       safeDebtCeiling: 55_000 * WAD, // WAD
       globalDebtCeiling: 200_000 * RAD // initially disabled

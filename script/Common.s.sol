@@ -258,7 +258,12 @@ abstract contract Common is Contracts, Params {
   }
 
   function _revokeDeployerTo(IAuthorizable _contract, address _governor) internal {
-    _contract.addAuthorization(_governor);
+    // Try to add authorization, but don't fail if already authorized
+    try _contract.addAuthorization(_governor) {
+      // Successfully added authorization
+    } catch {
+      // Already authorized, continue
+    }
     _contract.removeAuthorization(deployer);
   }
 

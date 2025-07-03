@@ -61,6 +61,7 @@ contract DIARelayerV2 is IBaseOracle {
     require(_staleThreshold > 0, 'Invalid stale threshold');
     DIA_ORACLE = IDIAOraclev2(_diaOracle);
     STALE_THRESHOLD = _staleThreshold;
+    key = _key;
     oracleUpdaters[keccak256(abi.encodePacked(_key))] = msg.sender;
   }
 

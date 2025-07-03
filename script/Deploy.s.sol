@@ -63,8 +63,7 @@ abstract contract Deploy is Common, Script {
     } else if (delegate == deployer) {
       _delegateToAll(governor);
     } else {
-      _delegateToAll(delegate);
-      _revokeDeployerToAll(governor);
+      _revokeDeployerToAll(delegate);
     }
 
     vm.stopBroadcast();
@@ -73,7 +72,7 @@ abstract contract Deploy is Common, Script {
 
 contract DeployMainnet is MainnetParams, Deploy {
   function setUp() public virtual {
-    _deployerPk = uint256(vm.envBytes32('BASE_SEPOLIA_DEPLOYER_PK'));
+    _deployerPk = uint256(vm.envBytes32('BASE_MAINNET_DEPLOYER_PK'));
   }
 
   function setupEnvironment() public virtual override updateParams {

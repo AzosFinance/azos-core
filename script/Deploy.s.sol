@@ -76,7 +76,7 @@ contract DeployMainnet is MainnetParams, Deploy {
   }
 
   function setupEnvironment() public virtual override updateParams {
-    delegate = 0x44E568e07d08821a12cA9A076984102759e53d5d; // Deployer EOA Public Key
+    delegate = 0x44E568e07d08821a12cA9A076984102759e53d5d; //
 
     // Deploy oracle factories
     denominatedOracleFactory = new DenominatedOracleFactory();

@@ -4,8 +4,7 @@ pragma solidity ^0.8.20;
 import '@script/Params.s.sol';
 
 abstract contract MainnetParams is Contracts, Params {
-  // # TODO fix base admin safe address
-  address constant BASE_ADMIN_SAFE = 0xBdAF85b594C7Cb802ECBBcF0C64e0959b6Cf3629;
+  address constant BASE_ADMIN_SAFE = 0x928970D013AE19e1e9E1746f35bF866Ea440DD1C;
 
   // --- Mainnet Params ---
   function _getEnvironmentParams() internal override {
@@ -64,7 +63,7 @@ abstract contract MainnetParams is Contracts, Params {
       ITaxCollector.TaxReceiver({
         receiver: address(stabilityFeeTreasury),
         canTakeBackTax: true, // [bool]
-        taxPercentage: 0.05e18 // 5%
+        taxPercentage: 0.04e18 // 4%
       })
     );
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {
   IGlobalSettlement,
@@ -214,7 +214,9 @@ contract GlobalSettlement is Authorizable, Modifiable, Disableable, IGlobalSettl
   }
 
   /// @inheritdoc IGlobalSettlement
-  function freezeCollateralType(bytes32 _cType) external whenDisabled {
+  function freezeCollateralType(
+    bytes32 _cType
+  ) external whenDisabled {
     if (finalCoinPerCollateralPrice[_cType] != 0) revert GS_FinalCollateralPriceAlreadyDefined();
     collateralTotalDebt[_cType] = safeEngine.cData(_cType).debtAmount;
     IBaseOracle _oracle = oracleRelayer.cParams(_cType).oracle;
@@ -285,7 +287,9 @@ contract GlobalSettlement is Authorizable, Modifiable, Disableable, IGlobalSettl
   }
 
   /// @inheritdoc IGlobalSettlement
-  function freeCollateral(bytes32 _cType) external whenDisabled {
+  function freeCollateral(
+    bytes32 _cType
+  ) external whenDisabled {
     ISAFEEngine.SAFE memory _safeData = safeEngine.safes(_cType, msg.sender);
     if (_safeData.generatedDebt != 0) revert GS_SafeDebtNotZero();
 
@@ -313,7 +317,9 @@ contract GlobalSettlement is Authorizable, Modifiable, Disableable, IGlobalSettl
   }
 
   /// @inheritdoc IGlobalSettlement
-  function calculateCashPrice(bytes32 _cType) external {
+  function calculateCashPrice(
+    bytes32 _cType
+  ) external {
     if (outstandingCoinSupply == 0) revert GS_OutstandingCoinSupplyZero();
     if (collateralCashPrice[_cType] != 0) revert GS_CollateralCashPriceAlreadyDefined();
 
@@ -328,7 +334,9 @@ contract GlobalSettlement is Authorizable, Modifiable, Disableable, IGlobalSettl
   }
 
   /// @inheritdoc IGlobalSettlement
-  function prepareCoinsForRedeeming(uint256 _coinAmount) external {
+  function prepareCoinsForRedeeming(
+    uint256 _coinAmount
+  ) external {
     if (outstandingCoinSupply == 0) revert GS_OutstandingCoinSupplyZero();
 
     safeEngine.transferInternalCoins(msg.sender, address(accountingEngine), _coinAmount * RAY);

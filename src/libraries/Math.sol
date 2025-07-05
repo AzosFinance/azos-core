@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 /// @dev Max uint256 value that a RAD can represent without overflowing
 uint256 constant MAX_RAD = type(uint256).max / RAY;
@@ -217,7 +217,9 @@ library Math {
    * @return _int Signed integer
    * @dev    Throws if `_x` is too large to fit in an int256
    */
-  function toInt(uint256 _x) internal pure returns (int256 _int) {
+  function toInt(
+    uint256 _x
+  ) internal pure returns (int256 _int) {
     _int = int256(_x);
     if (_int < 0) revert IntOverflow();
   }
@@ -239,7 +241,9 @@ library Math {
    * @param  _x Signed integer
    * @return _z Unsigned absolute value of `_x`
    */
-  function absolute(int256 _x) internal pure returns (uint256 _z) {
+  function absolute(
+    int256 _x
+  ) internal pure returns (uint256 _z) {
     _z = (_x < 0) ? uint256(-_x) : uint256(_x);
   }
 }

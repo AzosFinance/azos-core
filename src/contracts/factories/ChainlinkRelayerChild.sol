@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IChainlinkRelayerChild} from '@interfaces/factories/IChainlinkRelayerChild.sol';
 import {IChainlinkRelayerFactory} from '@interfaces/factories/IChainlinkRelayerFactory.sol';
@@ -43,5 +43,7 @@ contract ChainlinkRelayerChild is ChainlinkRelayer, FactoryChild, IChainlinkRela
    * @param  __sequencerUptimeFeed Ignored parameter (read from factory)
    * @inheritdoc ChainlinkRelayer
    */
-  function _setSequencerUptimeFeed(address __sequencerUptimeFeed) internal override {}
+  function _setSequencerUptimeFeed(
+    address __sequencerUptimeFeed
+  ) internal override {}
 }

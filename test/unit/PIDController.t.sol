@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IPIDController, PIDController} from '@contracts/PIDController.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 import {InternalCallsWatcher, InternalCallsExtension} from '@test/utils/InternalCallsWatcher.sol';
 import {PIDControllerForTest, MockPIDController} from '@test/mocks/PIDControllerForTest.sol';
 
@@ -11,7 +11,7 @@ import '@script/Params.s.sol';
 import {Math, RAY, WAD} from '@libraries/Math.sol';
 import {Assertions} from '@libraries/Assertions.sol';
 
-contract Base is HaiTest {
+contract Base is AzosTest {
   IPIDController pidController;
   IPIDController.PIDControllerParams params;
   IPIDController.ControllerGains gains;
@@ -33,7 +33,9 @@ contract Base is HaiTest {
 
   MockPIDController mockPIDController = new MockPIDController();
 
-  function _createPidController(IPIDController.DeviationObservation memory _importedState) internal {
+  function _createPidController(
+    IPIDController.DeviationObservation memory _importedState
+  ) internal {
     vm.prank(deployer);
 
     IPIDController.ControllerGains memory _pidControllerGains =
@@ -77,29 +79,39 @@ contract Base is HaiTest {
 
   // --- Params ---
 
-  function _mockIntegralPeriodSize(uint256 _integralPeriodSize) internal {
+  function _mockIntegralPeriodSize(
+    uint256 _integralPeriodSize
+  ) internal {
     stdstore.target(address(pidController)).sig(IPIDController.params.selector).depth(0).checked_write(
       _integralPeriodSize
     );
   }
 
-  function _mockPerSecondCumulativeLeak(uint256 _perSecondCumulativeLeak) internal {
+  function _mockPerSecondCumulativeLeak(
+    uint256 _perSecondCumulativeLeak
+  ) internal {
     stdstore.target(address(pidController)).sig(IPIDController.params.selector).depth(1).checked_write(
       _perSecondCumulativeLeak
     );
   }
 
-  function _mockNoiseBarrier(uint256 _noiseBarrier) internal {
+  function _mockNoiseBarrier(
+    uint256 _noiseBarrier
+  ) internal {
     stdstore.target(address(pidController)).sig(IPIDController.params.selector).depth(2).checked_write(_noiseBarrier);
   }
 
-  function _mockFeedbackOutputUpperBound(uint256 _feedbackOutputUpperBound) internal {
+  function _mockFeedbackOutputUpperBound(
+    uint256 _feedbackOutputUpperBound
+  ) internal {
     stdstore.target(address(pidController)).sig(IPIDController.params.selector).depth(3).checked_write(
       _feedbackOutputUpperBound
     );
   }
 
-  function _mockFeedbackOutputLowerBound(int256 _feedbackOutputLowerBound) internal {
+  function _mockFeedbackOutputLowerBound(
+    int256 _feedbackOutputLowerBound
+  ) internal {
     // casts to uint256 because stdstore does not support int256
     stdstore.target(address(pidController)).sig(IPIDController.params.selector).depth(4).checked_write(
       uint256(_feedbackOutputLowerBound)
@@ -108,7 +120,9 @@ contract Base is HaiTest {
 
   // --- Deviation Terms ---
 
-  function _mockGetProportionalTerm(int256 _proportionalTerm) internal {
+  function _mockGetProportionalTerm(
+    int256 _proportionalTerm
+  ) internal {
     vm.mockCall(
       address(mockPIDController),
       abi.encodeWithSelector(MockPIDController.mock_getProportionalTerm.selector),
@@ -116,27 +130,35 @@ contract Base is HaiTest {
     );
   }
 
-  function _mockLastUpdateTime(uint256 _updateTime) internal {
+  function _mockLastUpdateTime(
+    uint256 _updateTime
+  ) internal {
     stdstore.target(address(pidController)).sig(IPIDController.deviationObservation.selector).depth(0).checked_write(
       _updateTime
     );
   }
 
-  function _mockProportionalTerm(int256 _proportionalTerm) internal {
+  function _mockProportionalTerm(
+    int256 _proportionalTerm
+  ) internal {
     // casts to uint256 because stdstore does not support int256
     stdstore.target(address(pidController)).sig(IPIDController.deviationObservation.selector).depth(1).checked_write(
       uint256(_proportionalTerm)
     );
   }
 
-  function _mockIntegralTerm(int256 _proportionalTerm) internal {
+  function _mockIntegralTerm(
+    int256 _proportionalTerm
+  ) internal {
     // casts to uint256 because stdstore does not support int256
     stdstore.target(address(pidController)).sig(IPIDController.deviationObservation.selector).depth(2).checked_write(
       uint256(_proportionalTerm)
     );
   }
 
-  function _mockControllerGains(IPIDController.ControllerGains memory _gains) internal {
+  function _mockControllerGains(
+    IPIDController.ControllerGains memory _gains
+  ) internal {
     stdstore.target(address(pidController)).sig(IPIDController.controllerGains.selector).depth(0).checked_write(
       // casts to uint256 because stdstore does not support int256
       uint256(_gains.kp)
@@ -154,7 +176,9 @@ contract Base is HaiTest {
     );
   }
 
-  function _mockGetGainAdjustedPIOutput(int256 _piOutput) internal {
+  function _mockGetGainAdjustedPIOutput(
+    int256 _piOutput
+  ) internal {
     vm.mockCall(
       address(mockPIDController),
       abi.encodeWithSelector(MockPIDController.mock_getGainAdjustedPIOutput.selector),
@@ -162,7 +186,9 @@ contract Base is HaiTest {
     );
   }
 
-  function _mockBreakNoiseBarrier(bool _breaksNoiseBarrier) internal {
+  function _mockBreakNoiseBarrier(
+    bool _breaksNoiseBarrier
+  ) internal {
     vm.mockCall(
       address(mockPIDController),
       abi.encodeWithSelector(MockPIDController.mock_breaksNoiseBarrier.selector),
@@ -170,7 +196,9 @@ contract Base is HaiTest {
     );
   }
 
-  function _mockGetBoundedRedemptionRate(uint256 _newRedemptionRate) internal {
+  function _mockGetBoundedRedemptionRate(
+    uint256 _newRedemptionRate
+  ) internal {
     vm.mockCall(
       address(mockPIDController),
       abi.encodeWithSelector(MockPIDController.mock_getBoundedRedemptionRate.selector),
@@ -178,11 +206,15 @@ contract Base is HaiTest {
     );
   }
 
-  function setCallSuper(bool _callSuper) public {
+  function setCallSuper(
+    bool _callSuper
+  ) public {
     PIDControllerForTest(address(pidController)).setCallSuper(_callSuper);
   }
 
-  function _mockBoundedPIOutput(int256 _boundedPiOutput) internal {
+  function _mockBoundedPIOutput(
+    int256 _boundedPiOutput
+  ) internal {
     vm.mockCall(
       address(mockPIDController),
       abi.encodeWithSelector(MockPIDController.mock_getBoundedPIOutput.selector),
@@ -290,7 +322,9 @@ contract Unit_PIDController_Constructor is Base {
     assertEq(_deviation.integral, 0);
   }
 
-  function test_Set_PIDControllerParams(IPIDController.PIDControllerParams memory _controllerParams) public {
+  function test_Set_PIDControllerParams(
+    IPIDController.PIDControllerParams memory _controllerParams
+  ) public {
     vm.assume(_controllerParams.integralPeriodSize != 0);
     vm.assume(_controllerParams.noiseBarrier != 0 && _controllerParams.noiseBarrier <= WAD);
     vm.assume(
@@ -319,7 +353,9 @@ contract Unit_PIDController_Constructor is Base {
     _createPidController(IPIDController.DeviationObservation(0, 0, 0));
   }
 
-  function test_Revert_Invalid_FeedbackOutputUpperBound(uint256 _feedbackUpperBound) public {
+  function test_Revert_Invalid_FeedbackOutputUpperBound(
+    uint256 _feedbackUpperBound
+  ) public {
     vm.assume(_feedbackUpperBound > 0 && _feedbackUpperBound > POSITIVE_RATE_LIMIT);
     params.feedbackOutputUpperBound = _feedbackUpperBound;
 
@@ -332,7 +368,9 @@ contract Unit_PIDController_Constructor is Base {
     _createPidController(IPIDController.DeviationObservation(0, 0, 0));
   }
 
-  function test_Revert_FeedbackOutputLowerBoundIsGreaterThanZero(int256 _feedbackLowerBound) public {
+  function test_Revert_FeedbackOutputLowerBoundIsGreaterThanZero(
+    int256 _feedbackLowerBound
+  ) public {
     vm.assume(_feedbackLowerBound > 0);
     params.feedbackOutputLowerBound = _feedbackLowerBound;
 
@@ -341,7 +379,9 @@ contract Unit_PIDController_Constructor is Base {
     _createPidController(IPIDController.DeviationObservation(0, 0, 0));
   }
 
-  function test_Revert_Invalid_FeedbackOutputLowerBound(int256 _feedbackLowerBound) public {
+  function test_Revert_Invalid_FeedbackOutputLowerBound(
+    int256 _feedbackLowerBound
+  ) public {
     vm.assume(_feedbackLowerBound < -(int256(NEGATIVE_RATE_LIMIT)));
     params.feedbackOutputLowerBound = _feedbackLowerBound;
 
@@ -370,7 +410,9 @@ contract Unit_PIDController_Constructor is Base {
     _createPidController(IPIDController.DeviationObservation(0, 0, 0));
   }
 
-  function test_Revert_Invalid_NoiseBarrier(uint256 _noiseBarrier) public {
+  function test_Revert_Invalid_NoiseBarrier(
+    uint256 _noiseBarrier
+  ) public {
     vm.assume(_noiseBarrier > 0 && _noiseBarrier > WAD);
     params.noiseBarrier = _noiseBarrier;
 
@@ -379,7 +421,9 @@ contract Unit_PIDController_Constructor is Base {
     _createPidController(IPIDController.DeviationObservation(0, 0, 0));
   }
 
-  function test_Revert_Invalid_Kp(int256 _kp) public {
+  function test_Revert_Invalid_Kp(
+    int256 _kp
+  ) public {
     vm.assume(_kp > type(int256).min && Math.absolute(_kp) > WAD);
     gains.kp = _kp;
 
@@ -392,7 +436,9 @@ contract Unit_PIDController_Constructor is Base {
     _createPidController(IPIDController.DeviationObservation(0, 0, 0));
   }
 
-  function test_Revert_Invalid_Ki(int256 _ki) public {
+  function test_Revert_Invalid_Ki(
+    int256 _ki
+  ) public {
     vm.assume(_ki > type(int256).min && Math.absolute(_ki) > WAD);
     gains.ki = _ki;
 
@@ -439,21 +485,27 @@ contract Unit_PIDController_GetBoundedRedemptionRate is Base {
     PIDControllerForTest(address(pidController)).setCallSupper_getBoundedRedemptionRate(true);
   }
 
-  modifier negativeBoundedPIOutput(int256 _boundedPIOutput) {
+  modifier negativeBoundedPIOutput(
+    int256 _boundedPIOutput
+  ) {
     // Checks that boundedPIOutput is never less than NEGATIVE_RATE_LIMIT, the setters should prevent this
     vm.assume(_boundedPIOutput < 0 && _boundedPIOutput >= -int256(NEGATIVE_RATE_LIMIT));
     _mockBoundedPIOutput(_boundedPIOutput);
     _;
   }
 
-  modifier positiveBoundedPIOutput(int256 _boundedPIOutput) {
+  modifier positiveBoundedPIOutput(
+    int256 _boundedPIOutput
+  ) {
     // Checks that boundedPIOutput is never greater than POSITIVE_RATE_LIMIT, the setters should prevent this
     vm.assume(_boundedPIOutput >= 0 && uint256(_boundedPIOutput) <= POSITIVE_RATE_LIMIT);
     _mockBoundedPIOutput(_boundedPIOutput);
     _;
   }
 
-  function test_Call_Internal_GetBoundedPIOutput(int256 _piOutput) public {
+  function test_Call_Internal_GetBoundedPIOutput(
+    int256 _piOutput
+  ) public {
     vm.expectCall(
       watcher,
       abi.encodeWithSelector(
@@ -464,10 +516,9 @@ contract Unit_PIDController_GetBoundedRedemptionRate is Base {
     pidController.getBoundedRedemptionRate(_piOutput);
   }
 
-  function test_Return_NewRedemptionRate_NegativeBoundedPIOutput(int256 _boundedPIOutput)
-    public
-    negativeBoundedPIOutput(_boundedPIOutput)
-  {
+  function test_Return_NewRedemptionRate_NegativeBoundedPIOutput(
+    int256 _boundedPIOutput
+  ) public negativeBoundedPIOutput(_boundedPIOutput) {
     uint256 _calculatedRedemptionRate = RAY.add(_boundedPIOutput);
 
     // sending 0 as _piOutput because it's mocked and it does not matter
@@ -476,17 +527,18 @@ contract Unit_PIDController_GetBoundedRedemptionRate is Base {
     assertEq(_newRedemptionRate, _calculatedRedemptionRate);
   }
 
-  function test_Return_NewRedemptionRate_PositiveBoundedPIOutput(int256 _boundedPIOutput)
-    public
-    positiveBoundedPIOutput(_boundedPIOutput)
-  {
+  function test_Return_NewRedemptionRate_PositiveBoundedPIOutput(
+    int256 _boundedPIOutput
+  ) public positiveBoundedPIOutput(_boundedPIOutput) {
     uint256 _calculatedRedemptionRate = RAY.add(_boundedPIOutput);
     uint256 _newRedemptionRate = pidController.getBoundedRedemptionRate(0);
 
     assertEq(_newRedemptionRate, _calculatedRedemptionRate);
   }
 
-  function test_Return_NewRedemptionRate_PiOutputLessThanFeedbackOutputLowerBound(int256 _piOutput) public {
+  function test_Return_NewRedemptionRate_PiOutputLessThanFeedbackOutputLowerBound(
+    int256 _piOutput
+  ) public {
     setCallSuper(true);
     vm.assume(_piOutput < -int256(NEGATIVE_RATE_LIMIT));
     uint256 _newRedemptionRate = pidController.getBoundedRedemptionRate(_piOutput);
@@ -495,7 +547,9 @@ contract Unit_PIDController_GetBoundedRedemptionRate is Base {
     assertEq(_newRedemptionRate, 1);
   }
 
-  function test_Return_NewRedemptionRate_PiOutputGreaterThanFeedbackOutputUpperBound(int256 _piOutput) public {
+  function test_Return_NewRedemptionRate_PiOutputGreaterThanFeedbackOutputUpperBound(
+    int256 _piOutput
+  ) public {
     setCallSuper(true);
     vm.assume(_piOutput > int256(pidController.params().feedbackOutputUpperBound));
     uint256 _newRedemptionRate = pidController.getBoundedRedemptionRate(_piOutput);
@@ -504,7 +558,9 @@ contract Unit_PIDController_GetBoundedRedemptionRate is Base {
   }
 
   // This scenario would not happen in reality because the feedbackOutputLowerBound will never be less than -NEGATIVE_RATE_LIMIT
-  function test_Return_NewRedemptionRate_NEGATIVE_RATE_LIMIT(int256 _boundedPiOutput) public {
+  function test_Return_NewRedemptionRate_NEGATIVE_RATE_LIMIT(
+    int256 _boundedPiOutput
+  ) public {
     vm.assume(_boundedPiOutput < -int256(RAY));
     _mockBoundedPIOutput(_boundedPiOutput);
     uint256 _newRedemptionRate = pidController.getBoundedRedemptionRate(0);
@@ -543,19 +599,25 @@ contract Unit_PIDController_GetNextRedemptionRate is Base {
     _mockGetBoundedRedemptionRate(_scenario.newRedemptionRate);
   }
 
-  modifier breaksNoiseBarrier(GetNextRedemptionRateScenario memory _scenario) {
+  modifier breaksNoiseBarrier(
+    GetNextRedemptionRateScenario memory _scenario
+  ) {
     vm.assume(_scenario.piOutput > type(int256).min && _scenario.piOutput != 0);
     _mockValues(_scenario, true);
     _;
   }
 
-  modifier notBreaksNoiseBarrier(GetNextRedemptionRateScenario memory _scenario) {
+  modifier notBreaksNoiseBarrier(
+    GetNextRedemptionRateScenario memory _scenario
+  ) {
     vm.assume(_scenario.piOutput > type(int256).min && _scenario.piOutput != 0);
     _mockValues(_scenario, false);
     _;
   }
 
-  function test_Call_Internal_GetProportionalTerm(GetNextRedemptionRateScenario memory _scenario) public {
+  function test_Call_Internal_GetProportionalTerm(
+    GetNextRedemptionRateScenario memory _scenario
+  ) public {
     vm.expectCall(
       watcher,
       abi.encodeWithSelector(
@@ -569,7 +631,9 @@ contract Unit_PIDController_GetNextRedemptionRate is Base {
     pidController.getNextRedemptionRate(_scenario.marketPrice, _scenario.redemptionPrice, _scenario.accumulatedLeak);
   }
 
-  function test_Call_Internal_GetNextDeviationCumulative(GetNextRedemptionRateScenario memory _scenario) public {
+  function test_Call_Internal_GetNextDeviationCumulative(
+    GetNextRedemptionRateScenario memory _scenario
+  ) public {
     vm.assume(_scenario.piOutput > type(int256).min);
     _mockValues(_scenario, false);
 
@@ -586,7 +650,9 @@ contract Unit_PIDController_GetNextRedemptionRate is Base {
     pidController.getNextRedemptionRate(_scenario.marketPrice, _scenario.redemptionPrice, _scenario.accumulatedLeak);
   }
 
-  function test_Call_Internal_GetGainAdjustedPIOutput(GetNextRedemptionRateScenario memory _scenario) public {
+  function test_Call_Internal_GetGainAdjustedPIOutput(
+    GetNextRedemptionRateScenario memory _scenario
+  ) public {
     vm.assume(_scenario.piOutput > type(int256).min);
     _mockValues(_scenario, false);
 
@@ -603,7 +669,9 @@ contract Unit_PIDController_GetNextRedemptionRate is Base {
     pidController.getNextRedemptionRate(_scenario.marketPrice, _scenario.redemptionPrice, _scenario.accumulatedLeak);
   }
 
-  function test_Call_Internal_BreaksNoiseBarrier(GetNextRedemptionRateScenario memory _scenario) public {
+  function test_Call_Internal_BreaksNoiseBarrier(
+    GetNextRedemptionRateScenario memory _scenario
+  ) public {
     PIDControllerForTest(address(pidController)).setCallSupper_getGainAdjustedPIOutput(false);
     vm.assume(_scenario.piOutput > type(int256).min);
     _mockValues(_scenario, false);
@@ -651,10 +719,9 @@ contract Unit_PIDController_GetNextRedemptionRate is Base {
     pidController.getNextRedemptionRate(_scenario.marketPrice, _scenario.redemptionPrice, _scenario.accumulatedLeak);
   }
 
-  function test_Return_BreaksNoiseBarrier(GetNextRedemptionRateScenario memory _scenario)
-    public
-    breaksNoiseBarrier(_scenario)
-  {
+  function test_Return_BreaksNoiseBarrier(
+    GetNextRedemptionRateScenario memory _scenario
+  ) public breaksNoiseBarrier(_scenario) {
     PIDControllerForTest(address(pidController)).setCallSupper_getGainAdjustedPIOutput(false);
     (uint256 _newRedemptionRate, int256 _proportionalTerm, int256 _cumulativeDeviation) =
       pidController.getNextRedemptionRate(_scenario.marketPrice, _scenario.redemptionPrice, _scenario.accumulatedLeak);
@@ -664,10 +731,9 @@ contract Unit_PIDController_GetNextRedemptionRate is Base {
     assertEq(_cumulativeDeviation, _scenario.cumulativeDeviation);
   }
 
-  function test_Return_NotBreaksNoiseBarrier(GetNextRedemptionRateScenario memory _scenario)
-    public
-    notBreaksNoiseBarrier(_scenario)
-  {
+  function test_Return_NotBreaksNoiseBarrier(
+    GetNextRedemptionRateScenario memory _scenario
+  ) public notBreaksNoiseBarrier(_scenario) {
     (uint256 _newRedemptionRate, int256 _proportionalTerm, int256 _cumulativeDeviation) =
       pidController.getNextRedemptionRate(_scenario.marketPrice, _scenario.redemptionPrice, _scenario.accumulatedLeak);
 
@@ -738,17 +804,18 @@ contract Unit_PID_Controller_GetGainAdjustedTerms is Base {
     int256 ki;
   }
 
-  modifier happyPath(GetGainAdjustedTermsScenario memory _scenario) {
+  modifier happyPath(
+    GetGainAdjustedTermsScenario memory _scenario
+  ) {
     vm.assume(notOverflowMul(_scenario.kp, _scenario.proportionalTerm));
     vm.assume(notOverflowMul(_scenario.ki, _scenario.integralTerm));
     _mockControllerGains(IPIDController.ControllerGains(_scenario.kp, _scenario.ki));
     _;
   }
 
-  function test_Return_AdjustedProportionalTerm(GetGainAdjustedTermsScenario memory _scenario)
-    public
-    happyPath(_scenario)
-  {
+  function test_Return_AdjustedProportionalTerm(
+    GetGainAdjustedTermsScenario memory _scenario
+  ) public happyPath(_scenario) {
     int256 _expectedProportionalTerm = _scenario.kp.wmul(_scenario.proportionalTerm);
 
     (int256 _gainAdjustedProportionalTerm,) =
@@ -757,7 +824,9 @@ contract Unit_PID_Controller_GetGainAdjustedTerms is Base {
     assertEq(_gainAdjustedProportionalTerm, _expectedProportionalTerm);
   }
 
-  function test_Return_AdjustedIntegralTerm(GetGainAdjustedTermsScenario memory _scenario) public happyPath(_scenario) {
+  function test_Return_AdjustedIntegralTerm(
+    GetGainAdjustedTermsScenario memory _scenario
+  ) public happyPath(_scenario) {
     int256 _expectedIntegralTerm = _scenario.ki.wmul(_scenario.integralTerm);
 
     (, int256 _gainAdjustedIntegralTerm) =
@@ -781,13 +850,17 @@ contract Unit_PID_Controller_GetGainAdjustedPIOutput is Base {
     int256 adjustedIntegralTerm;
   }
 
-  modifier happyPath(GetGainAdjustedPIOutput memory _scenario) {
+  modifier happyPath(
+    GetGainAdjustedPIOutput memory _scenario
+  ) {
     vm.assume(notOverflowAdd(_scenario.adjustedProportionalTerm, _scenario.adjustedIntegralTerm));
     _mockGetGainAdjustedTerms(_scenario.adjustedProportionalTerm, _scenario.adjustedIntegralTerm);
     _;
   }
 
-  function test_Call_Internal_GetGainAdjusted_Terms(GetGainAdjustedPIOutput memory _scenario) public {
+  function test_Call_Internal_GetGainAdjusted_Terms(
+    GetGainAdjustedPIOutput memory _scenario
+  ) public {
     vm.expectCall(
       watcher,
       abi.encodeCall(
@@ -801,7 +874,9 @@ contract Unit_PID_Controller_GetGainAdjustedPIOutput is Base {
     pidController.getGainAdjustedPIOutput(_scenario.proportionalTerm, _scenario.integralTerm);
   }
 
-  function test_Return_AdjustedPIOutput(GetGainAdjustedPIOutput memory _scenario) public happyPath(_scenario) {
+  function test_Return_AdjustedPIOutput(
+    GetGainAdjustedPIOutput memory _scenario
+  ) public happyPath(_scenario) {
     int256 _expectedAdjustedPIOutput = _scenario.adjustedProportionalTerm + _scenario.adjustedIntegralTerm;
 
     assertEq(
@@ -830,7 +905,9 @@ contract Unit_PIDController_GetNextDeviationCumulative is Base {
     uint256 accumulatedLeak;
   }
 
-  function _happyPath(GetNextDeviationCumulativeScenario memory _scenario) internal pure {
+  function _happyPath(
+    GetNextDeviationCumulativeScenario memory _scenario
+  ) internal pure {
     vm.assume(_scenario.timestamp >= _scenario.lastUpdateTime);
     vm.assume(_scenario.timestamp - _scenario.lastUpdateTime <= uint256(type(int256).max));
     vm.assume(_scenario.accumulatedLeak <= uint256(type(int256).max));
@@ -851,31 +928,36 @@ contract Unit_PIDController_GetNextDeviationCumulative is Base {
     );
   }
 
-  modifier lastUpdateTimeNotZero(GetNextDeviationCumulativeScenario memory _scenario) {
+  modifier lastUpdateTimeNotZero(
+    GetNextDeviationCumulativeScenario memory _scenario
+  ) {
     vm.assume(_scenario.lastUpdateTime > 0);
     _happyPath(_scenario);
     _mockValues(_scenario);
     _;
   }
 
-  modifier lastUpdateTimeIsZero(GetNextDeviationCumulativeScenario memory _scenario) {
+  modifier lastUpdateTimeIsZero(
+    GetNextDeviationCumulativeScenario memory _scenario
+  ) {
     _scenario.lastUpdateTime = 0;
     _happyPath(_scenario);
     _mockValues(_scenario);
     _;
   }
 
-  function _mockValues(GetNextDeviationCumulativeScenario memory _scenario) internal {
+  function _mockValues(
+    GetNextDeviationCumulativeScenario memory _scenario
+  ) internal {
     _mockLastUpdateTime(_scenario.lastUpdateTime);
     _mockProportionalTerm(_scenario.lastProportionalTerm);
     _mockIntegralTerm(_scenario.priceDeviationCumulative);
     vm.warp(_scenario.timestamp);
   }
 
-  function test_Return_NextDeviationCumulative(GetNextDeviationCumulativeScenario memory _scenario)
-    public
-    lastUpdateTimeNotZero(_scenario)
-  {
+  function test_Return_NextDeviationCumulative(
+    GetNextDeviationCumulativeScenario memory _scenario
+  ) public lastUpdateTimeNotZero(_scenario) {
     int256 _expectedNewTimeAdjustedDeviation = ((_scenario.proportionalTerm + _scenario.lastProportionalTerm) / 2)
       * int256(_scenario.timestamp - _scenario.lastUpdateTime);
     int256 _expectedNextDeviationCumulative =
@@ -887,10 +969,9 @@ contract Unit_PIDController_GetNextDeviationCumulative is Base {
     assertEq(_nextDeviationCumulative, _expectedNextDeviationCumulative);
   }
 
-  function test_Return_NewTimeAdjustedDeviation(GetNextDeviationCumulativeScenario memory _scenario)
-    public
-    lastUpdateTimeNotZero(_scenario)
-  {
+  function test_Return_NewTimeAdjustedDeviation(
+    GetNextDeviationCumulativeScenario memory _scenario
+  ) public lastUpdateTimeNotZero(_scenario) {
     int256 _expectedNewTimeAdjustedDeviation = ((_scenario.proportionalTerm + _scenario.lastProportionalTerm) / 2)
       * int256(_scenario.timestamp - _scenario.lastUpdateTime);
 
@@ -900,10 +981,9 @@ contract Unit_PIDController_GetNextDeviationCumulative is Base {
     assertEq(_newTimeAdjustedDeviation, _expectedNewTimeAdjustedDeviation);
   }
 
-  function test_Return_NextDeviationCumulative_LastUpdateIsZero(GetNextDeviationCumulativeScenario memory _scenario)
-    public
-    lastUpdateTimeIsZero(_scenario)
-  {
+  function test_Return_NextDeviationCumulative_LastUpdateIsZero(
+    GetNextDeviationCumulativeScenario memory _scenario
+  ) public lastUpdateTimeIsZero(_scenario) {
     int256 _expectedNextDeviationCumulative = _scenario.accumulatedLeak.rmul(_scenario.priceDeviationCumulative);
 
     (int256 _nextDeviationCumulative,) =
@@ -912,10 +992,9 @@ contract Unit_PIDController_GetNextDeviationCumulative is Base {
     assertEq(_nextDeviationCumulative, _expectedNextDeviationCumulative);
   }
 
-  function test_Return_NewTimeAdjustedDeviation_LastUpdateIsZero(GetNextDeviationCumulativeScenario memory _scenario)
-    public
-    lastUpdateTimeIsZero(_scenario)
-  {
+  function test_Return_NewTimeAdjustedDeviation_LastUpdateIsZero(
+    GetNextDeviationCumulativeScenario memory _scenario
+  ) public lastUpdateTimeIsZero(_scenario) {
     (, int256 _newTimeAdjustedDeviation) =
       pidController.getNextDeviationCumulative(_scenario.proportionalTerm, _scenario.accumulatedLeak);
 
@@ -938,7 +1017,9 @@ contract Unit_PIDController_UpdateDeviation is Base {
     uint256 accumulatedLeak;
   }
 
-  function test_Call_Internal_GetNextDeviationCumulative(UpdateDeviationScenario memory _scenario) public {
+  function test_Call_Internal_GetNextDeviationCumulative(
+    UpdateDeviationScenario memory _scenario
+  ) public {
     vm.expectCall(
       watcher,
       abi.encodeCall(
@@ -954,7 +1035,9 @@ contract Unit_PIDController_UpdateDeviation is Base {
     );
   }
 
-  function test_Set_DeviationCumulative(UpdateDeviationScenario memory _scenario) public {
+  function test_Set_DeviationCumulative(
+    UpdateDeviationScenario memory _scenario
+  ) public {
     _mockGetNextDeviationCumulative(_scenario.virtualDeviationCumulative, _scenario.appliedDeviation);
 
     PIDControllerForTest(address(pidController)).call_updateDeviation(
@@ -964,7 +1047,9 @@ contract Unit_PIDController_UpdateDeviation is Base {
     assertEq(pidController.deviationObservation().integral, _scenario.virtualDeviationCumulative);
   }
 
-  function test_Set_DeviationObservation(UpdateDeviationScenario memory _scenario) public {
+  function test_Set_DeviationObservation(
+    UpdateDeviationScenario memory _scenario
+  ) public {
     _mockGetNextDeviationCumulative(_scenario.virtualDeviationCumulative, _scenario.appliedDeviation);
     vm.warp(_scenario.timestamp);
 
@@ -981,7 +1066,9 @@ contract Unit_PIDController_UpdateDeviation is Base {
 
   event UpdateDeviation(int256 _proportionalDeviation, int256 _cumulativeDeviation, int256 _deltaCumulativeDeviation);
 
-  function test_Emit_UpdateDeviation(UpdateDeviationScenario memory _scenario) public {
+  function test_Emit_UpdateDeviation(
+    UpdateDeviationScenario memory _scenario
+  ) public {
     _mockGetNextDeviationCumulative(_scenario.virtualDeviationCumulative, _scenario.appliedDeviation);
     vm.warp(_scenario.timestamp);
 
@@ -1028,7 +1115,9 @@ contract Unit_PIDController_ComputeRate is Base {
     uint256 redemptionPrice;
   }
 
-  function _happyPath(ComputeRateScenario memory _scenario) internal view {
+  function _happyPath(
+    ComputeRateScenario memory _scenario
+  ) internal view {
     vm.assume(_scenario.lastUpdateTime > 0);
     vm.assume(_scenario.timestamp >= _scenario.lastUpdateTime);
     vm.assume(_scenario.timestamp - _scenario.lastUpdateTime >= _scenario.integralPeriodSize);
@@ -1056,23 +1145,25 @@ contract Unit_PIDController_ComputeRate is Base {
     _;
   }
 
-  modifier notBreaksNoiseBarrier(ComputeRateScenario memory _scenario) {
+  modifier notBreaksNoiseBarrier(
+    ComputeRateScenario memory _scenario
+  ) {
     _happyPath(_scenario);
     _mockValues(_scenario, false);
     _;
   }
 
-  modifier breaksNoiseBarrier(ComputeRateScenario memory _scenario) {
+  modifier breaksNoiseBarrier(
+    ComputeRateScenario memory _scenario
+  ) {
     _happyPath(_scenario);
     _mockValues(_scenario, true);
     _;
   }
 
-  function test_Call_Internal_GetProportionalTerm(ComputeRateScenario memory _scenario)
-    public
-    breaksNoiseBarrier(_scenario)
-    authorized
-  {
+  function test_Call_Internal_GetProportionalTerm(
+    ComputeRateScenario memory _scenario
+  ) public breaksNoiseBarrier(_scenario) authorized {
     vm.expectCall(
       watcher,
       abi.encodeCall(
@@ -1086,11 +1177,9 @@ contract Unit_PIDController_ComputeRate is Base {
     pidController.computeRate(_scenario.marketPrice, _scenario.redemptionPrice);
   }
 
-  function test_Call_Internal_UpdateDeviation(ComputeRateScenario memory _scenario)
-    public
-    breaksNoiseBarrier(_scenario)
-    authorized
-  {
+  function test_Call_Internal_UpdateDeviation(
+    ComputeRateScenario memory _scenario
+  ) public breaksNoiseBarrier(_scenario) authorized {
     vm.expectCall(
       watcher,
       abi.encodeCall(
@@ -1159,11 +1248,9 @@ contract Unit_PIDController_ComputeRate is Base {
     pidController.computeRate(_scenario.marketPrice, _scenario.redemptionPrice);
   }
 
-  function test_Call_Internal_GetBoundedRedemptionRate(ComputeRateScenario memory _scenario)
-    public
-    breaksNoiseBarrier(_scenario)
-    authorized
-  {
+  function test_Call_Internal_GetBoundedRedemptionRate(
+    ComputeRateScenario memory _scenario
+  ) public breaksNoiseBarrier(_scenario) authorized {
     vm.expectCall(
       watcher,
       abi.encodeCall(
@@ -1175,11 +1262,9 @@ contract Unit_PIDController_ComputeRate is Base {
     pidController.computeRate(_scenario.marketPrice, _scenario.redemptionPrice);
   }
 
-  function test_Not_Call_Internal_GetBoundedRedemptionRate_NotBreaksNoiseBarrier(ComputeRateScenario memory _scenario)
-    public
-    notBreaksNoiseBarrier(_scenario)
-    authorized
-  {
+  function test_Not_Call_Internal_GetBoundedRedemptionRate_NotBreaksNoiseBarrier(
+    ComputeRateScenario memory _scenario
+  ) public notBreaksNoiseBarrier(_scenario) authorized {
     vm.expectCall(
       watcher,
       abi.encodeCall(
@@ -1192,23 +1277,21 @@ contract Unit_PIDController_ComputeRate is Base {
     pidController.computeRate(_scenario.marketPrice, _scenario.redemptionPrice);
   }
 
-  function test_Return_RAY_NotBreaksNoiseBarrier(ComputeRateScenario memory _scenario)
-    public
-    notBreaksNoiseBarrier(_scenario)
-    authorized
-  {
+  function test_Return_RAY_NotBreaksNoiseBarrier(
+    ComputeRateScenario memory _scenario
+  ) public notBreaksNoiseBarrier(_scenario) authorized {
     assertEq(pidController.computeRate(_scenario.marketPrice, _scenario.redemptionPrice), RAY);
   }
 
-  function test_Return_NewRedemptionRate(ComputeRateScenario memory _scenario)
-    public
-    breaksNoiseBarrier(_scenario)
-    authorized
-  {
+  function test_Return_NewRedemptionRate(
+    ComputeRateScenario memory _scenario
+  ) public breaksNoiseBarrier(_scenario) authorized {
     assertEq(pidController.computeRate(_scenario.marketPrice, _scenario.redemptionPrice), _scenario.newRedemptionRate);
   }
 
-  function test_Set_Deviation(ComputeRateScenario memory _scenario) public notBreaksNoiseBarrier(_scenario) authorized {
+  function test_Set_Deviation(
+    ComputeRateScenario memory _scenario
+  ) public notBreaksNoiseBarrier(_scenario) authorized {
     pidController.computeRate(_scenario.marketPrice, _scenario.redemptionPrice);
     assertEq(pidController.deviationObservation().timestamp, block.timestamp);
     assertEq(pidController.deviationObservation().proportional, _scenario.proportionalTerm);
@@ -1227,7 +1310,9 @@ contract Unit_PIDController_ComputeRate is Base {
     pidController.computeRate(_scenario.marketPrice, _scenario.redemptionPrice);
   }
 
-  function test_Revert_WaitMore(ComputeRateScenario memory _scenario) public authorized {
+  function test_Revert_WaitMore(
+    ComputeRateScenario memory _scenario
+  ) public authorized {
     vm.assume(_scenario.lastUpdateTime > 0);
     vm.assume(_scenario.timestamp >= _scenario.lastUpdateTime);
     vm.assume(_scenario.timestamp - _scenario.lastUpdateTime < _scenario.integralPeriodSize);
@@ -1364,7 +1449,9 @@ contract Unit_PIDController_ModifyParameters is Base {
     pidController.modifyParameters('seedProposer', abi.encode(address(0)));
   }
 
-  function test_Revert_InvalidNoiseBarrier(uint256 _noiseBarrier) public authorized {
+  function test_Revert_InvalidNoiseBarrier(
+    uint256 _noiseBarrier
+  ) public authorized {
     if (_noiseBarrier == 0) {
       vm.expectRevert(Assertions.NullAmount.selector);
     } else if (_noiseBarrier > WAD) {
@@ -1380,7 +1467,9 @@ contract Unit_PIDController_ModifyParameters is Base {
     pidController.modifyParameters('integralPeriodSize', abi.encode(0));
   }
 
-  function test_Revert_InvalidFeedbackOutputUpperBound(uint256 _feedbackOutputUpperBound) public authorized {
+  function test_Revert_InvalidFeedbackOutputUpperBound(
+    uint256 _feedbackOutputUpperBound
+  ) public authorized {
     if (_feedbackOutputUpperBound == 0) {
       vm.expectRevert(Assertions.NullAmount.selector);
     } else if (_feedbackOutputUpperBound > POSITIVE_RATE_LIMIT) {
@@ -1392,7 +1481,9 @@ contract Unit_PIDController_ModifyParameters is Base {
     pidController.modifyParameters('feedbackOutputUpperBound', abi.encode(_feedbackOutputUpperBound));
   }
 
-  function test_Revert_FeedbackOutputLowerBound(int256 _feedbackOutputLowerBound) public authorized {
+  function test_Revert_FeedbackOutputLowerBound(
+    int256 _feedbackOutputLowerBound
+  ) public authorized {
     if (_feedbackOutputLowerBound >= 0) {
       vm.expectRevert(abi.encodeWithSelector(Assertions.IntNotLesserThan.selector, _feedbackOutputLowerBound, 0));
     } else if (_feedbackOutputLowerBound < -int256(NEGATIVE_RATE_LIMIT)) {
@@ -1406,7 +1497,9 @@ contract Unit_PIDController_ModifyParameters is Base {
     pidController.modifyParameters('feedbackOutputLowerBound', abi.encode(_feedbackOutputLowerBound));
   }
 
-  function test_Revert_InvalidPerSecondCumulativeLeak(uint256 _perSecondCumulativeLeak) public authorized {
+  function test_Revert_InvalidPerSecondCumulativeLeak(
+    uint256 _perSecondCumulativeLeak
+  ) public authorized {
     if (_perSecondCumulativeLeak > RAY) {
       vm.expectRevert(abi.encodeWithSelector(Assertions.NotLesserOrEqualThan.selector, _perSecondCumulativeLeak, RAY));
     }
@@ -1414,7 +1507,9 @@ contract Unit_PIDController_ModifyParameters is Base {
     pidController.modifyParameters('perSecondCumulativeLeak', abi.encode(_perSecondCumulativeLeak));
   }
 
-  function test_Revert_InvalidProportionalGain(int256 _proportionalGain) public authorized {
+  function test_Revert_InvalidProportionalGain(
+    int256 _proportionalGain
+  ) public authorized {
     if (_proportionalGain > int256(WAD)) {
       vm.expectRevert(
         abi.encodeWithSelector(Assertions.IntNotLesserOrEqualThan.selector, _proportionalGain, int256(WAD))
@@ -1428,7 +1523,9 @@ contract Unit_PIDController_ModifyParameters is Base {
     pidController.modifyParameters('kp', abi.encode(_proportionalGain));
   }
 
-  function test_Revert_InvalidIntegralGain(int256 _integralGain) public authorized {
+  function test_Revert_InvalidIntegralGain(
+    int256 _integralGain
+  ) public authorized {
     if (_integralGain > int256(WAD)) {
       vm.expectRevert(abi.encodeWithSelector(Assertions.IntNotLesserOrEqualThan.selector, _integralGain, int256(WAD)));
     } else if (_integralGain < -int256(WAD)) {

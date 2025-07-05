@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {RewardDistributor} from '@contracts/tokens/RewardDistributor.sol';
 import {ERC20ForTest} from '@test/mocks/ERC20ForTest.sol';
 import {MerkleTreeGenerator} from '@test/utils/MerkleTreeGenerator.sol';
 import {IRewardDistributor} from '@interfaces/tokens/IRewardDistributor.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {Pausable} from '@openzeppelin/contracts/utils/Pausable.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   address deployer = label('deployer');
   address authorizedAccount = label('authorizedAccount');
   address user = label('user');

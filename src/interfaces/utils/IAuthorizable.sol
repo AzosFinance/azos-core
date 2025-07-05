@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 interface IAuthorizable {
   // --- Events ---
@@ -31,7 +31,9 @@ interface IAuthorizable {
    * @param  _account Account to check
    * @return _authorized Whether the account is authorized or not
    */
-  function authorizedAccounts(address _account) external view returns (bool _authorized);
+  function authorizedAccounts(
+    address _account
+  ) external view returns (bool _authorized);
 
   /**
    * @notice Getter for the authorized accounts
@@ -46,12 +48,16 @@ interface IAuthorizable {
    * @param  _account Account to add authorization to
    * @dev    Method will revert if the account is already authorized
    */
-  function addAuthorization(address _account) external;
+  function addAuthorization(
+    address _account
+  ) external;
 
   /**
    * @notice Remove authorization from an account
    * @param  _account Account to remove authorization from
    * @dev    Method will revert if the account is not authorized
    */
-  function removeAuthorization(address _account) external;
+  function removeAuthorization(
+    address _account
+  ) external;
 }

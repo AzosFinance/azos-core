@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {IProtocolToken} from '@interfaces/tokens/IProtocolToken.sol';
@@ -108,7 +108,9 @@ interface ICommonSurplusAuctionHouse {
    * @param  _id Id of the auction
    * @return _auction Auction data struct
    */
-  function auctions(uint256 _id) external view returns (Auction memory _auction);
+  function auctions(
+    uint256 _id
+  ) external view returns (Auction memory _auction);
 
   /**
    * @notice Raw data of an auction
@@ -120,7 +122,9 @@ interface ICommonSurplusAuctionHouse {
    * @return _auctionDeadline Hard deadline for the auction after which no more bids can be placed [timestamp]
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _auctions(uint256 _id)
+  function _auctions(
+    uint256 _id
+  )
     external
     view
     returns (
@@ -156,7 +160,9 @@ interface ICommonSurplusAuctionHouse {
    * @notice Restart an auction if no bids were submitted for it
    * @param  _id ID of the auction to restart
    */
-  function restartAuction(uint256 _id) external;
+  function restartAuction(
+    uint256 _id
+  ) external;
 
   /**
    * @notice Submit a higher protocol token bid for the same amount of system coins
@@ -169,5 +175,7 @@ interface ICommonSurplusAuctionHouse {
    * @notice Settle/finish an auction
    * @param  _id ID of the auction to settle
    */
-  function settleAuction(uint256 _id) external;
+  function settleAuction(
+    uint256 _id
+  ) external;
 }

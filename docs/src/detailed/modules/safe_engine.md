@@ -4,7 +4,7 @@ See [SAFEEngine.sol](/src/contracts/SAFEEngine.sol/contract.SAFEEngine.md) for m
 
 ## 1. Introduction
 
-The SAFE Engine serves as the central component of the HAI framework, managing data on user-owned SAFEs (Simplified Agreement for Future Equity) and the interest rates for different forms of collateral. It performs the following functions:
+The SAFE Engine serves as the central component of the Azos framework, managing data on user-owned SAFEs (Simplified Agreement for Future Equity) and the interest rates for different forms of collateral. It performs the following functions:
 
 - Monitoring the debt generated at the system level, by a specific collateral type, or by individual SAFEs.
 - Facilitating the internal movement of coins, collateral, or debt between accounts.

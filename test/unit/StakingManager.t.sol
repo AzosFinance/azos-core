@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {StakingManagerForTest} from '@test/mocks/StakingManagerForTest.sol';
 import {StakingManager, IStakingManager} from '@contracts/tokens/StakingManager.sol';
@@ -7,11 +7,11 @@ import {IProtocolToken} from '@interfaces/tokens/IProtocolToken.sol';
 import {IStakingToken} from '@interfaces/tokens/IStakingToken.sol';
 import {IRewardPool} from '@interfaces/tokens/IRewardPool.sol';
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {Assertions} from '@libraries/Assertions.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   address deployer = label('deployer');
   address authorizedAccount = label('authorizedAccount');
   address user = label('user');
@@ -73,7 +73,9 @@ contract Unit_StakingManager_Constructor is Base {
 }
 
 contract Unit_StakingManager_ModifyParameters is Base {
-  function test_ModifyParameters(uint256 _cooldownPeriod) public authorized {
+  function test_ModifyParameters(
+    uint256 _cooldownPeriod
+  ) public authorized {
     vm.assume(_cooldownPeriod > 0);
 
     stakingManager.modifyParameters('cooldownPeriod', abi.encode(_cooldownPeriod));
@@ -305,7 +307,9 @@ contract Unit_StakingManager_Stake is Base {
     stakingManager.stake(user, 0);
   }
 
-  function test_Stake(uint256 _amount) public {
+  function test_Stake(
+    uint256 _amount
+  ) public {
     vm.assume(_amount > 0 && _amount <= type(uint256).max);
 
     // Mock token transfer
@@ -329,7 +333,9 @@ contract Unit_StakingManager_Stake is Base {
     assertEq(stakingManager.stakedBalances(user), _amount);
   }
 
-  function test_Stake_WithRewardPool(uint256 _amount) public {
+  function test_Stake_WithRewardPool(
+    uint256 _amount
+  ) public {
     vm.assume(_amount > 0 && _amount <= type(uint256).max);
 
     // Setup reward pool

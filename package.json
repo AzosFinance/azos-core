@@ -1,11 +1,11 @@
 {
-  "name": "hai",
+  "name": "azos",
   "version": "1.0.7",
   "description": "Multicollateral debt backed stablecoin",
-  "homepage": "https://github.com/hai-on-op/core#readme",
+  "homepage": "https://azos.finance",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hai-on-op/core.git"
+    "url": "git+https://github.com/azosFinance/hai-core.git"
   },
   "license": "MIT",
   "author": "Wonderland",
@@ -18,7 +18,7 @@
   "scripts": {
     "build": "forge build",
     "coverage": "forge coverage",
-    "deploy:mainnet": "bash -c 'source .env && forge script DeployMainnet -vvvvv --rpc-url $OP_MAINNET_RPC --broadcast --private-key $OP_MAINNET_DEPLOYER_PK --verify --etherscan-api-key $OP_ETHERSCAN_API_KEY'",
+    "deploy:mainnet": "bash -c 'source .env && forge script DeployMainnet -vvvvv --rpc-url $BASE_MAINNET_RPC --broadcast --private-key $BASE_MAINNET_DEPLOYER_PK --verify --etherscan-api-key $BASE_ETHERSCAN_API_KEY'",
     "deploy:testnet": "bash -c 'source .env && forge script DeployTestnet -vvvvv --rpc-url $OP_SEPOLIA_RPC --broadcast --private-key $OP_SEPOLIA_DEPLOYER_PK --verify --etherscan-api-key $OP_ETHERSCAN_API_KEY'",
     "docs:build": "./build-docs.sh",
     "docs:run": "mdbook serve docs",
@@ -56,5 +56,6 @@
     "solhint": "3.4.1",
     "solhint-plugin-defi-wonderland": "1.1.0",
     "sort-package-json": "1.53.1"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ScriptBase} from 'forge-std/Script.sol';
 import {ETH_A} from '@script/Params.s.sol';
@@ -37,7 +37,9 @@ abstract contract DirectUser is BaseUser, Contracts, ScriptBase {
     _wad = _wei * 10 ** (18 - _decimals);
   }
 
-  function _getInternalCoinBalance(address _user) internal view override returns (uint256 _rad) {
+  function _getInternalCoinBalance(
+    address _user
+  ) internal view override returns (uint256 _rad) {
     _rad = safeEngine.coinBalance(_user);
   }
 
@@ -57,7 +59,9 @@ abstract contract DirectUser is BaseUser, Contracts, ScriptBase {
     vm.stopPrank();
   }
 
-  function _exitAllCoins(address _user) internal override {
+  function _exitAllCoins(
+    address _user
+  ) internal override {
     uint256 _systemCoinInternalBalance = safeEngine.coinBalance(_user);
 
     _exitCoins(_user, _systemCoinInternalBalance);
@@ -259,21 +263,27 @@ abstract contract DirectUser is BaseUser, Contracts, ScriptBase {
     _exitAllCoins(_user);
   }
 
-  function _workAuctionDebt(address _user) internal override {
+  function _workAuctionDebt(
+    address _user
+  ) internal override {
     vm.prank(_user);
     accountingJob.workAuctionDebt();
 
     _exitAllCoins(_user);
   }
 
-  function _workAuctionSurplus(address _user) internal override {
+  function _workAuctionSurplus(
+    address _user
+  ) internal override {
     vm.prank(_user);
     accountingJob.workAuctionSurplus();
 
     _exitAllCoins(_user);
   }
 
-  function _workTransferExtraSurplus(address _user) internal override {
+  function _workTransferExtraSurplus(
+    address _user
+  ) internal override {
     vm.prank(_user);
     accountingJob.workTransferExtraSurplus();
 
@@ -294,7 +304,9 @@ abstract contract DirectUser is BaseUser, Contracts, ScriptBase {
     _exitAllCoins(_user);
   }
 
-  function _workUpdateRate(address _user) internal override {
+  function _workUpdateRate(
+    address _user
+  ) internal override {
     vm.prank(_user);
     oracleJob.workUpdateRate();
 

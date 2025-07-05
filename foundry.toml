@@ -9,7 +9,7 @@ number_underscore = 'thousands'
 wrap_comments = false
 
 [profile.docs]
-title = 'HAI docs'
+title = 'Azos docs'
 src ='src' # root_path variable in build-docs.sh
 
 [profile.default]
@@ -38,3 +38,4 @@ src = 'test'
 [rpc_endpoints]
 mainnet = "${OP_MAINNET_RPC}"
 testnet = "${OP_SEPOLIA_RPC}"
+base_mainnet = "${BASE_MAINNET_RPC}"

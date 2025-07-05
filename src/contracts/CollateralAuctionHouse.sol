@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ICollateralAuctionHouse} from '@interfaces/ICollateralAuctionHouse.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -61,7 +61,9 @@ contract CollateralAuctionHouse is Authorizable, Modifiable, Disableable, IColla
   mapping(uint256 _auctionId => Auction) public _auctions;
 
   /// @inheritdoc ICollateralAuctionHouse
-  function auctions(uint256 _auctionId) external view returns (Auction memory _auction) {
+  function auctions(
+    uint256 _auctionId
+  ) external view returns (Auction memory _auction) {
     return _auctions[_auctionId];
   }
 
@@ -150,7 +152,9 @@ contract CollateralAuctionHouse is Authorizable, Modifiable, Disableable, IColla
    * @param  _id The ID of the auction to calculate the upcoming discount for
    * @return _auctionDiscount The upcoming discount that will be used in the targeted auction
    */
-  function _getAuctionDiscount(uint256 _id) internal view returns (uint256 _auctionDiscount) {
+  function _getAuctionDiscount(
+    uint256 _id
+  ) internal view returns (uint256 _auctionDiscount) {
     uint256 _auctionTimestamp = _auctions[_id].initialTimestamp;
     if (_auctionTimestamp == 0) return WAD; // auction is finished, return no discount
 
@@ -217,7 +221,9 @@ contract CollateralAuctionHouse is Authorizable, Modifiable, Disableable, IColla
   }
 
   /// @inheritdoc ICollateralAuctionHouse
-  function getAuctionDiscount(uint256 _id) external view returns (uint256 _auctionDiscount) {
+  function getAuctionDiscount(
+    uint256 _id
+  ) external view returns (uint256 _auctionDiscount) {
     return _getAuctionDiscount(_id);
   }
 
@@ -340,7 +346,9 @@ contract CollateralAuctionHouse is Authorizable, Modifiable, Disableable, IColla
   }
 
   /// @inheritdoc ICollateralAuctionHouse
-  function terminateAuctionPrematurely(uint256 _id) external isAuthorized {
+  function terminateAuctionPrematurely(
+    uint256 _id
+  ) external isAuthorized {
     Auction memory _auction = _auctions[_id];
     delete _auctions[_id];
 
@@ -382,14 +390,18 @@ contract CollateralAuctionHouse is Authorizable, Modifiable, Disableable, IColla
   }
 
   /// @dev Sets the LiquidationEngine contract address, revoking the previous, and granting the new one authorization
-  function _setLiquidationEngine(address _newLiquidationEngine) internal virtual {
+  function _setLiquidationEngine(
+    address _newLiquidationEngine
+  ) internal virtual {
     if (address(_liquidationEngine) != address(0)) _removeAuthorization(address(_liquidationEngine));
     _liquidationEngine = ILiquidationEngine(_newLiquidationEngine);
     _addAuthorization(_newLiquidationEngine);
   }
 
   /// @dev Sets the OracleRelayer contract address
-  function _setOracleRelayer(address _newOracleRelayer) internal virtual {
+  function _setOracleRelayer(
+    address _newOracleRelayer
+  ) internal virtual {
     _oracleRelayer = IOracleRelayer(_newOracleRelayer);
   }
 

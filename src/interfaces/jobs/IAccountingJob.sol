@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IAccountingEngine} from '@interfaces/IAccountingEngine.sol';
 
@@ -34,7 +34,9 @@ interface IAccountingJob is IAuthorizable, IModifiable, IJob {
    * @notice Rewarded method to pop debt from the AccountingEngine's queue
    * @param _debtBlockTimestamp Timestamp of the debt block to pop
    */
-  function workPopDebtFromQueue(uint256 _debtBlockTimestamp) external;
+  function workPopDebtFromQueue(
+    uint256 _debtBlockTimestamp
+  ) external;
 
   /// @notice Rewarded method to auction debt from the AccountingEngine
   function workAuctionDebt() external;

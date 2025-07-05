@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
@@ -212,13 +212,19 @@ interface IRewardPool is IAuthorizable, IModifiable {
   function setTotalStaked(uint256 _totalStaked) external;
 
   /// @notice Stake tokens in the pool
-  function stake(uint256 _amount) external;
+  function stake(
+    uint256 _amount
+  ) external;
 
   /// @notice Increase staked amount
-  function increaseStake(uint256 _amount) external;
+  function increaseStake(
+    uint256 _amount
+  ) external;
 
   /// @notice Decrease staked amount
-  function decreaseStake(uint256 _amount) external;
+  function decreaseStake(
+    uint256 _amount
+  ) external;
 
   /// @notice Withdraw staked tokens
   function withdraw(uint256 _amount, bool _claim) external;
@@ -227,10 +233,14 @@ interface IRewardPool is IAuthorizable, IModifiable {
   function getReward() external;
 
   /// @notice Queue new rewards for distribution
-  function queueNewRewards(uint256 _amount) external;
+  function queueNewRewards(
+    uint256 _amount
+  ) external;
 
   /// @notice Notify reward amount for immediate distribution
-  function notifyRewardAmount(uint256 _reward) external;
+  function notifyRewardAmount(
+    uint256 _reward
+  ) external;
 
   /// @notice Emergency withdrawal of reward tokens
   function emergencyWithdraw(address _rescueReceiver, uint256 _wad) external;

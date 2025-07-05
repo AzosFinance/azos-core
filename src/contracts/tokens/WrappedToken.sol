@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
@@ -75,7 +75,9 @@ contract WrappedToken is ERC20, ERC20Permit, Authorizable, Modifiable, IWrappedT
 
   // --- Overrides ---
 
-  function nonces(address _owner) public view override(ERC20Permit, IERC20Permit) returns (uint256 _nonce) {
+  function nonces(
+    address _owner
+  ) public view override(ERC20Permit, IERC20Permit) returns (uint256 _nonce) {
     return super.nonces(_owner);
   }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ICollateralJoinFactory} from '@interfaces/factories/ICollateralJoinFactory.sol';
 import {ICollateralJoin} from '@interfaces/utils/ICollateralJoin.sol';
@@ -40,7 +40,9 @@ contract CollateralJoinFactory is Authorizable, Disableable, ICollateralJoinFact
   /**
    * @param  _safeEngine Address of the SAFEEngine contract
    */
-  constructor(address _safeEngine) Authorizable(msg.sender) {
+  constructor(
+    address _safeEngine
+  ) Authorizable(msg.sender) {
     safeEngine = _safeEngine.assertNonNull();
   }
 
@@ -74,7 +76,9 @@ contract CollateralJoinFactory is Authorizable, Disableable, ICollateralJoinFact
   }
 
   /// @inheritdoc ICollateralJoinFactory
-  function disableCollateralJoin(bytes32 _cType) external isAuthorized {
+  function disableCollateralJoin(
+    bytes32 _cType
+  ) external isAuthorized {
     if (!_collateralTypes.remove(_cType)) revert CollateralJoinFactory_CollateralJoinNonExistent();
     address _collateralJoin = collateralJoins[_cType];
     IDisableable(_collateralJoin).disableContract();

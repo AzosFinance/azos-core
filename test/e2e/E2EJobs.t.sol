@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {Common, COLLAT, DEBT, TKN} from './Common.t.sol';
 import {JOB_REWARD} from '@script/Params.s.sol';
@@ -30,7 +30,9 @@ abstract contract E2EJobsTest is BaseUser, Common {
     _collectFees(TKN, YEAR * 10);
   }
 
-  function test_work_pop_debt_from_queue(uint256 _debtBlock) public {
+  function test_work_pop_debt_from_queue(
+    uint256 _debtBlock
+  ) public {
     vm.assume(_debtBlock != 0);
     vm.prank(deployer);
     accountingEngine.pushDebtToQueue(_debtBlock);

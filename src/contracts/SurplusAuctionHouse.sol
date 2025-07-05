@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISurplusAuctionHouse, ICommonSurplusAuctionHouse} from '@interfaces/ISurplusAuctionHouse.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -35,7 +35,9 @@ contract SurplusAuctionHouse is Authorizable, Modifiable, Disableable, ISurplusA
   mapping(uint256 _auctionId => Auction) public _auctions;
 
   /// @inheritdoc ICommonSurplusAuctionHouse
-  function auctions(uint256 _id) external view returns (Auction memory _auction) {
+  function auctions(
+    uint256 _id
+  ) external view returns (Auction memory _auction) {
     return _auctions[_id];
   }
 
@@ -120,7 +122,9 @@ contract SurplusAuctionHouse is Authorizable, Modifiable, Disableable, ISurplusA
   }
 
   /// @inheritdoc ICommonSurplusAuctionHouse
-  function restartAuction(uint256 _id) external {
+  function restartAuction(
+    uint256 _id
+  ) external {
     if (_id == 0 || _id > auctionsStarted) revert SAH_AuctionNeverStarted();
     Auction storage _auction = _auctions[_id];
     if (_auction.auctionDeadline > block.timestamp) revert SAH_AuctionNotFinished();
@@ -174,7 +178,9 @@ contract SurplusAuctionHouse is Authorizable, Modifiable, Disableable, ISurplusA
   }
 
   /// @inheritdoc ICommonSurplusAuctionHouse
-  function settleAuction(uint256 _id) external whenEnabled {
+  function settleAuction(
+    uint256 _id
+  ) external whenEnabled {
     Auction memory _auction = _auctions[_id];
     delete _auctions[_id];
 
@@ -204,7 +210,9 @@ contract SurplusAuctionHouse is Authorizable, Modifiable, Disableable, ISurplusA
   }
 
   /// @inheritdoc ISurplusAuctionHouse
-  function terminateAuctionPrematurely(uint256 _id) external whenDisabled {
+  function terminateAuctionPrematurely(
+    uint256 _id
+  ) external whenDisabled {
     Auction memory _auction = _auctions[_id];
     delete _auctions[_id];
 

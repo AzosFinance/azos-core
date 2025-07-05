@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {Contracts} from '@script/Contracts.s.sol';
 
@@ -18,7 +18,7 @@ import {
   ITaxCollector,
   IGlobalSettlement,
   IPostSettlementSurplusAuctionHouse,
-  IHaiGovernor,
+  IAzosGovernor,
   ITokenDistributor,
   IModifiable
 } from '@script/Contracts.s.sol';
@@ -27,16 +27,21 @@ import {WAD, RAY, RAD} from '@libraries/Math.sol';
 
 // --- Utils ---
 
-// HAI Params
-bytes32 constant HAI = bytes32('HAI'); // 0x4841490000000000000000000000000000000000000000000000000000000000
+// AZUSD Params
+uint256 constant AZUSD_USD_INITIAL_PRICE = 1e18; // 1 AZUSD = 1 USD
 uint256 constant HAI_USD_INITIAL_PRICE = 1e18; // 1 HAI = 1 USD
+uint256 constant AZUSD_ETH_INITIAL_PRICE = 0.0005e18; // 2000 AZUSD = 1 ETH
 uint256 constant HAI_ETH_INITIAL_PRICE = 0.0005e18; // 2000 HAI = 1 ETH
+int24 constant AZUSD_ETH_INITIAL_TICK = 76_013; // ~2000 AZUSD = 1 ETH
 int24 constant HAI_ETH_INITIAL_TICK = 76_013; // ~2000 HAI = 1 ETH
 
+uint24 constant AZUSD_POOL_FEE_TIER = 3000; // 0.3 %
 uint24 constant HAI_POOL_FEE_TIER = 3000; // 0.3 %
+uint16 constant AZUSD_POOL_OBSERVATION_CARDINALITY = 5000; // Safest cardinality would be 43.2k (at 2s per block, 1d TWAP)
 uint16 constant HAI_POOL_OBSERVATION_CARDINALITY = 5000; // Safest cardinality would be 43.2k (at 2s per block, 1d TWAP)
 
 // Collateral Names
+bytes32 constant HAI = bytes32('HAI'); // 0x4841490000000000000000000000000000000000000000000000000000000000
 bytes32 constant ETH_A = bytes32('ETH-A'); // 0x4554482d41000000000000000000000000000000000000000000000000000000
 bytes32 constant WETH = bytes32('WETH'); // 0x5745544800000000000000000000000000000000000000000000000000000000
 bytes32 constant WSTETH = bytes32('WSTETH'); // 0x5753544554480000000000000000000000000000000000000000000000000000
@@ -45,11 +50,22 @@ bytes32 constant WBTC = bytes32('WBTC'); // 0x5742544300000000000000000000000000
 bytes32 constant STONES = bytes32('STONES'); // 0x53544f4e45530000000000000000000000000000000000000000000000000000
 bytes32 constant TOTEM = bytes32('TOTEM'); // 0x544f54454d000000000000000000000000000000000000000000000000000000
 
+bytes32 constant AZOS = bytes32('AZOS'); // 0x415a4f5300000000000000000000000000000000000000000000000000000000
+bytes32 constant AZUSD = bytes32('AZUSD'); // 0x4841490000000000000000000000000000000000000000000000000000000000
+bytes32 constant CELO = bytes32('CELO'); // 0x43454c4f00000000000000000000000000000000000000000000000000000000
+bytes32 constant USDGLO = bytes32('USDGLO'); // 0x555344474c4f0000000000000000000000000000000000000000000000000000
+bytes32 constant USDC = bytes32('USDC'); // 0x5553444300000000000000000000000000000000000000000000000000000000
+bytes32 constant HLSP = bytes32('HLSP'); // 0x484c535000000000000000000000000000000000000000000000000000000000
+bytes32 constant KLIMA = bytes32('KLIMA'); // 0x4b4c494d41000000000000000000000000000000000000000000000000000000
+bytes32 constant POWR = bytes32('POWR'); // 0x50574f5200000000000000000000000000000000000000000000000000000000
+bytes32 constant GTC = bytes32('GTC'); // 0x4754430000000000000000000000000000000000000000000000000000000000
+bytes32 constant GIV = bytes32('GIV'); // 0x4749540000000000000000000000000000000000000000000000000000000000
+
 // Original Wrong Value
 uint256 constant MINUS_10_PERCENT_IN_2_HOURS = 999_985_366_702_115_272_120_527_460;
 // Correct Value
 // bc -l <<< 'scale=27; e( l(.9)/(60 * 60 * 2) )'
-// uint256 constant MINUS_10_PERCENT_IN_2_HOURS_CORRECT = 999_985_366_702_115_272_120_527_461;
+uint256 constant MINUS_10_PERCENT_IN_2_HOURS_CORRECT = 999_985_366_702_115_272_120_527_461;
 
 // bc -l <<< 'scale=27; e( l(.85)/(60 * 60 * 2) )'
 uint256 constant MINUS_15_PERCENT_IN_2_HOURS = 999_977_428_181_205_977_622_596_568;
@@ -100,7 +116,7 @@ uint256 constant PROPORTIONAL_GAIN = 154_712_579_997;
 uint256 constant INTEGRAL_GAIN = 13_785;
 
 // Job Params
-uint256 constant JOB_REWARD = 1 * WAD; // 1 HAI
+uint256 constant JOB_REWARD = (1 * WAD) / 100; // 0.01 AZUSD
 
 /**
  * @title Params
@@ -139,7 +155,7 @@ abstract contract Params {
   IPostSettlementSurplusAuctionHouse.PostSettlementSAHParams _postSettlementSAHParams;
 
   // --- Governor params ---
-  IHaiGovernor.HaiGovernorParams _governorParams;
+  IAzosGovernor.AzosGovernorParams _governorParams;
   ITokenDistributor.TokenDistributorParams _tokenDistributorParams;
 }
 

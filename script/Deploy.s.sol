@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import '@script/Contracts.s.sol';
 import '@script/Params.s.sol';
@@ -20,10 +20,8 @@ abstract contract Deploy is Common, Script {
 
     // Deploy tokens used to setup the environment
     deployTokens();
-
     // Deploy governance contracts
     deployGovernance();
-
     // Environment may be different for each network
     setupEnvironment();
 
@@ -65,8 +63,7 @@ abstract contract Deploy is Common, Script {
     } else if (delegate == deployer) {
       _delegateToAll(governor);
     } else {
-      _delegateToAll(delegate);
-      _revokeDeployerToAll(governor);
+      _revokeDeployerToAll(delegate);
     }
 
     vm.stopBroadcast();
@@ -75,66 +72,46 @@ abstract contract Deploy is Common, Script {
 
 contract DeployMainnet is MainnetParams, Deploy {
   function setUp() public virtual {
-    _deployerPk = uint256(vm.envBytes32('OP_MAINNET_DEPLOYER_PK'));
+    _deployerPk = uint256(vm.envBytes32('BASE_MAINNET_DEPLOYER_PK'));
   }
 
   function setupEnvironment() public virtual override updateParams {
+    delegate = 0x44E568e07d08821a12cA9A076984102759e53d5d; //
+
     // Deploy oracle factories
-    chainlinkRelayerFactory = new ChainlinkRelayerFactory(OP_CHAINLINK_SEQUENCER_UPTIME_FEED);
-    uniV3RelayerFactory = new UniV3RelayerFactory(UNISWAP_V3_FACTORY);
     denominatedOracleFactory = new DenominatedOracleFactory();
     delayedOracleFactory = new DelayedOracleFactory();
 
+    // Setup oracle system with DIA Oracle V2
+    address diaOracleV2 = 0x997b09Fb3AB03b06506E2eFBc10b19345A283D09;
     // Setup oracle feeds
-    IBaseOracle _ethUSDPriceFeed = chainlinkRelayerFactory.deployChainlinkRelayer(OP_CHAINLINK_ETH_USD_FEED, 1 hours);
-    IBaseOracle _wstethETHPriceFeed =
-      chainlinkRelayerFactory.deployChainlinkRelayer(OP_CHAINLINK_WSTETH_ETH_FEED, 1 hours);
-    IBaseOracle _opUSDPriceFeed = chainlinkRelayerFactory.deployChainlinkRelayer(OP_CHAINLINK_OP_USD_FEED, 1 hours);
+    IBaseOracle _klimaUsdOracle = new DIARelayerV2(diaOracleV2, 'KLIMA/USD', 1 hours);
+    IBaseOracle _ethUsdOracle = new DIARelayerV2(diaOracleV2, 'ETH/USD', 1 hours);
+    IBaseOracle _usdgloUsdOracle = new HardcodedOracle('USDGLO/USD', 1e18); // 1 USDGLO = 1 USD, hardcoded for usd redemptions
+    IBaseOracle _hlspUsdOracle = new HardcodedOracle('HLSP/USD', 1e18); // 1 HLSP = 1 USD, hardcoded for usd redemptions
 
-    IBaseOracle _wstethUSDPriceFeed = denominatedOracleFactory.deployDenominatedOracle({
-      _priceSource: _wstethETHPriceFeed,
-      _denominationPriceSource: _ethUSDPriceFeed,
-      _inverted: false
-    });
+    delayedOracle[KLIMA] = delayedOracleFactory.deployDelayedOracle(_klimaUsdOracle, 1 hours);
+    delayedOracle[WETH] = delayedOracleFactory.deployDelayedOracle(_ethUsdOracle, 1 hours);
+    delayedOracle[HLSP] = delayedOracleFactory.deployDelayedOracle(_hlspUsdOracle, 1 hours);
+    delayedOracle[USDGLO] = delayedOracleFactory.deployDelayedOracle(_usdgloUsdOracle, 1 hours);
 
-    delayedOracle[WETH] = delayedOracleFactory.deployDelayedOracle(_ethUSDPriceFeed, 1 hours);
-    delayedOracle[WSTETH] = delayedOracleFactory.deployDelayedOracle(_wstethUSDPriceFeed, 1 hours);
-    delayedOracle[OP] = delayedOracleFactory.deployDelayedOracle(_opUSDPriceFeed, 1 hours);
+    collateral[KLIMA] = IERC20Metadata(address(BASE_KLIMA));
+    collateral[WETH] = IERC20Metadata(address(BASE_WETH));
+    collateral[HLSP] = IERC20Metadata(address(BASE_HLSP));
+    collateral[USDGLO] = IERC20Metadata(address(BASE_USDGLO));
 
-    collateral[WETH] = IERC20Metadata(OP_WETH);
-    collateral[WSTETH] = IERC20Metadata(OP_WSTETH);
-    collateral[OP] = IERC20Metadata(OP_OPTIMISM);
-
+    // Setup collateral types
+    collateralTypes.push(KLIMA);
     collateralTypes.push(WETH);
-    collateralTypes.push(WSTETH);
-    collateralTypes.push(OP);
+    collateralTypes.push(HLSP);
+    collateralTypes.push(USDGLO);
 
     // NOTE: Deploying the PID Controller turned off until governance action
-    systemCoinOracle = new HardcodedOracle('HAI / USD', HAI_USD_INITIAL_PRICE); // 1 HAI = 1 USD
+    systemCoinOracle = new HardcodedOracle('AZUSD / USD', AZUSD_USD_INITIAL_PRICE); // 1 AZUSD = 1 USD
   }
 
   function setupPostEnvironment() public virtual override updateParams {
-    // Deploy HAI/WETH UniV3 pool (uninitialized)
-    IUniswapV3Factory(UNISWAP_V3_FACTORY).createPool({
-      tokenA: address(systemCoin),
-      tokenB: address(collateral[WETH]),
-      fee: HAI_POOL_FEE_TIER
-    });
-
-    // Setup HAI/WETH oracle feed
-    IBaseOracle _haiWethOracle = uniV3RelayerFactory.deployUniV3Relayer({
-      _baseToken: address(systemCoin),
-      _quoteToken: address(collateral[WETH]),
-      _feeTier: HAI_POOL_FEE_TIER,
-      _quotePeriod: 1 days
-    });
-
-    // Setup HAI/USD oracle feed
-    denominatedOracleFactory.deployDenominatedOracle({
-      _priceSource: _haiWethOracle,
-      _denominationPriceSource: delayedOracle[WETH].priceSource(),
-      _inverted: false
-    });
+    // NOTE: Deploying the PID Controller turned off until governance action
   }
 }
 

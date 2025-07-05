@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 
@@ -15,13 +15,17 @@ import {SystemCoin} from '@contracts/tokens/SystemCoin.sol';
 import {ProtocolToken} from '@contracts/tokens/ProtocolToken.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
+  function warp(
+    uint256
+  ) public virtual;
 }
 
 contract GuyBurningSurplusAuction {
   SurplusAuctionHouse surplusAuctionHouse;
 
-  constructor(SurplusAuctionHouse surplusAuctionHouse_) {
+  constructor(
+    SurplusAuctionHouse surplusAuctionHouse_
+  ) {
     surplusAuctionHouse = surplusAuctionHouse_;
     surplusAuctionHouse.safeEngine().approveSAFEModification(address(surplusAuctionHouse));
     surplusAuctionHouse.protocolToken().approve(address(surplusAuctionHouse), type(uint256).max);
@@ -31,7 +35,9 @@ contract GuyBurningSurplusAuction {
     surplusAuctionHouse.increaseBidSize(id, bid);
   }
 
-  function settleAuction(uint256 id) public {
+  function settleAuction(
+    uint256 id
+  ) public {
     surplusAuctionHouse.settleAuction(id);
   }
 
@@ -40,12 +46,16 @@ contract GuyBurningSurplusAuction {
     (ok,) = address(surplusAuctionHouse).call(abi.encodeWithSignature(sig, id, bid));
   }
 
-  function try_settleAuction(uint256 id) public returns (bool ok) {
+  function try_settleAuction(
+    uint256 id
+  ) public returns (bool ok) {
     string memory sig = 'settleAuction(uint256)';
     (ok,) = address(surplusAuctionHouse).call(abi.encodeWithSignature(sig, id));
   }
 
-  function try_restartAuction(uint256 id) public returns (bool ok) {
+  function try_restartAuction(
+    uint256 id
+  ) public returns (bool ok) {
     string memory sig = 'restartAuction(uint256)';
     (ok,) = address(surplusAuctionHouse).call(abi.encodeWithSignature(sig, id));
   }
@@ -54,7 +64,9 @@ contract GuyBurningSurplusAuction {
 contract GuyRecyclingSurplusAuction {
   SurplusAuctionHouse surplusAuctionHouse;
 
-  constructor(SurplusAuctionHouse surplusAuctionHouse_) {
+  constructor(
+    SurplusAuctionHouse surplusAuctionHouse_
+  ) {
     surplusAuctionHouse = surplusAuctionHouse_;
     surplusAuctionHouse.safeEngine().approveSAFEModification(address(surplusAuctionHouse));
     surplusAuctionHouse.protocolToken().approve(address(surplusAuctionHouse), type(uint256).max);
@@ -64,7 +76,9 @@ contract GuyRecyclingSurplusAuction {
     surplusAuctionHouse.increaseBidSize(id, bid);
   }
 
-  function settleAuction(uint256 id) public {
+  function settleAuction(
+    uint256 id
+  ) public {
     surplusAuctionHouse.settleAuction(id);
   }
 
@@ -73,12 +87,16 @@ contract GuyRecyclingSurplusAuction {
     (ok,) = address(surplusAuctionHouse).call(abi.encodeWithSignature(sig, id, bid));
   }
 
-  function try_settleAuction(uint256 id) public returns (bool ok) {
+  function try_settleAuction(
+    uint256 id
+  ) public returns (bool ok) {
     string memory sig = 'settleAuction(uint256)';
     (ok,) = address(surplusAuctionHouse).call(abi.encodeWithSignature(sig, id));
   }
 
-  function try_restartAuction(uint256 id) public returns (bool ok) {
+  function try_restartAuction(
+    uint256 id
+  ) public returns (bool ok) {
     string memory sig = 'restartAuction(uint256)';
     (ok,) = address(surplusAuctionHouse).call(abi.encodeWithSignature(sig, id));
   }
@@ -87,7 +105,9 @@ contract GuyRecyclingSurplusAuction {
 contract GuyPostSurplusAuction {
   PostSettlementSurplusAuctionHouse surplusAuctionHouse;
 
-  constructor(PostSettlementSurplusAuctionHouse surplusAuctionHouse_) {
+  constructor(
+    PostSettlementSurplusAuctionHouse surplusAuctionHouse_
+  ) {
     surplusAuctionHouse = surplusAuctionHouse_;
     surplusAuctionHouse.safeEngine().approveSAFEModification(address(surplusAuctionHouse));
     surplusAuctionHouse.protocolToken().approve(address(surplusAuctionHouse), type(uint256).max);
@@ -97,7 +117,9 @@ contract GuyPostSurplusAuction {
     surplusAuctionHouse.increaseBidSize(id, bid);
   }
 
-  function settleAuction(uint256 id) public {
+  function settleAuction(
+    uint256 id
+  ) public {
     surplusAuctionHouse.settleAuction(id);
   }
 
@@ -106,12 +128,16 @@ contract GuyPostSurplusAuction {
     (ok,) = address(surplusAuctionHouse).call(abi.encodeWithSignature(sig, id, bid));
   }
 
-  function try_settleAuction(uint256 id) public returns (bool ok) {
+  function try_settleAuction(
+    uint256 id
+  ) public returns (bool ok) {
     string memory sig = 'settleAuction(uint256)';
     (ok,) = address(surplusAuctionHouse).call(abi.encodeWithSignature(sig, id));
   }
 
-  function try_restartAuction(uint256 id) public returns (bool ok) {
+  function try_restartAuction(
+    uint256 id
+  ) public returns (bool ok) {
     string memory sig = 'restartAuction(uint256)';
     (ok,) = address(surplusAuctionHouse).call(abi.encodeWithSignature(sig, id));
   }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 
@@ -12,7 +12,9 @@ import {CoinJoin} from '@contracts/utils/CoinJoin.sol';
 import {HOUR} from '@libraries/Math.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
+  function warp(
+    uint256
+  ) public virtual;
 }
 
 contract Usr {
@@ -54,11 +56,15 @@ contract SingleStabilityFeeTreasuryTest is DSTest {
   uint256 constant HUNDRED = 10 ** 2;
   uint256 constant RAY = 10 ** 27;
 
-  function ray(uint256 wad) internal pure returns (uint256) {
+  function ray(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 9;
   }
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * RAY;
   }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ITokenDistributor} from '@interfaces/tokens/ITokenDistributor.sol';
 import {IProtocolToken} from '@interfaces/tokens/IProtocolToken.sol';
@@ -69,7 +69,9 @@ contract TokenDistributor is Authorizable, ITokenDistributor {
   }
 
   /// @inheritdoc ITokenDistributor
-  function sweep(address _sweepReceiver) external override isAuthorized {
+  function sweep(
+    address _sweepReceiver
+  ) external override isAuthorized {
     if (block.timestamp <= claimPeriodEnd) revert TokenDistributor_ClaimPeriodNotEnded();
 
     uint256 _totalClaimable = totalClaimable.assertNonNull();

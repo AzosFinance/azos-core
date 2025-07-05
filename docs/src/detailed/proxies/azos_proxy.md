@@ -1,10 +1,10 @@
-# HAI Proxy
+# Azos Proxy
 
-See [HaiProxy.sol](/src/contracts/proxies/HaiProxy.sol/contract.HaiProxy.html) for more details.
+See [AzosProxy.sol](/src/contracts/proxies/AzosProxy.sol/contract.AzosProxy.html) for more details.
 
 ## 1. Introduction
 
-The HAI Proxy contract is a powerful and flexible smart contract commonly used within the decentralized finance (DeFi) ecosystem. Its primary function is to act as an extensible, personal proxy contract that allows users to bundle multiple actions into single, atomic transactions. With HAI Proxy, users can interact with multiple smart contracts or execute complex contract calls in a secure, efficient, and modular manner.
+The Azos Proxy contract is a powerful and flexible smart contract commonly used within the decentralized finance (DeFi) ecosystem. Its primary function is to act as an extensible, personal proxy contract that allows users to bundle multiple actions into single, atomic transactions. With Azos Proxy, users can interact with multiple smart contracts or execute complex contract calls in a secure, efficient, and modular manner.
 
 ## 2. Contract Details
 

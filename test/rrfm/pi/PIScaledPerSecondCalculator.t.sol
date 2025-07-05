@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 
@@ -12,7 +12,9 @@ import {OracleForTest} from '@test/mocks/OracleForTest.sol';
 import {Math} from '@libraries/Math.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
+  function warp(
+    uint256
+  ) public virtual;
 }
 
 contract PIScaledPerSecondCalculatorTest is DSTest {

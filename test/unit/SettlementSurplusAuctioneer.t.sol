@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {
   SettlementSurplusAuctioneer,
@@ -10,11 +10,11 @@ import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {ISurplusAuctionHouse} from '@interfaces/ISurplusAuctionHouse.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
 import {Assertions} from '@libraries/Assertions.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   address deployer = label('deployer');
@@ -40,7 +40,9 @@ abstract contract Base is HaiTest {
     vm.stopPrank();
   }
 
-  function _mockContractEnabled(bool _contractEnabled) internal {
+  function _mockContractEnabled(
+    bool _contractEnabled
+  ) internal {
     vm.mockCall(
       address(mockAccountingEngine),
       abi.encodeCall(mockAccountingEngine.contractEnabled, ()),
@@ -48,7 +50,9 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockSafeEngine(ISAFEEngine _safeEngine) internal {
+  function _mockSafeEngine(
+    ISAFEEngine _safeEngine
+  ) internal {
     vm.mockCall(
       address(mockAccountingEngine), abi.encodeCall(mockAccountingEngine.safeEngine, ()), abi.encode(_safeEngine)
     );
@@ -94,7 +98,9 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockLastSurplusAuctionTime(uint256 _lastSurplusTime) internal {
+  function _mockLastSurplusAuctionTime(
+    uint256 _lastSurplusTime
+  ) internal {
     stdstore.target(address(settlementSurplusAuctioneer)).sig(ISettlementSurplusAuctioneer.lastSurplusTime.selector)
       .checked_write(_lastSurplusTime);
   }
@@ -341,13 +347,17 @@ contract Unit_SettlementSurplusAuctioneer_ModifyParameters is Base {
     _;
   }
 
-  function test_Set_AccountingEngine(address _accountingEngine) public happyPath {
+  function test_Set_AccountingEngine(
+    address _accountingEngine
+  ) public happyPath {
     settlementSurplusAuctioneer.modifyParameters('accountingEngine', abi.encode(_accountingEngine));
 
     assertEq(address(settlementSurplusAuctioneer.accountingEngine()), _accountingEngine);
   }
 
-  function test_Set_SurplusAuctionHouse(address _surplusAuctionHouse) public happyPath {
+  function test_Set_SurplusAuctionHouse(
+    address _surplusAuctionHouse
+  ) public happyPath {
     address _previousSurplusAuctionHouse = address(settlementSurplusAuctioneer.surplusAuctionHouse());
 
     vm.expectCall(
@@ -362,7 +372,9 @@ contract Unit_SettlementSurplusAuctioneer_ModifyParameters is Base {
     assertEq(address(settlementSurplusAuctioneer.surplusAuctionHouse()), _surplusAuctionHouse);
   }
 
-  function test_Revert_UnrecognizedParam(bytes memory _data) public {
+  function test_Revert_UnrecognizedParam(
+    bytes memory _data
+  ) public {
     vm.startPrank(authorizedAccount);
 
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);

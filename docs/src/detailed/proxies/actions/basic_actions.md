@@ -6,7 +6,7 @@ See [BasicActions.sol](/src/contracts/proxies/actions/BasicActions.sol/contract.
 
 These actions encapsulate all functionalities needed for the comprehensive management of Single-Collateral SAFEs within the SAFE Engine. Whether you're aiming to open, modify, or close SAFEs, Basic Actions provide the modular and gas-efficient methods to achieve your goals.
 
-The scope of these Actions is to provide the user with a set of methods to interact with the SAFE Manager Contract. These methods are used by the HAI Proxy contract to execute the corresponding operations on the SAFE Engine.
+The scope of these Actions is to provide the user with a set of methods to interact with the SAFE Manager Contract. These methods are used by the Azos Proxy contract to execute the corresponding operations on the SAFE Engine.
 
 ## 2. Contract Details
 

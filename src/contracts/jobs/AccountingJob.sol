@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IAccountingJob} from '@interfaces/jobs/IAccountingJob.sol';
 import {IAccountingEngine} from '@interfaces/IAccountingEngine.sol';
@@ -59,7 +59,9 @@ contract AccountingJob is Authorizable, Modifiable, Job, IAccountingJob {
   // --- Job ---
 
   /// @inheritdoc IAccountingJob
-  function workPopDebtFromQueue(uint256 _debtBlockTimestamp) external reward {
+  function workPopDebtFromQueue(
+    uint256 _debtBlockTimestamp
+  ) external reward {
     if (!shouldWorkPopDebtFromQueue) revert NotWorkable();
     accountingEngine.popDebtFromQueue(_debtBlockTimestamp);
   }

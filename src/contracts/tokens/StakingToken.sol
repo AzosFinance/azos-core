@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IProtocolToken} from '@interfaces/tokens/IProtocolToken.sol';
 import {IStakingToken} from '@interfaces/tokens/IStakingToken.sol';
@@ -68,7 +68,9 @@ contract StakingToken is ERC20, ERC20Permit, ERC20Votes, ERC20Burnable, Authoriz
   }
 
   /// @inheritdoc IStakingToken
-  function burn(uint256 _wad) public override(ERC20Burnable, IStakingToken) {
+  function burn(
+    uint256 _wad
+  ) public override(ERC20Burnable, IStakingToken) {
     _burn(msg.sender, _wad);
     emit StakingTokenBurn(msg.sender, _wad);
   }
@@ -95,7 +97,9 @@ contract StakingToken is ERC20, ERC20Permit, ERC20Votes, ERC20Burnable, Authoriz
     super._update(_from, _to, _value);
   }
 
-  function nonces(address _owner) public view override(ERC20Permit, IERC20Permit, Nonces) returns (uint256 _nonce) {
+  function nonces(
+    address _owner
+  ) public view override(ERC20Permit, IERC20Permit, Nonces) returns (uint256 _nonce) {
     return super.nonces(_owner);
   }
 

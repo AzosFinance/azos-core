@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {GlobalSettlement, IGlobalSettlement} from '@contracts/settlement/GlobalSettlement.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -10,11 +10,11 @@ import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
 import {IDisableable} from '@interfaces/utils/IDisableable.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
 import {Math, RAY, WAD} from '@libraries/Math.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   address deployer = label('deployer');
@@ -61,7 +61,9 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockGlobalDebt(uint256 _globalDebt) internal {
+  function _mockGlobalDebt(
+    uint256 _globalDebt
+  ) internal {
     vm.mockCall(address(mockSafeEngine), abi.encodeCall(mockSafeEngine.globalDebt, ()), abi.encode(_globalDebt));
   }
 
@@ -106,7 +108,9 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockRedemptionPrice(uint256 _redemptionPrice) internal {
+  function _mockRedemptionPrice(
+    uint256 _redemptionPrice
+  ) internal {
     vm.mockCall(
       address(mockOracleRelayer), abi.encodeCall(mockOracleRelayer.redemptionPrice, ()), abi.encode(_redemptionPrice)
     );
@@ -138,27 +142,37 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockOracleRead(uint256 _oracleReadValue) internal {
+  function _mockOracleRead(
+    uint256 _oracleReadValue
+  ) internal {
     vm.mockCall(address(mockOracle), abi.encodeCall(IBaseOracle.read, ()), abi.encode(_oracleReadValue));
   }
 
-  function _mockContractEnabled(bool _contractEnabled) internal {
+  function _mockContractEnabled(
+    bool _contractEnabled
+  ) internal {
     stdstore.target(address(globalSettlement)).sig(IDisableable.contractEnabled.selector).checked_write(
       _contractEnabled
     );
   }
 
-  function _mockShutdownTime(uint256 _shutdownTime) internal {
+  function _mockShutdownTime(
+    uint256 _shutdownTime
+  ) internal {
     stdstore.target(address(globalSettlement)).sig(IGlobalSettlement.shutdownTime.selector).checked_write(_shutdownTime);
   }
 
-  function _mockShutdownCooldown(uint256 _shutdownCooldown) internal {
+  function _mockShutdownCooldown(
+    uint256 _shutdownCooldown
+  ) internal {
     stdstore.target(address(globalSettlement)).sig(IGlobalSettlement.params.selector).depth(0).checked_write(
       _shutdownCooldown
     );
   }
 
-  function _mockOutstandingCoinSupply(uint256 _outstandingCoinSupply) internal {
+  function _mockOutstandingCoinSupply(
+    uint256 _outstandingCoinSupply
+  ) internal {
     stdstore.target(address(globalSettlement)).sig(IGlobalSettlement.outstandingCoinSupply.selector).checked_write(
       _outstandingCoinSupply
     );
@@ -225,7 +239,9 @@ contract Unit_GlobalSettlement_Constructor is Base {
     assertEq(globalSettlement.contractEnabled(), true);
   }
 
-  function test_Set_SafeEngine(address _safeEngine) public happyPath mockAsContract(_safeEngine) {
+  function test_Set_SafeEngine(
+    address _safeEngine
+  ) public happyPath mockAsContract(_safeEngine) {
     globalSettlement = new GlobalSettlement(
       _safeEngine,
       address(mockLiquidationEngine),
@@ -240,7 +256,9 @@ contract Unit_GlobalSettlement_Constructor is Base {
     assertEq(address(globalSettlement.safeEngine()), _safeEngine);
   }
 
-  function test_Set_LiquidationEngine(address _liquidationEngine) public happyPath mockAsContract(_liquidationEngine) {
+  function test_Set_LiquidationEngine(
+    address _liquidationEngine
+  ) public happyPath mockAsContract(_liquidationEngine) {
     globalSettlement = new GlobalSettlement(
       address(mockSafeEngine),
       address(_liquidationEngine),
@@ -255,7 +273,9 @@ contract Unit_GlobalSettlement_Constructor is Base {
     assertEq(address(globalSettlement.liquidationEngine()), _liquidationEngine);
   }
 
-  function test_Set_OracleRelayer(address _oracleRelayer) public happyPath mockAsContract(_oracleRelayer) {
+  function test_Set_OracleRelayer(
+    address _oracleRelayer
+  ) public happyPath mockAsContract(_oracleRelayer) {
     globalSettlement = new GlobalSettlement(
       address(mockSafeEngine),
       address(mockLiquidationEngine),
@@ -270,7 +290,9 @@ contract Unit_GlobalSettlement_Constructor is Base {
     assertEq(address(globalSettlement.oracleRelayer()), _oracleRelayer);
   }
 
-  function test_Set_CoinJoin(address _coinJoin) public happyPath mockAsContract(_coinJoin) {
+  function test_Set_CoinJoin(
+    address _coinJoin
+  ) public happyPath mockAsContract(_coinJoin) {
     globalSettlement = new GlobalSettlement(
       address(mockSafeEngine),
       address(mockLiquidationEngine),
@@ -285,11 +307,9 @@ contract Unit_GlobalSettlement_Constructor is Base {
     assertEq(address(globalSettlement.coinJoin()), _coinJoin);
   }
 
-  function test_Set_CollateralJoinFactory(address _collateralJoinFactory)
-    public
-    happyPath
-    mockAsContract(_collateralJoinFactory)
-  {
+  function test_Set_CollateralJoinFactory(
+    address _collateralJoinFactory
+  ) public happyPath mockAsContract(_collateralJoinFactory) {
     globalSettlement = new GlobalSettlement(
       address(mockSafeEngine),
       address(mockLiquidationEngine),
@@ -304,11 +324,9 @@ contract Unit_GlobalSettlement_Constructor is Base {
     assertEq(address(globalSettlement.collateralJoinFactory()), _collateralJoinFactory);
   }
 
-  function test_Set_CollateralAuctionHouseFactory(address _collateralAuctionHouseFactory)
-    public
-    happyPath
-    mockAsContract(_collateralAuctionHouseFactory)
-  {
+  function test_Set_CollateralAuctionHouseFactory(
+    address _collateralAuctionHouseFactory
+  ) public happyPath mockAsContract(_collateralAuctionHouseFactory) {
     globalSettlement = new GlobalSettlement(
       address(mockSafeEngine),
       address(mockLiquidationEngine),
@@ -323,7 +341,9 @@ contract Unit_GlobalSettlement_Constructor is Base {
     assertEq(address(globalSettlement.collateralAuctionHouseFactory()), _collateralAuctionHouseFactory);
   }
 
-  function test_Set_StabilityFeeTreasury(address _sfTreasury) public happyPath mockAsContract(_sfTreasury) {
+  function test_Set_StabilityFeeTreasury(
+    address _sfTreasury
+  ) public happyPath mockAsContract(_sfTreasury) {
     globalSettlement = new GlobalSettlement(
       address(mockSafeEngine),
       address(mockLiquidationEngine),
@@ -338,7 +358,9 @@ contract Unit_GlobalSettlement_Constructor is Base {
     assertEq(address(globalSettlement.stabilityFeeTreasury()), _sfTreasury);
   }
 
-  function test_Set_AccountingEngine(address _accountingEngine) public happyPath mockAsContract(_accountingEngine) {
+  function test_Set_AccountingEngine(
+    address _accountingEngine
+  ) public happyPath mockAsContract(_accountingEngine) {
     globalSettlement = new GlobalSettlement(
       address(mockSafeEngine),
       address(mockLiquidationEngine),
@@ -353,7 +375,9 @@ contract Unit_GlobalSettlement_Constructor is Base {
     assertEq(address(globalSettlement.accountingEngine()), _accountingEngine);
   }
 
-  function test_Set_ShutdownCooldown(uint256 _cooldown) public happyPath {
+  function test_Set_ShutdownCooldown(
+    uint256 _cooldown
+  ) public happyPath {
     globalSettlement = new GlobalSettlement(
       address(mockSafeEngine),
       address(mockLiquidationEngine),
@@ -496,7 +520,9 @@ contract Unit_GlobalSettlement_FreezeCollateralType is Base {
     _mockOracleRead(_oracleReadValue);
   }
 
-  function test_Revert_ContractIsEnabled(bytes32 _cType) public {
+  function test_Revert_ContractIsEnabled(
+    bytes32 _cType
+  ) public {
     vm.expectRevert(IDisableable.ContractIsEnabled.selector);
 
     globalSettlement.freezeCollateralType(_cType);
@@ -561,13 +587,17 @@ contract Unit_GlobalSettlement_FastTrackAuction is Base {
 
   event FastTrackAuction(bytes32 indexed _cType, uint256 indexed _auctionId, uint256 _collateralTotalDebt);
 
-  modifier happyPath(FastTrackAuctionStruct memory _auction) {
+  modifier happyPath(
+    FastTrackAuctionStruct memory _auction
+  ) {
     _assumeHappyPath(_auction);
     _mockValues(_auction);
     _;
   }
 
-  function _assumeHappyPath(FastTrackAuctionStruct memory _auction) internal pure returns (uint256 _debt) {
+  function _assumeHappyPath(
+    FastTrackAuctionStruct memory _auction
+  ) internal pure returns (uint256 _debt) {
     vm.assume(_auction.finalCoinPerCollateralPrice != 0);
     vm.assume(_auction.accumulatedRate != 0);
     vm.assume(_auction.amountToSell > 0);
@@ -580,7 +610,9 @@ contract Unit_GlobalSettlement_FastTrackAuction is Base {
     vm.assume(notOverflowInt256(_debt));
   }
 
-  function _mockValues(FastTrackAuctionStruct memory _auction) internal {
+  function _mockValues(
+    FastTrackAuctionStruct memory _auction
+  ) internal {
     _mockFinalCoinPerCollateralPrice(_auction.collateralType, _auction.finalCoinPerCollateralPrice);
     _mockCollateralTotalDebt(_auction.collateralType, _auction.collateralTotalDebt);
     _mockSafeEngineCollateralData(_auction.collateralType, 0, 0, _auction.accumulatedRate, 0, 0);
@@ -588,13 +620,17 @@ contract Unit_GlobalSettlement_FastTrackAuction is Base {
     _mockAuction(_auction.id, _auction.amountToSell, _auction.amountToRaise, _auction.forgoneCollateralReceiver);
   }
 
-  function test_Revert_FinalCollateralPriceNotDefined(FastTrackAuctionStruct memory _auction) public {
+  function test_Revert_FinalCollateralPriceNotDefined(
+    FastTrackAuctionStruct memory _auction
+  ) public {
     vm.expectRevert(IGlobalSettlement.GS_FinalCollateralPriceNotDefined.selector);
 
     globalSettlement.fastTrackAuction(_auction.collateralType, _auction.id);
   }
 
-  function test_Revert_IntOverflow_0(FastTrackAuctionStruct memory _auction) public {
+  function test_Revert_IntOverflow_0(
+    FastTrackAuctionStruct memory _auction
+  ) public {
     vm.assume(_auction.finalCoinPerCollateralPrice != 0);
     vm.assume(_auction.accumulatedRate != 0);
 
@@ -610,7 +646,9 @@ contract Unit_GlobalSettlement_FastTrackAuction is Base {
     globalSettlement.fastTrackAuction(_auction.collateralType, _auction.id);
   }
 
-  function test_Revert_IntOverflow_1(FastTrackAuctionStruct memory _auction) public {
+  function test_Revert_IntOverflow_1(
+    FastTrackAuctionStruct memory _auction
+  ) public {
     vm.assume(_auction.finalCoinPerCollateralPrice != 0);
     vm.assume(_auction.accumulatedRate != 0);
 
@@ -627,7 +665,9 @@ contract Unit_GlobalSettlement_FastTrackAuction is Base {
     globalSettlement.fastTrackAuction(_auction.collateralType, _auction.id);
   }
 
-  function test_Call_SafeEngine_CreateUnbackedDebt(FastTrackAuctionStruct memory _auction) public happyPath(_auction) {
+  function test_Call_SafeEngine_CreateUnbackedDebt(
+    FastTrackAuctionStruct memory _auction
+  ) public happyPath(_auction) {
     vm.expectCall(
       address(mockSafeEngine),
       abi.encodeCall(
@@ -640,10 +680,9 @@ contract Unit_GlobalSettlement_FastTrackAuction is Base {
     globalSettlement.fastTrackAuction(_auction.collateralType, _auction.id);
   }
 
-  function test_Call_CollateralAuctionHouse_TerminateAuctionPrematurely(FastTrackAuctionStruct memory _auction)
-    public
-    happyPath(_auction)
-  {
+  function test_Call_CollateralAuctionHouse_TerminateAuctionPrematurely(
+    FastTrackAuctionStruct memory _auction
+  ) public happyPath(_auction) {
     vm.expectCall(
       address(mockCollateralAuctionHouse),
       abi.encodeCall(ICollateralAuctionHouse.terminateAuctionPrematurely, (_auction.id)),
@@ -653,7 +692,9 @@ contract Unit_GlobalSettlement_FastTrackAuction is Base {
     globalSettlement.fastTrackAuction(_auction.collateralType, _auction.id);
   }
 
-  function test_Set_CollateralTotalDebt(FastTrackAuctionStruct memory _auction) public {
+  function test_Set_CollateralTotalDebt(
+    FastTrackAuctionStruct memory _auction
+  ) public {
     uint256 _debt = _assumeHappyPath(_auction);
     _mockValues(_auction);
 
@@ -662,7 +703,9 @@ contract Unit_GlobalSettlement_FastTrackAuction is Base {
     assertEq(globalSettlement.collateralTotalDebt(_auction.collateralType), _auction.collateralTotalDebt + _debt);
   }
 
-  function test_Call_SafeEngine_ConfiscateSAFECollateralAndDebt(FastTrackAuctionStruct memory _auction) public {
+  function test_Call_SafeEngine_ConfiscateSAFECollateralAndDebt(
+    FastTrackAuctionStruct memory _auction
+  ) public {
     uint256 _debt = _assumeHappyPath(_auction);
     _mockValues(_auction);
 
@@ -685,7 +728,9 @@ contract Unit_GlobalSettlement_FastTrackAuction is Base {
     globalSettlement.fastTrackAuction(_auction.collateralType, _auction.id);
   }
 
-  function test_Emit_FastTrackAuction(FastTrackAuctionStruct memory _auction) public {
+  function test_Emit_FastTrackAuction(
+    FastTrackAuctionStruct memory _auction
+  ) public {
     uint256 _debt = _assumeHappyPath(_auction);
     _mockValues(_auction);
 
@@ -711,11 +756,9 @@ contract Unit_GlobalSettlement_ProcessSAFE is Base {
 
   event ProcessSAFE(bytes32 indexed _cType, address indexed _safe, uint256 _collateralShortfall);
 
-  function _assumeHappyPath(ProcessSAFEStruct memory _safeData)
-    internal
-    pure
-    returns (uint256 _amountOwed, uint256 _minCollateral)
-  {
+  function _assumeHappyPath(
+    ProcessSAFEStruct memory _safeData
+  ) internal pure returns (uint256 _amountOwed, uint256 _minCollateral) {
     vm.assume(_safeData.finalCoinPerCollateralPrice != 0);
     vm.assume(notOverflowMul(_safeData.generatedDebt, _safeData.accumulatedRate));
     vm.assume(
@@ -730,7 +773,9 @@ contract Unit_GlobalSettlement_ProcessSAFE is Base {
     vm.assume(notOverflowInt256(_safeData.generatedDebt));
   }
 
-  function _mockValues(ProcessSAFEStruct memory _safeData) internal {
+  function _mockValues(
+    ProcessSAFEStruct memory _safeData
+  ) internal {
     _mockFinalCoinPerCollateralPrice(_safeData.collateralType, _safeData.finalCoinPerCollateralPrice);
     _mockCollateralShortfall(_safeData.collateralType, _safeData.collateralShortfall);
     _mockSafeEngineCollateralData(_safeData.collateralType, 0, 0, _safeData.accumulatedRate, 0, 0);
@@ -739,13 +784,17 @@ contract Unit_GlobalSettlement_ProcessSAFE is Base {
     );
   }
 
-  function test_Revert_FinalCollateralPriceNotDefined(ProcessSAFEStruct memory _safeData) public {
+  function test_Revert_FinalCollateralPriceNotDefined(
+    ProcessSAFEStruct memory _safeData
+  ) public {
     vm.expectRevert(IGlobalSettlement.GS_FinalCollateralPriceNotDefined.selector);
 
     globalSettlement.processSAFE(_safeData.collateralType, _safeData.safe);
   }
 
-  function test_Revert_IntOverflow_1(ProcessSAFEStruct memory _safeData) public {
+  function test_Revert_IntOverflow_1(
+    ProcessSAFEStruct memory _safeData
+  ) public {
     vm.assume(_safeData.finalCoinPerCollateralPrice != 0);
     vm.assume(notOverflowMul(_safeData.generatedDebt, _safeData.accumulatedRate));
     vm.assume(
@@ -767,7 +816,9 @@ contract Unit_GlobalSettlement_ProcessSAFE is Base {
     globalSettlement.processSAFE(_safeData.collateralType, _safeData.safe);
   }
 
-  function test_Set_CollateralShortfall(ProcessSAFEStruct memory _safeData) public {
+  function test_Set_CollateralShortfall(
+    ProcessSAFEStruct memory _safeData
+  ) public {
     (uint256 _amountOwed, uint256 _minCollateral) = _assumeHappyPath(_safeData);
     _mockValues(_safeData);
 
@@ -779,7 +830,9 @@ contract Unit_GlobalSettlement_ProcessSAFE is Base {
     );
   }
 
-  function test_Call_SafeEngine_ConfiscateSAFECollateralAndDebt(ProcessSAFEStruct memory _safeData) public {
+  function test_Call_SafeEngine_ConfiscateSAFECollateralAndDebt(
+    ProcessSAFEStruct memory _safeData
+  ) public {
     (, uint256 _minCollateral) = _assumeHappyPath(_safeData);
     _mockValues(_safeData);
 
@@ -802,7 +855,9 @@ contract Unit_GlobalSettlement_ProcessSAFE is Base {
     globalSettlement.processSAFE(_safeData.collateralType, _safeData.safe);
   }
 
-  function test_Emit_ProcessSAFE(ProcessSAFEStruct memory _safeData) public {
+  function test_Emit_ProcessSAFE(
+    ProcessSAFEStruct memory _safeData
+  ) public {
     (uint256 _amountOwed, uint256 _minCollateral) = _assumeHappyPath(_safeData);
     _mockValues(_safeData);
 
@@ -826,7 +881,9 @@ contract Unit_GlobalSettlement_FreeCollateral is Base {
     _;
   }
 
-  function _assumeHappyPath(uint256 _lockedCollateral) internal pure {
+  function _assumeHappyPath(
+    uint256 _lockedCollateral
+  ) internal pure {
     vm.assume(notOverflowInt256(_lockedCollateral));
   }
 
@@ -835,7 +892,9 @@ contract Unit_GlobalSettlement_FreeCollateral is Base {
     _mockSafeEngineSafeData(_cType, user, _lockedCollateral, _generatedDebt);
   }
 
-  function test_Revert_ContractIsEnabled(bytes32 _cType) public {
+  function test_Revert_ContractIsEnabled(
+    bytes32 _cType
+  ) public {
     vm.expectRevert(IDisableable.ContractIsEnabled.selector);
 
     globalSettlement.freeCollateral(_cType);
@@ -925,7 +984,9 @@ contract Unit_GlobalSettlement_SetOutstandingCoinSupply is Base {
     globalSettlement.setOutstandingCoinSupply();
   }
 
-  function test_Revert_OutstandingCoinSupplyNotZero(uint256 _outstandingCoinSupply) public {
+  function test_Revert_OutstandingCoinSupplyNotZero(
+    uint256 _outstandingCoinSupply
+  ) public {
     vm.assume(_outstandingCoinSupply != 0);
 
     _mockValues(0, 0, _outstandingCoinSupply, 0, 0);
@@ -935,7 +996,9 @@ contract Unit_GlobalSettlement_SetOutstandingCoinSupply is Base {
     globalSettlement.setOutstandingCoinSupply();
   }
 
-  function test_Revert_SurplusNotZero(uint256 _coinBalance) public {
+  function test_Revert_SurplusNotZero(
+    uint256 _coinBalance
+  ) public {
     vm.assume(_coinBalance != 0);
 
     _mockValues(0, 0, 0, _coinBalance, 0);
@@ -1017,7 +1080,9 @@ contract Unit_GlobalSettlement_CalculateCashPrice is Base {
     _mockSafeEngineCollateralData(_cType, 0, 0, _accumulatedRate, 0, 0);
   }
 
-  function test_Revert_OutstandingCoinSupplyZero(bytes32 _cType) public {
+  function test_Revert_OutstandingCoinSupplyZero(
+    bytes32 _cType
+  ) public {
     vm.expectRevert(IGlobalSettlement.GS_OutstandingCoinSupplyZero.selector);
 
     globalSettlement.calculateCashPrice(_cType);
@@ -1119,7 +1184,9 @@ contract Unit_GlobalSettlement_PrepareCoinsForRedeeming is Base {
     _mockCoinBag(user, _coinBag);
   }
 
-  function test_Revert_OutstandingCoinSupplyZero(uint256 _coinAmount) public {
+  function test_Revert_OutstandingCoinSupplyZero(
+    uint256 _coinAmount
+  ) public {
     vm.expectRevert(IGlobalSettlement.GS_OutstandingCoinSupplyZero.selector);
 
     globalSettlement.prepareCoinsForRedeeming(_coinAmount);
@@ -1176,7 +1243,9 @@ contract Unit_GlobalSettlement_RedeemCollateral is Base {
     bytes32 indexed _cType, address indexed _sender, uint256 _coinsAmount, uint256 _collateralAmount
   );
 
-  modifier happyPath(RedeemCollateralStruct memory _collateralData) {
+  modifier happyPath(
+    RedeemCollateralStruct memory _collateralData
+  ) {
     vm.startPrank(user);
 
     _assumeHappyPath(_collateralData);
@@ -1184,26 +1253,34 @@ contract Unit_GlobalSettlement_RedeemCollateral is Base {
     _;
   }
 
-  function _assumeHappyPath(RedeemCollateralStruct memory _collateralData) internal pure {
+  function _assumeHappyPath(
+    RedeemCollateralStruct memory _collateralData
+  ) internal pure {
     vm.assume(_collateralData.collateralCashPrice != 0);
     vm.assume(notOverflowMul(_collateralData.coinsAmount, _collateralData.collateralCashPrice));
     vm.assume(notOverflowAdd(_collateralData.coinsUsedToRedeem, _collateralData.coinsAmount));
     vm.assume(_collateralData.coinsUsedToRedeem + _collateralData.coinsAmount <= _collateralData.coinBag);
   }
 
-  function _mockValues(RedeemCollateralStruct memory _collateralData) internal {
+  function _mockValues(
+    RedeemCollateralStruct memory _collateralData
+  ) internal {
     _mockCollateralCashPrice(_collateralData.collateralType, _collateralData.collateralCashPrice);
     _mockCoinBag(user, _collateralData.coinBag);
     _mockCoinsUsedToRedeem(_collateralData.collateralType, user, _collateralData.coinsUsedToRedeem);
   }
 
-  function test_Revert_CollateralCashPriceNotDefined(RedeemCollateralStruct memory _collateralData) public {
+  function test_Revert_CollateralCashPriceNotDefined(
+    RedeemCollateralStruct memory _collateralData
+  ) public {
     vm.expectRevert(IGlobalSettlement.GS_CollateralCashPriceNotDefined.selector);
 
     globalSettlement.redeemCollateral(_collateralData.collateralType, _collateralData.coinsAmount);
   }
 
-  function test_Revert_InsufficientBagBalance(RedeemCollateralStruct memory _collateralData) public {
+  function test_Revert_InsufficientBagBalance(
+    RedeemCollateralStruct memory _collateralData
+  ) public {
     vm.startPrank(user);
     vm.assume(_collateralData.collateralCashPrice != 0);
     vm.assume(notOverflowMul(_collateralData.coinsAmount, _collateralData.collateralCashPrice));
@@ -1217,10 +1294,9 @@ contract Unit_GlobalSettlement_RedeemCollateral is Base {
     globalSettlement.redeemCollateral(_collateralData.collateralType, _collateralData.coinsAmount);
   }
 
-  function test_Call_SafeEngine_TransferCollateral(RedeemCollateralStruct memory _collateralData)
-    public
-    happyPath(_collateralData)
-  {
+  function test_Call_SafeEngine_TransferCollateral(
+    RedeemCollateralStruct memory _collateralData
+  ) public happyPath(_collateralData) {
     vm.expectCall(
       address(mockSafeEngine),
       abi.encodeCall(
@@ -1238,7 +1314,9 @@ contract Unit_GlobalSettlement_RedeemCollateral is Base {
     globalSettlement.redeemCollateral(_collateralData.collateralType, _collateralData.coinsAmount);
   }
 
-  function test_Set_CoinsUsedToRedeem(RedeemCollateralStruct memory _collateralData) public happyPath(_collateralData) {
+  function test_Set_CoinsUsedToRedeem(
+    RedeemCollateralStruct memory _collateralData
+  ) public happyPath(_collateralData) {
     globalSettlement.redeemCollateral(_collateralData.collateralType, _collateralData.coinsAmount);
 
     assertEq(
@@ -1247,7 +1325,9 @@ contract Unit_GlobalSettlement_RedeemCollateral is Base {
     );
   }
 
-  function test_Emit_RedeemCollateral(RedeemCollateralStruct memory _collateralData) public happyPath(_collateralData) {
+  function test_Emit_RedeemCollateral(
+    RedeemCollateralStruct memory _collateralData
+  ) public happyPath(_collateralData) {
     vm.expectEmit();
     emit RedeemCollateral(
       _collateralData.collateralType,
@@ -1278,57 +1358,65 @@ contract Unit_GlobalSettlement_ModifyParameters is Base {
     globalSettlement.modifyParameters(_param, _data);
   }
 
-  function test_Set_LiquidationEngine(address _liquidationEngine) public happyPath mockAsContract(_liquidationEngine) {
+  function test_Set_LiquidationEngine(
+    address _liquidationEngine
+  ) public happyPath mockAsContract(_liquidationEngine) {
     globalSettlement.modifyParameters('liquidationEngine', abi.encode(_liquidationEngine));
 
     assertEq(address(globalSettlement.liquidationEngine()), _liquidationEngine);
   }
 
-  function test_Set_AccountingEngine(address _accountingEngine) public happyPath mockAsContract(_accountingEngine) {
+  function test_Set_AccountingEngine(
+    address _accountingEngine
+  ) public happyPath mockAsContract(_accountingEngine) {
     globalSettlement.modifyParameters('accountingEngine', abi.encode(_accountingEngine));
 
     assertEq(address(globalSettlement.accountingEngine()), _accountingEngine);
   }
 
-  function test_Set_OracleRelayer(address _oracleRelayer) public happyPath mockAsContract(_oracleRelayer) {
+  function test_Set_OracleRelayer(
+    address _oracleRelayer
+  ) public happyPath mockAsContract(_oracleRelayer) {
     globalSettlement.modifyParameters('oracleRelayer', abi.encode(_oracleRelayer));
 
     assertEq(address(globalSettlement.oracleRelayer()), _oracleRelayer);
   }
 
-  function test_Set_CoinJoin(address _coinJoin) public happyPath mockAsContract(_coinJoin) {
+  function test_Set_CoinJoin(
+    address _coinJoin
+  ) public happyPath mockAsContract(_coinJoin) {
     globalSettlement.modifyParameters('coinJoin', abi.encode(_coinJoin));
 
     assertEq(address(globalSettlement.coinJoin()), _coinJoin);
   }
 
-  function test_Set_CollateralJoinFactory(address _collateralJoinFactory)
-    public
-    happyPath
-    mockAsContract(_collateralJoinFactory)
-  {
+  function test_Set_CollateralJoinFactory(
+    address _collateralJoinFactory
+  ) public happyPath mockAsContract(_collateralJoinFactory) {
     globalSettlement.modifyParameters('collateralJoinFactory', abi.encode(_collateralJoinFactory));
 
     assertEq(address(globalSettlement.collateralJoinFactory()), _collateralJoinFactory);
   }
 
-  function test_Set_StabilityFeeTreasury(address _stabilityFeeTreasury)
-    public
-    happyPath
-    mockAsContract(_stabilityFeeTreasury)
-  {
+  function test_Set_StabilityFeeTreasury(
+    address _stabilityFeeTreasury
+  ) public happyPath mockAsContract(_stabilityFeeTreasury) {
     globalSettlement.modifyParameters('stabilityFeeTreasury', abi.encode(_stabilityFeeTreasury));
 
     assertEq(address(globalSettlement.stabilityFeeTreasury()), _stabilityFeeTreasury);
   }
 
-  function test_Set_ShutdownCooldown(uint256 _shutdownCooldown) public happyPath {
+  function test_Set_ShutdownCooldown(
+    uint256 _shutdownCooldown
+  ) public happyPath {
     globalSettlement.modifyParameters('shutdownCooldown', abi.encode(_shutdownCooldown));
 
     assertEq(globalSettlement.params().shutdownCooldown, _shutdownCooldown);
   }
 
-  function test_Revert_UnrecognizedParam(bytes memory _data) public {
+  function test_Revert_UnrecognizedParam(
+    bytes memory _data
+  ) public {
     vm.startPrank(authorizedAccount);
 
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);

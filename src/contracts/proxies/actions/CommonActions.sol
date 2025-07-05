@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {IERC20Metadata} from '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
@@ -34,7 +34,9 @@ abstract contract CommonActions is ICommonActions {
   }
 
   /// @inheritdoc ICommonActions
-  function exitAllSystemCoins(address _coinJoin) external onlyDelegateCall {
+  function exitAllSystemCoins(
+    address _coinJoin
+  ) external onlyDelegateCall {
     uint256 _coinsToExit = ICoinJoin(_coinJoin).safeEngine().coinBalance(address(this));
     _exitSystemCoins(_coinJoin, _coinsToExit);
   }

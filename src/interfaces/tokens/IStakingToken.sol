@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IProtocolToken} from '@interfaces/tokens/IProtocolToken.sol';
 
@@ -77,7 +77,9 @@ interface IStakingToken is IERC20Metadata, IERC20Permit, IVotes, IAuthorizable {
    * @notice Burns tokens from the caller's address
    * @param _wad The amount of tokens to burn
    */
-  function burn(uint256 _wad) external;
+  function burn(
+    uint256 _wad
+  ) external;
 
   /**
    * @notice Burns tokens from the caller's address

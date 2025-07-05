@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {Deploy, DeployMainnet, DeployTestnet} from '@script/Deploy.s.sol';
 
 import {
@@ -24,7 +24,7 @@ import {TestnetDeployment} from '@script/TestnetDeployment.s.sol';
 import {MainnetDeployment} from '@script/MainnetDeployment.s.sol';
 import 'forge-std/console.sol';
 
-abstract contract CommonDeploymentTest is HaiTest, Deploy {
+abstract contract CommonDeploymentTest is AzosTest, Deploy {
   uint256 _governorAccounts;
 
   // SAFEEngine
@@ -439,27 +439,27 @@ abstract contract CommonDeploymentTest is HaiTest, Deploy {
   // }
 
   function test_Timelock_Auth() public {
-    assertEq(timelock.hasRole(keccak256('PROPOSER_ROLE'), address(haiGovernor)), true);
-    assertEq(timelock.hasRole(keccak256('CANCELLER_ROLE'), address(haiGovernor)), true);
-    assertEq(timelock.hasRole(keccak256('EXECUTOR_ROLE'), address(haiGovernor)), true);
+    assertEq(timelock.hasRole(keccak256('PROPOSER_ROLE'), address(azosGovernor)), true);
+    assertEq(timelock.hasRole(keccak256('CANCELLER_ROLE'), address(azosGovernor)), true);
+    assertEq(timelock.hasRole(keccak256('EXECUTOR_ROLE'), address(azosGovernor)), true);
   }
 
   function test_Timelock_Params() public {
     assertEq(timelock.getMinDelay(), _governorParams.timelockMinDelay);
   }
 
-  // function test_HaiGovernor_Bytecode_MANUAL_CHECK() public {
+  // function test_AzosGovernor_Bytecode_MANUAL_CHECK() public {
   //     // Not possible to check bytecode because it has immutable storage
   //     // Needs to be manually checked
   // }
 
-  function test_HaiGovernor_Params() public {
-    assertEq(haiGovernor.votingDelay(), _governorParams.votingDelay);
-    assertEq(haiGovernor.votingPeriod(), _governorParams.votingPeriod);
-    assertEq(haiGovernor.proposalThreshold(), _governorParams.proposalThreshold);
+  function test_AzosGovernor_Params() public {
+    assertEq(azosGovernor.votingDelay(), _governorParams.votingDelay);
+    assertEq(azosGovernor.votingPeriod(), _governorParams.votingPeriod);
+    assertEq(azosGovernor.proposalThreshold(), _governorParams.proposalThreshold);
 
-    assertEq(address(haiGovernor.token()), address(protocolToken));
-    assertEq(address(haiGovernor.timelock()), address(timelock));
+    assertEq(address(azosGovernor.token()), address(protocolToken));
+    assertEq(address(azosGovernor.timelock()), address(timelock));
   }
 
   // TokenDistributor
@@ -485,7 +485,7 @@ abstract contract CommonDeploymentTest is HaiTest, Deploy {
   // }
 
   function test_Delegated_OP() public {
-    assertEq(ERC20Votes(OP_OPTIMISM).delegates(address(collateralJoin[OP])), address(haiDelegatee));
+    assertEq(ERC20Votes(OP_OPTIMISM).delegates(address(collateralJoin[OP])), address(azosDelegate));
   }
 
   function _test_Authorizations(address _target, bool _permission) internal {

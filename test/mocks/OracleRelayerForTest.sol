@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {OracleRelayer, IOracleRelayer, EnumerableSet} from '@contracts/OracleRelayer.sol';
 import {IDelayedOracle} from '@interfaces/oracles/IDelayedOracle.sol';
@@ -19,15 +19,21 @@ contract OracleRelayerForTest is OracleRelayer {
     _cParams[_cType].oracle = IDelayedOracle(_oracle);
   }
 
-  function addToCollateralList(bytes32 _cType) external {
+  function addToCollateralList(
+    bytes32 _cType
+  ) external {
     _collateralList.add(_cType);
   }
 
-  function setRedemptionPrice(uint256 _price) external {
+  function setRedemptionPrice(
+    uint256 _price
+  ) external {
     _redemptionPrice = _price;
   }
 
-  function setContractEnabled(bool _contractEnabled) external {
+  function setContractEnabled(
+    bool _contractEnabled
+  ) external {
     contractEnabled = _contractEnabled;
   }
 

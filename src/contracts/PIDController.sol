@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IPIDController} from '@interfaces/IPIDController.sol';
 
@@ -94,12 +94,16 @@ contract PIDController is Authorizable, Modifiable, IPIDController {
   }
 
   /// @inheritdoc IPIDController
-  function getBoundedRedemptionRate(int256 _piOutput) external view returns (uint256 _newRedemptionRate) {
+  function getBoundedRedemptionRate(
+    int256 _piOutput
+  ) external view returns (uint256 _newRedemptionRate) {
     return _getBoundedRedemptionRate(_piOutput);
   }
 
   /// @dev Computes the new redemption rate by taking into account the feedbackOutputUpperBound and feedbackOutputLowerBound
-  function _getBoundedRedemptionRate(int256 _piOutput) internal view virtual returns (uint256 _newRedemptionRate) {
+  function _getBoundedRedemptionRate(
+    int256 _piOutput
+  ) internal view virtual returns (uint256 _newRedemptionRate) {
     int256 _boundedPIOutput = _getBoundedPIOutput(_piOutput);
 
     // feedbackOutputLowerBound will never be less than NEGATIVE_RATE_LIMIT : RAY - 1,
@@ -111,7 +115,9 @@ contract PIDController is Authorizable, Modifiable, IPIDController {
   }
 
   /// @dev Computes the pi output by taking into account the feedbackOutputUpperBound and feedbackOutputLowerBound
-  function _getBoundedPIOutput(int256 _piOutput) internal view virtual returns (int256 _boundedPIOutput) {
+  function _getBoundedPIOutput(
+    int256 _piOutput
+  ) internal view virtual returns (int256 _boundedPIOutput) {
     _boundedPIOutput = _piOutput;
     if (_piOutput < _params.feedbackOutputLowerBound) {
       _boundedPIOutput = _params.feedbackOutputLowerBound;

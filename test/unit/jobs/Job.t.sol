@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {JobForTest, IJob} from '@test/mocks/JobForTest.sol';
 import {IStabilityFeeTreasury} from '@interfaces/IStabilityFeeTreasury.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
 import {Assertions} from '@libraries/Assertions.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   address deployer = label('deployer');
@@ -33,7 +33,9 @@ abstract contract Base is HaiTest {
     vm.stopPrank();
   }
 
-  function _mockRewardAmount(uint256 _rewardAmount) internal {
+  function _mockRewardAmount(
+    uint256 _rewardAmount
+  ) internal {
     stdstore.target(address(job)).sig(IJob.rewardAmount.selector).checked_write(_rewardAmount);
   }
 }
@@ -80,17 +82,17 @@ contract Unit_Job_ModifyParameters is Base {
     _;
   }
 
-  function test_Set_StabilityFeeTreasury(address _stabilityFeeTreasury)
-    public
-    happyPath
-    mockAsContract(_stabilityFeeTreasury)
-  {
+  function test_Set_StabilityFeeTreasury(
+    address _stabilityFeeTreasury
+  ) public happyPath mockAsContract(_stabilityFeeTreasury) {
     job.modifyParameters('stabilityFeeTreasury', abi.encode(_stabilityFeeTreasury));
 
     assertEq(address(job.stabilityFeeTreasury()), _stabilityFeeTreasury);
   }
 
-  function test_Set_RewardAmount(uint256 _rewardAmount) public happyPath {
+  function test_Set_RewardAmount(
+    uint256 _rewardAmount
+  ) public happyPath {
     vm.assume(_rewardAmount != 0);
 
     job.modifyParameters('rewardAmount', abi.encode(_rewardAmount));
@@ -114,7 +116,9 @@ contract Unit_Job_ModifyParameters is Base {
     job.modifyParameters('rewardAmount', abi.encode(0));
   }
 
-  function test_Revert_UnrecognizedParam(bytes memory _data) public {
+  function test_Revert_UnrecognizedParam(
+    bytes memory _data
+  ) public {
     vm.startPrank(authorizedAccount);
 
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);
@@ -126,18 +130,24 @@ contract Unit_Job_ModifyParameters is Base {
 contract Unit_Job_Reward is Base {
   event Rewarded(address _rewardedAccount, uint256 _rewardAmount);
 
-  modifier happyPath(uint256 _rewardAmount) {
+  modifier happyPath(
+    uint256 _rewardAmount
+  ) {
     vm.startPrank(user);
 
     _mockValues(_rewardAmount);
     _;
   }
 
-  function _mockValues(uint256 _rewardAmount) internal {
+  function _mockValues(
+    uint256 _rewardAmount
+  ) internal {
     _mockRewardAmount(_rewardAmount);
   }
 
-  function test_Call_StabilityFeeTreasury_PullFunds(uint256 _rewardAmount) public happyPath(_rewardAmount) {
+  function test_Call_StabilityFeeTreasury_PullFunds(
+    uint256 _rewardAmount
+  ) public happyPath(_rewardAmount) {
     vm.expectCall(
       address(mockStabilityFeeTreasury), abi.encodeCall(mockStabilityFeeTreasury.pullFunds, (user, _rewardAmount)), 1
     );
@@ -145,7 +155,9 @@ contract Unit_Job_Reward is Base {
     job.rewardModifier();
   }
 
-  function test_Emit_Rewarded(uint256 _rewardAmount) public happyPath(_rewardAmount) {
+  function test_Emit_Rewarded(
+    uint256 _rewardAmount
+  ) public happyPath(_rewardAmount) {
     vm.expectEmit();
     emit Rewarded(user, _rewardAmount);
 

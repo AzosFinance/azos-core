@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import '@script/Contracts.s.sol';
 import {TestnetParams, WETH, OP, WBTC, STONES, TOTEM} from '@script/TestnetParams.s.sol';
@@ -78,8 +78,8 @@ abstract contract TestnetDeployment is Contracts, TestnetParams {
     oracleJob = OracleJob(0xAACc036c505370918e4A89567a636D561833bD21);
 
     // --- proxies ---
-    proxyFactory = HaiProxyFactory(0xB97a5f055285244bf11252178fb1053f035A77E5);
-    safeManager = HaiSafeManager(0x0ef96c66767942ed561e4C028905D683943B7a39);
+    proxyFactory = AzosProxyFactory(0xB97a5f055285244bf11252178fb1053f035A77E5);
+    safeManager = AzosSafeManager(0x0ef96c66767942ed561e4C028905D683943B7a39);
 
     basicActions = BasicActions(0x1929cFCB27C9cb384925B51bA6D0b53ff31eBEE5);
     debtBidActions = DebtBidActions(0x910271788cEFa5F0D4F6824bC4706d4452e25613);
@@ -98,9 +98,9 @@ abstract contract TestnetDeployment is Contracts, TestnetParams {
     delayedOracle[TOTEM] = IDelayedOracle(0x458057eB20175895D2598ABC313d8F2Ab0b2230a);
 
     // --- governance ---
-    haiGovernor = HaiGovernor(payable(0x34C0CdCe8D66A559CcCCcBeB2AeabCF68182e8B9));
+    azosGovernor = AzosGovernor(payable(0x34C0CdCe8D66A559CcCCcBeB2AeabCF68182e8B9));
     timelock = TimelockController(payable(0x06F2bC32144aAbEfb5FaaB498356c9ADc56EEEaa));
-    haiDelegatee = HaiDelegatee(0x8bdBebfDFb82C1A8315A8Ebe00E53b87944D7526);
+    azosDelegate = AzosDelegatee(0x8bdBebfDFb82C1A8315A8Ebe00E53b87944D7526);
 
     tokenDistributor = TokenDistributor(0x5684Ea6cf4A323F410a1Eb25B4A6ec8D8a93Cf24);
 

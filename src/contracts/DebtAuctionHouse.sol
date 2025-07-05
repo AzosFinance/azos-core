@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IDebtAuctionHouse} from '@interfaces/IDebtAuctionHouse.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -32,7 +32,9 @@ contract DebtAuctionHouse is Authorizable, Modifiable, Disableable, IDebtAuction
   mapping(uint256 _auctionId => Auction) public _auctions;
 
   /// @inheritdoc IDebtAuctionHouse
-  function auctions(uint256 _id) external view returns (Auction memory _auction) {
+  function auctions(
+    uint256 _id
+  ) external view returns (Auction memory _auction) {
     return _auctions[_id];
   }
 
@@ -120,7 +122,9 @@ contract DebtAuctionHouse is Authorizable, Modifiable, Disableable, IDebtAuction
   }
 
   /// @inheritdoc IDebtAuctionHouse
-  function restartAuction(uint256 _id) external {
+  function restartAuction(
+    uint256 _id
+  ) external {
     Auction storage _auction = _auctions[_id];
     if (_id == 0 || _id > auctionsStarted) revert DAH_AuctionNeverStarted();
     if (_auction.auctionDeadline > block.timestamp) revert DAH_AuctionNotFinished();
@@ -165,7 +169,9 @@ contract DebtAuctionHouse is Authorizable, Modifiable, Disableable, IDebtAuction
   }
 
   /// @inheritdoc IDebtAuctionHouse
-  function settleAuction(uint256 _id) external whenEnabled {
+  function settleAuction(
+    uint256 _id
+  ) external whenEnabled {
     Auction memory _auction = _auctions[_id];
 
     if (_auction.bidExpiry == 0 || (_auction.bidExpiry > block.timestamp && _auction.auctionDeadline > block.timestamp))
@@ -187,7 +193,9 @@ contract DebtAuctionHouse is Authorizable, Modifiable, Disableable, IDebtAuction
   }
 
   /// @inheritdoc IDebtAuctionHouse
-  function terminateAuctionPrematurely(uint256 _id) external whenDisabled {
+  function terminateAuctionPrematurely(
+    uint256 _id
+  ) external whenDisabled {
     Auction memory _auction = _auctions[_id];
     delete _auctions[_id];
 

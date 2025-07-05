@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 
@@ -131,7 +131,9 @@ interface ITaxCollector is IAuthorizable, IModifiable, IModifiablePerCollateral 
    * @param  _cType Bytes32 representation of the collateral type
    * @return _taxCollectorCParams Tax collector collateral parameters struct
    */
-  function cParams(bytes32 _cType) external view returns (TaxCollectorCollateralParams memory _taxCollectorCParams);
+  function cParams(
+    bytes32 _cType
+  ) external view returns (TaxCollectorCollateralParams memory _taxCollectorCParams);
 
   /**
    * @notice Getter for the unpacked collateral parameters struct
@@ -139,14 +141,18 @@ interface ITaxCollector is IAuthorizable, IModifiable, IModifiablePerCollateral 
    * @return _stabilityFee Stability fee [ray]
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _cParams(bytes32 _cType) external view returns (uint256 _stabilityFee);
+  function _cParams(
+    bytes32 _cType
+  ) external view returns (uint256 _stabilityFee);
 
   /**
    * @notice Getter for the collateral data struct
    * @param  _cType Bytes32 representation of the collateral type
    * @return _taxCollectorCData Tax collector collateral data struct
    */
-  function cData(bytes32 _cType) external view returns (TaxCollectorCollateralData memory _taxCollectorCData);
+  function cData(
+    bytes32 _cType
+  ) external view returns (TaxCollectorCollateralData memory _taxCollectorCData);
 
   /**
    * @notice Getter for the unpacked collateral data struct
@@ -156,10 +162,9 @@ interface ITaxCollector is IAuthorizable, IModifiable, IModifiablePerCollateral 
    * @return _secondaryReceiverAllotedTax Percentage of SF that goes to other addresses apart from the primary receiver
    */
   // solhint-disable-next-line private-vars-leading-underscore
-  function _cData(bytes32 _cType)
-    external
-    view
-    returns (uint256 _nextStabilityFee, uint256 _updateTime, uint256 _secondaryReceiverAllotedTax);
+  function _cData(
+    bytes32 _cType
+  ) external view returns (uint256 _nextStabilityFee, uint256 _updateTime, uint256 _secondaryReceiverAllotedTax);
 
   /**
    * @notice Getter for the data about a specific secondary tax receiver
@@ -217,7 +222,9 @@ interface ITaxCollector is IAuthorizable, IModifiable, IModifiablePerCollateral 
    * @return _newlyAccumulatedRate The newly accumulated rate
    * @return _deltaRate The delta between the new and the last accumulated rates
    */
-  function taxSingleOutcome(bytes32 _cType) external view returns (uint256 _newlyAccumulatedRate, int256 _deltaRate);
+  function taxSingleOutcome(
+    bytes32 _cType
+  ) external view returns (uint256 _newlyAccumulatedRate, int256 _deltaRate);
 
   // --- Tax Receiver Utils ---
 
@@ -236,7 +243,9 @@ interface ITaxCollector is IAuthorizable, IModifiable, IModifiablePerCollateral 
    * @param  _receiver Tax receiver address to check
    * @return _isSecondaryReceiver Whether the tax receiver for at least one collateral type
    */
-  function isSecondaryReceiver(address _receiver) external view returns (bool _isSecondaryReceiver);
+  function isSecondaryReceiver(
+    address _receiver
+  ) external view returns (bool _isSecondaryReceiver);
 
   // --- Views ---
 
@@ -248,10 +257,9 @@ interface ITaxCollector is IAuthorizable, IModifiable, IModifiablePerCollateral 
    * @param  _secondaryReceiver Secondary tax receiver address to check
    * @return _secondaryReceiverRevenueSourcesList List of collateral types for which the address is a secondary tax receiver
    */
-  function secondaryReceiverRevenueSourcesList(address _secondaryReceiver)
-    external
-    view
-    returns (bytes32[] memory _secondaryReceiverRevenueSourcesList);
+  function secondaryReceiverRevenueSourcesList(
+    address _secondaryReceiver
+  ) external view returns (bytes32[] memory _secondaryReceiverRevenueSourcesList);
 
   // --- Tax (Stability Fee) Collection ---
 
@@ -267,5 +275,7 @@ interface ITaxCollector is IAuthorizable, IModifiable, IModifiablePerCollateral 
    * @param _cType Collateral type to tax
    * @return _latestAccumulatedRate The newly accumulated rate after taxation
    */
-  function taxSingle(bytes32 _cType) external returns (uint256 _latestAccumulatedRate);
+  function taxSingle(
+    bytes32 _cType
+  ) external returns (uint256 _latestAccumulatedRate);
 }

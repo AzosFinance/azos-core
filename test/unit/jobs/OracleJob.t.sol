@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {OracleJobForTest, IOracleJob} from '@test/mocks/OracleJobForTest.sol';
 import {IOracleRelayer} from '@interfaces/IOracleRelayer.sol';
@@ -9,11 +9,11 @@ import {IStabilityFeeTreasury} from '@interfaces/IStabilityFeeTreasury.sol';
 import {IJob} from '@interfaces/jobs/IJob.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
 import {Assertions} from '@libraries/Assertions.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   address deployer = label('deployer');
@@ -55,20 +55,28 @@ abstract contract Base is HaiTest {
     );
   }
 
-  function _mockUpdateResult(bool _success) internal {
+  function _mockUpdateResult(
+    bool _success
+  ) internal {
     vm.mockCall(address(mockDelayedOracle), abi.encodeCall(mockDelayedOracle.updateResult, ()), abi.encode(_success));
   }
 
-  function _mockRewardAmount(uint256 _rewardAmount) internal {
+  function _mockRewardAmount(
+    uint256 _rewardAmount
+  ) internal {
     stdstore.target(address(oracleJob)).sig(IJob.rewardAmount.selector).checked_write(_rewardAmount);
   }
 
-  function _mockShouldWorkUpdateCollateralPrice(bool _shouldWorkUpdateCollateralPrice) internal {
+  function _mockShouldWorkUpdateCollateralPrice(
+    bool _shouldWorkUpdateCollateralPrice
+  ) internal {
     // BUG: Accessing packed slots is not supported by Std Storage
     oracleJob.setShouldWorkUpdateCollateralPrice(_shouldWorkUpdateCollateralPrice);
   }
 
-  function _mockShouldWorkUpdateRate(bool _shouldWorkUpdateRate) internal {
+  function _mockShouldWorkUpdateRate(
+    bool _shouldWorkUpdateRate
+  ) internal {
     // BUG: Accessing packed slots is not supported by Std Storage
     oracleJob.setShouldWorkUpdateRate(_shouldWorkUpdateRate);
   }
@@ -99,14 +107,18 @@ contract Unit_OracleJob_Constructor is Base {
     assertEq(oracleJob.rewardAmount(), REWARD_AMOUNT);
   }
 
-  function test_Set_OracleRelayer(address _oracleRelayer) public happyPath mockAsContract(_oracleRelayer) {
+  function test_Set_OracleRelayer(
+    address _oracleRelayer
+  ) public happyPath mockAsContract(_oracleRelayer) {
     oracleJob =
       new OracleJobForTest(_oracleRelayer, address(mockPIDRateSetter), address(mockStabilityFeeTreasury), REWARD_AMOUNT);
 
     assertEq(address(oracleJob.oracleRelayer()), _oracleRelayer);
   }
 
-  function test_Set_PIDRateSetter(address _pidRateSetter) public happyPath mockAsContract(_pidRateSetter) {
+  function test_Set_PIDRateSetter(
+    address _pidRateSetter
+  ) public happyPath mockAsContract(_pidRateSetter) {
     oracleJob =
       new OracleJobForTest(address(mockOracleRelayer), _pidRateSetter, address(mockStabilityFeeTreasury), REWARD_AMOUNT);
 
@@ -149,7 +161,9 @@ contract Unit_OracleJob_Constructor is Base {
 contract Unit_OracleJob_WorkUpdateCollateralPrice is Base {
   event Rewarded(address _rewardedAccount, uint256 _rewardAmount);
 
-  modifier happyPath(bytes32 _cType) {
+  modifier happyPath(
+    bytes32 _cType
+  ) {
     vm.startPrank(user);
 
     _mockValues(_cType, true, true);
@@ -162,7 +176,9 @@ contract Unit_OracleJob_WorkUpdateCollateralPrice is Base {
     _mockUpdateResult(_updateResult);
   }
 
-  function test_Revert_NotWorkable(bytes32 _cType) public {
+  function test_Revert_NotWorkable(
+    bytes32 _cType
+  ) public {
     _mockValues(_cType, false, false);
 
     vm.expectRevert(IJob.NotWorkable.selector);
@@ -170,7 +186,9 @@ contract Unit_OracleJob_WorkUpdateCollateralPrice is Base {
     oracleJob.workUpdateCollateralPrice(_cType);
   }
 
-  function test_Revert_InvalidPrice(bytes32 _cType) public {
+  function test_Revert_InvalidPrice(
+    bytes32 _cType
+  ) public {
     _mockValues(_cType, true, false);
 
     vm.expectRevert(IOracleJob.OracleJob_InvalidPrice.selector);
@@ -178,13 +196,17 @@ contract Unit_OracleJob_WorkUpdateCollateralPrice is Base {
     oracleJob.workUpdateCollateralPrice(_cType);
   }
 
-  function test_Call_OracleRelayer_UpdateCollateralPrice(bytes32 _cType) public happyPath(_cType) {
+  function test_Call_OracleRelayer_UpdateCollateralPrice(
+    bytes32 _cType
+  ) public happyPath(_cType) {
     vm.expectCall(address(mockOracleRelayer), abi.encodeCall(mockOracleRelayer.updateCollateralPrice, (_cType)), 1);
 
     oracleJob.workUpdateCollateralPrice(_cType);
   }
 
-  function test_Emit_Rewarded(bytes32 _cType) public happyPath(_cType) {
+  function test_Emit_Rewarded(
+    bytes32 _cType
+  ) public happyPath(_cType) {
     vm.expectEmit();
     emit Rewarded(user, REWARD_AMOUNT);
 
@@ -202,7 +224,9 @@ contract Unit_OracleJob_WorkUpdateRate is Base {
     _;
   }
 
-  function _mockValues(bool _shouldWorkUpdateRate) internal {
+  function _mockValues(
+    bool _shouldWorkUpdateRate
+  ) internal {
     _mockShouldWorkUpdateRate(_shouldWorkUpdateRate);
   }
 
@@ -234,41 +258,49 @@ contract Unit_OracleJob_ModifyParameters is Base {
     _;
   }
 
-  function test_Set_OracleRelayer(address _oracleRelayer) public happyPath mockAsContract(_oracleRelayer) {
+  function test_Set_OracleRelayer(
+    address _oracleRelayer
+  ) public happyPath mockAsContract(_oracleRelayer) {
     oracleJob.modifyParameters('oracleRelayer', abi.encode(_oracleRelayer));
 
     assertEq(address(oracleJob.oracleRelayer()), _oracleRelayer);
   }
 
-  function test_Set_PIDRateSetter(address _pidRateSetter) public happyPath mockAsContract(_pidRateSetter) {
+  function test_Set_PIDRateSetter(
+    address _pidRateSetter
+  ) public happyPath mockAsContract(_pidRateSetter) {
     oracleJob.modifyParameters('pidRateSetter', abi.encode(_pidRateSetter));
 
     assertEq(address(oracleJob.pidRateSetter()), _pidRateSetter);
   }
 
-  function test_Set_StabilityFeeTreasury(address _stabilityFeeTreasury)
-    public
-    happyPath
-    mockAsContract(_stabilityFeeTreasury)
-  {
+  function test_Set_StabilityFeeTreasury(
+    address _stabilityFeeTreasury
+  ) public happyPath mockAsContract(_stabilityFeeTreasury) {
     oracleJob.modifyParameters('stabilityFeeTreasury', abi.encode(_stabilityFeeTreasury));
 
     assertEq(address(oracleJob.stabilityFeeTreasury()), _stabilityFeeTreasury);
   }
 
-  function test_Set_ShouldWorkUpdateCollateralPrice(bool _shouldWorkUpdateCollateralPrice) public happyPath {
+  function test_Set_ShouldWorkUpdateCollateralPrice(
+    bool _shouldWorkUpdateCollateralPrice
+  ) public happyPath {
     oracleJob.modifyParameters('shouldWorkUpdateCollateralPrice', abi.encode(_shouldWorkUpdateCollateralPrice));
 
     assertEq(oracleJob.shouldWorkUpdateCollateralPrice(), _shouldWorkUpdateCollateralPrice);
   }
 
-  function test_Set_ShouldWorkUpdateRate(bool _shouldWorkUpdateRate) public happyPath {
+  function test_Set_ShouldWorkUpdateRate(
+    bool _shouldWorkUpdateRate
+  ) public happyPath {
     oracleJob.modifyParameters('shouldWorkUpdateRate', abi.encode(_shouldWorkUpdateRate));
 
     assertEq(oracleJob.shouldWorkUpdateRate(), _shouldWorkUpdateRate);
   }
 
-  function test_Set_RewardAmount(uint256 _rewardAmount) public happyPath {
+  function test_Set_RewardAmount(
+    uint256 _rewardAmount
+  ) public happyPath {
     vm.assume(_rewardAmount != 0);
 
     oracleJob.modifyParameters('rewardAmount', abi.encode(_rewardAmount));
@@ -308,7 +340,9 @@ contract Unit_OracleJob_ModifyParameters is Base {
     oracleJob.modifyParameters('rewardAmount', abi.encode(0));
   }
 
-  function test_Revert_UnrecognizedParam(bytes memory _data) public {
+  function test_Revert_UnrecognizedParam(
+    bytes memory _data
+  ) public {
     vm.startPrank(authorizedAccount);
 
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);

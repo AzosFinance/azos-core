@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IChainlinkRelayer} from '@interfaces/oracles/IChainlinkRelayer.sol';
 import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
@@ -77,12 +77,16 @@ contract ChainlinkRelayer is IBaseOracle, IChainlinkRelayer {
   }
 
   /// @notice Parses the result from the price feed into 18 decimals format
-  function _parseResult(int256 _feedResult) internal view returns (uint256 _result) {
+  function _parseResult(
+    int256 _feedResult
+  ) internal view returns (uint256 _result) {
     return uint256(_feedResult) * 10 ** multiplier;
   }
 
   /// @notice Checks if the feed is valid, considering the sequencer status, the staleThreshold and the feed timestamp
-  function _isValidFeed(uint256 _feedTimestamp) internal view returns (bool _valid) {
+  function _isValidFeed(
+    uint256 _feedTimestamp
+  ) internal view returns (bool _valid) {
     // Check the sequencer status
     (, int256 _feedStatus,,,) = sequencerUptimeFeed().latestRoundData();
 
@@ -97,7 +101,9 @@ contract ChainlinkRelayer is IBaseOracle, IChainlinkRelayer {
   }
 
   /// @notice Sets the Chainlink sequencer uptime feed contract address
-  function _setSequencerUptimeFeed(address __sequencerUptimeFeed) internal virtual {
+  function _setSequencerUptimeFeed(
+    address __sequencerUptimeFeed
+  ) internal virtual {
     if (__sequencerUptimeFeed == address(0)) revert ChainlinkRelayer_NullSequencerUptimeFeed();
     _sequencerUptimeFeed = IChainlinkOracle(__sequencerUptimeFeed);
   }

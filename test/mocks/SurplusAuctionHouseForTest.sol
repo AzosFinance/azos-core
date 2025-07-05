@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {SurplusAuctionHouse, ISurplusAuctionHouse} from '@contracts/SurplusAuctionHouse.sol';
 
@@ -25,7 +25,9 @@ contract SurplusAuctionHouseForTest is SurplusAuctionHouse {
     _auctions[_id].auctionDeadline = _auctionDeadline;
   }
 
-  function setBidReceiver(address _bidReceiver) external {
+  function setBidReceiver(
+    address _bidReceiver
+  ) external {
     _params.bidReceiver = _bidReceiver;
   }
 }

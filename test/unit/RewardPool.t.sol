@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {RewardPool, IRewardPool} from '@contracts/tokens/RewardPool.sol';
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import {IStakingManager} from '@interfaces/tokens/IStakingManager.sol';
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {Assertions} from '@libraries/Assertions.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
 import {IModifiable} from '@interfaces/utils/IModifiable.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   address deployer = label('deployer');
   address factoryDeployer = label('factoryDeployer');
   address authorizedAccount = label('authorizedAccount');
@@ -193,7 +193,9 @@ contract Unit_RewardPool_Stake is Base {
     rewardPool.stake(0);
   }
 
-  function test_Stake(uint256 _amount) public happyPath {
+  function test_Stake(
+    uint256 _amount
+  ) public happyPath {
     vm.assume(_amount > 0);
 
     vm.expectEmit();
@@ -222,7 +224,9 @@ contract Unit_RewardPool_IncreaseStake is Base {
     rewardPool.increaseStake(0);
   }
 
-  function test_IncreaseStake(uint256 _amount) public happyPath {
+  function test_IncreaseStake(
+    uint256 _amount
+  ) public happyPath {
     vm.assume(_amount > 0);
 
     vm.expectEmit();
@@ -455,7 +459,9 @@ contract Unit_RewardPool_LastTimeRewardApplicable is Base {
     _;
   }
 
-  modifier setupRewards(uint256 _rewardAmount) {
+  modifier setupRewards(
+    uint256 _rewardAmount
+  ) {
     // Setup initial rewards
     _rewardAmount = bound(_rewardAmount, 1e18, 1_000_000e18);
 
@@ -472,11 +478,9 @@ contract Unit_RewardPool_LastTimeRewardApplicable is Base {
     _;
   }
 
-  function test_LastTimeRewardApplicable_BeforePeriodFinish(uint256 _rewardAmount)
-    public
-    happyPath
-    setupRewards(_rewardAmount)
-  {
+  function test_LastTimeRewardApplicable_BeforePeriodFinish(
+    uint256 _rewardAmount
+  ) public happyPath setupRewards(_rewardAmount) {
     // Move time forward but not past period finish
     vm.warp(block.timestamp + 7 days);
 
@@ -484,11 +488,9 @@ contract Unit_RewardPool_LastTimeRewardApplicable is Base {
     assertEq(rewardPool.lastTimeRewardApplicable(), block.timestamp);
   }
 
-  function test_LastTimeRewardApplicable_AfterPeriodFinish(uint256 _rewardAmount)
-    public
-    happyPath
-    setupRewards(_rewardAmount)
-  {
+  function test_LastTimeRewardApplicable_AfterPeriodFinish(
+    uint256 _rewardAmount
+  ) public happyPath setupRewards(_rewardAmount) {
     uint256 periodFinish = rewardPool.periodFinish();
 
     // Move time past period finish
@@ -504,7 +506,9 @@ contract Unit_RewardPool_LastTimeRewardApplicable is Base {
     assertEq(rewardPool.lastTimeRewardApplicable(), 0);
   }
 
-  function test_LastTimeRewardApplicable_MultipleNotifications(uint256 _rewardAmount) public happyPath {
+  function test_LastTimeRewardApplicable_MultipleNotifications(
+    uint256 _rewardAmount
+  ) public happyPath {
     // Setup initial rewards
     _rewardAmount = bound(_rewardAmount, 1e18, 100_000e18);
 
@@ -546,7 +550,9 @@ contract Unit_RewardPool_RewardPerToken is Base {
     _;
   }
 
-  function test_RewardPerToken_NoStake(uint256 _rewardAmount) public happyPath {
+  function test_RewardPerToken_NoStake(
+    uint256 _rewardAmount
+  ) public happyPath {
     _rewardAmount = bound(_rewardAmount, 1e18, 1_000_000e18);
 
     vm.mockCall(
@@ -559,7 +565,9 @@ contract Unit_RewardPool_RewardPerToken is Base {
     assertEq(rewardPool.rewardPerToken(), 0);
   }
 
-  function test_RewardPerToken_NoRewards(uint256 _stakeAmount) public happyPath {
+  function test_RewardPerToken_NoRewards(
+    uint256 _stakeAmount
+  ) public happyPath {
     _stakeAmount = bound(_stakeAmount, 1e18, 1_000_000e18);
     // Should return 0 if there are no rewards, even with stake
     rewardPool.stake(_stakeAmount);
@@ -669,7 +677,9 @@ contract Unit_RewardPool_Earned is Base {
     _;
   }
 
-  function test_Earned_NoStake(uint256 _rewardAmount) public happyPath {
+  function test_Earned_NoStake(
+    uint256 _rewardAmount
+  ) public happyPath {
     // Should return 0 if there's no stake, even with rewards
     _rewardAmount = bound(_rewardAmount, 1e18, 1_000_000e18);
 
@@ -677,7 +687,9 @@ contract Unit_RewardPool_Earned is Base {
     assertEq(rewardPool.earned(), 0);
   }
 
-  function test_Earned_NoRewards(uint256 _stakeAmount) public happyPath {
+  function test_Earned_NoRewards(
+    uint256 _stakeAmount
+  ) public happyPath {
     _stakeAmount = bound(_stakeAmount, 1e18, 1_000_000e18);
 
     // Should return 0 if there are no rewards, even with stake
@@ -839,7 +851,9 @@ contract Unit_RewardPool_QueueNewRewards is Base {
     _;
   }
 
-  function test_QueueNewRewards_AfterPeriodFinish(uint256 _rewardsToQueue) public happyPath {
+  function test_QueueNewRewards_AfterPeriodFinish(
+    uint256 _rewardsToQueue
+  ) public happyPath {
     vm.assume(_rewardsToQueue > 0 && _rewardsToQueue < type(uint256).max / 2);
 
     // Warp to after period finish
@@ -976,7 +990,9 @@ contract Unit_RewardPool_NotifyRewardAmount is Base {
     _;
   }
 
-  function test_NotifyRewardAmount_Basic(uint256 _rewardAmount) public happyPath {
+  function test_NotifyRewardAmount_Basic(
+    uint256 _rewardAmount
+  ) public happyPath {
     _rewardAmount = bound(_rewardAmount, 1e18, 1_000_000e18);
 
     // Notify rewards
@@ -995,7 +1011,9 @@ contract Unit_RewardPool_NotifyRewardAmount is Base {
     rewardPool.notifyRewardAmount(0);
   }
 
-  function test_NotifyRewardAmount_AfterPeriodFinish(uint256 _rewardAmount) public happyPath {
+  function test_NotifyRewardAmount_AfterPeriodFinish(
+    uint256 _rewardAmount
+  ) public happyPath {
     _rewardAmount = bound(_rewardAmount, 1e18, 1_000_000e18);
 
     // First notification
@@ -1047,7 +1065,9 @@ contract Unit_RewardPool_NotifyRewardAmount is Base {
     rewardPool.notifyRewardAmount(100 ether);
   }
 
-  function test_NotifyRewardAmount_EmitsEvent(uint256 _rewardAmount) public happyPath {
+  function test_NotifyRewardAmount_EmitsEvent(
+    uint256 _rewardAmount
+  ) public happyPath {
     _rewardAmount = bound(_rewardAmount, 1e18, 1_000_000e18);
 
     vm.expectEmit();
@@ -1065,7 +1085,9 @@ contract Unit_RewardPool_EmergencyWithdraw is Base {
     _;
   }
 
-  function test_EmergencyWithdraw_Basic(uint256 _withdrawAmount) public happyPath {
+  function test_EmergencyWithdraw_Basic(
+    uint256 _withdrawAmount
+  ) public happyPath {
     _withdrawAmount = bound(_withdrawAmount, 1e18, 1_000_000e18);
     address rescueReceiver = address(0xdead);
 
@@ -1095,7 +1117,9 @@ contract Unit_RewardPool_EmergencyWithdraw is Base {
     rewardPool.emergencyWithdraw(address(0xdead), 100 ether);
   }
 
-  function test_EmergencyWithdraw_EmitsEvent(uint256 _withdrawAmount) public happyPath {
+  function test_EmergencyWithdraw_EmitsEvent(
+    uint256 _withdrawAmount
+  ) public happyPath {
     _withdrawAmount = bound(_withdrawAmount, 1e18, 1_000_000e18);
     address rescueReceiver = address(0xdead);
 
@@ -1112,7 +1136,9 @@ contract Unit_RewardPool_EmergencyWithdraw is Base {
     rewardPool.emergencyWithdraw(rescueReceiver, _withdrawAmount);
   }
 
-  function test_EmergencyWithdraw_TransferFails(uint256 _withdrawAmount) public happyPath {
+  function test_EmergencyWithdraw_TransferFails(
+    uint256 _withdrawAmount
+  ) public happyPath {
     _withdrawAmount = bound(_withdrawAmount, 1e18, 1_000_000e18);
     address rescueReceiver = address(0xdead);
 
@@ -1140,11 +1166,9 @@ contract Unit_RewardPool_ModifyParameters is Base {
     uint256 newRewardRatio;
   }
 
-  function test_ModifyParameters_Basic(ModifyParametersScenario memory _fuzz)
-    public
-    happyPath
-    mockAsContract(_fuzz.stakingManager)
-  {
+  function test_ModifyParameters_Basic(
+    ModifyParametersScenario memory _fuzz
+  ) public happyPath mockAsContract(_fuzz.stakingManager) {
     vm.assume(_fuzz.stakingManager != address(0));
     vm.assume(_fuzz.duration > 0);
     vm.assume(_fuzz.newRewardRatio > 0);
@@ -1161,11 +1185,9 @@ contract Unit_RewardPool_ModifyParameters is Base {
     assertEq(_params.newRewardRatio, _fuzz.newRewardRatio);
   }
 
-  function test_ModifyParameters_StakingManager(address _stakingManager)
-    public
-    happyPath
-    mockAsContract(_stakingManager)
-  {
+  function test_ModifyParameters_StakingManager(
+    address _stakingManager
+  ) public happyPath mockAsContract(_stakingManager) {
     vm.assume(_stakingManager != address(0));
     vm.assume(_stakingManager != address(mockStakingManager));
 
@@ -1174,7 +1196,9 @@ contract Unit_RewardPool_ModifyParameters is Base {
     assertEq(rewardPool.params().stakingManager, _stakingManager);
   }
 
-  function test_ModifyParameters_Duration(uint256 _duration) public happyPath {
+  function test_ModifyParameters_Duration(
+    uint256 _duration
+  ) public happyPath {
     vm.assume(_duration > 0);
 
     rewardPool.modifyParameters('duration', abi.encode(_duration));
@@ -1182,7 +1206,9 @@ contract Unit_RewardPool_ModifyParameters is Base {
     assertEq(rewardPool.params().duration, _duration);
   }
 
-  function test_ModifyParameters_NewRewardRatio(uint256 _newRewardRatio) public happyPath {
+  function test_ModifyParameters_NewRewardRatio(
+    uint256 _newRewardRatio
+  ) public happyPath {
     vm.assume(_newRewardRatio > 0);
 
     rewardPool.modifyParameters('newRewardRatio', abi.encode(_newRewardRatio));
@@ -1190,12 +1216,16 @@ contract Unit_RewardPool_ModifyParameters is Base {
     assertEq(rewardPool.params().newRewardRatio, _newRewardRatio);
   }
 
-  function test_Revert_ModifyParameters_UnrecognizedParam(bytes memory _data) public happyPath {
+  function test_Revert_ModifyParameters_UnrecognizedParam(
+    bytes memory _data
+  ) public happyPath {
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);
     rewardPool.modifyParameters('unrecognizedParam', _data);
   }
 
-  function test_Revert_ModifyParameters_Unauthorized(bytes memory _data) public {
+  function test_Revert_ModifyParameters_Unauthorized(
+    bytes memory _data
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
     rewardPool.modifyParameters('stakingManager', _data);
   }

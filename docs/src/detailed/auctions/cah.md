@@ -4,7 +4,7 @@ See [CollateralAuctionHouse.sol](/src/contracts/CollateralAuctionHouse.sol/contr
 
 ## 1. Introduction
 
-The Collateral Auction House plays a crucial role in maintaining the stability of the HAI Protocol by handling the auction of collateral seized from undercollateralized SAFEs. The primary objective is to convert this confiscated collateral into system coins, which are then forwarded to the Accounting Engine for debt destruction.
+The Collateral Auction House plays a crucial role in maintaining the stability of the Azos Protocol by handling the auction of collateral seized from undercollateralized SAFEs. The primary objective is to convert this confiscated collateral into system coins, which are then forwarded to the Accounting Engine for debt destruction.
 
 The Collateral Auction House utilizes an increasing discount model. This encourages early bidding by incrementally increasing the discount applied to the collateral over time. The rationale behind this is to expedite the auction process and ensure that debts are covered as swiftly as possible.
 

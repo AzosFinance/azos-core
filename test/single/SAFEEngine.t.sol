@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import 'ds-test/test.sol';
 import {CoinForTest} from '@test/mocks/CoinForTest.sol';
@@ -33,15 +33,21 @@ import {
 } from '@contracts/settlement/PostSettlementSurplusAuctionHouse.sol';
 
 abstract contract Hevm {
-  function warp(uint256) public virtual;
+  function warp(
+    uint256
+  ) public virtual;
   function store(address, bytes32, bytes32) external virtual;
-  function prank(address) external virtual;
+  function prank(
+    address
+  ) external virtual;
 }
 
 contract Usr {
   SAFEEngine public safeEngine;
 
-  constructor(SAFEEngine _safeEngine) {
+  constructor(
+    SAFEEngine _safeEngine
+  ) {
     safeEngine = _safeEngine;
   }
 
@@ -128,7 +134,9 @@ contract Usr {
     safeEngine.transferSAFECollateralAndDebt(_collateralType, _src, _dst, _deltaCollateral, _deltaDebt);
   }
 
-  function approveSAFEModification(address _usr) public {
+  function approveSAFEModification(
+    address _usr
+  ) public {
     safeEngine.approveSAFEModification(_usr);
   }
 }
@@ -170,7 +178,9 @@ contract SingleModifySAFECollateralizationTest is DSTest {
     );
   }
 
-  function ray(uint256 _wad) internal pure returns (uint256) {
+  function ray(
+    uint256 _wad
+  ) internal pure returns (uint256) {
     return _wad * 10 ** 9;
   }
 
@@ -298,7 +308,9 @@ contract SingleModifySAFECollateralizationTest is DSTest {
     assertTrue(this.try_modifySAFECollateralization('gold', 5 ether, 1 ether));
   }
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 27;
   }
 
@@ -437,11 +449,15 @@ contract SingleSAFEDebtLimitTest is DSTest {
       address(safeEngine).call(abi.encodeWithSignature(_sig, _collateralType, _self, dst, deltaCollateral, deltaDebt));
   }
 
-  function ray(uint256 wad) internal pure returns (uint256) {
+  function ray(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 9;
   }
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 27;
   }
 
@@ -595,12 +611,16 @@ contract SingleJoinTest is DSTest {
     me = address(this);
   }
 
-  function try_disable_contract(address a) public returns (bool ok) {
+  function try_disable_contract(
+    address a
+  ) public returns (bool ok) {
     string memory _sig = 'disableContract()';
     (ok,) = a.call(abi.encodeWithSignature(_sig));
   }
 
-  function try_disable_collateralJoin(bytes32 _cType) public returns (bool ok) {
+  function try_disable_collateralJoin(
+    bytes32 _cType
+  ) public returns (bool ok) {
     string memory _sig = 'disableCollateralJoin(bytes32)';
     (ok,) = address(collateralJoinFactory).call(abi.encodeWithSignature(_sig, _cType));
   }
@@ -627,7 +647,9 @@ contract SingleJoinTest is DSTest {
     assertEq(safeEngine.tokenCollateral('collateral', me), 10 ether);
   }
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 27;
   }
 
@@ -675,7 +697,9 @@ abstract contract EnglishCollateralAuctionHouseLike {
     uint256 amountToRaise;
   }
 
-  function bids(uint256)
+  function bids(
+    uint256
+  )
     public
     view
     virtual
@@ -730,11 +754,15 @@ contract SingleLiquidationTest is DSTest {
     (ok,) = address(liquidationEngine).call(abi.encodeWithSignature(_sig, _collateralType, _safe));
   }
 
-  function ray(uint256 wad) internal pure returns (uint256) {
+  function ray(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 9;
   }
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 27;
   }
 
@@ -1353,11 +1381,15 @@ contract SingleLiquidationTest is DSTest {
 contract SingleAccumulateRatesTest is DSTest {
   SAFEEngine safeEngine;
 
-  function ray(uint256 wad) internal pure returns (uint256) {
+  function ray(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 9;
   }
 
-  function rad(uint256 wad) internal pure returns (uint256) {
+  function rad(
+    uint256 wad
+  ) internal pure returns (uint256) {
     return wad * 10 ** 27;
   }
 

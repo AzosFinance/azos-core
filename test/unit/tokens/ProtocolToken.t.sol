@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ProtocolToken, IProtocolToken} from '@contracts/tokens/ProtocolToken.sol';
 import {Pausable} from '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol';
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
-import {HaiTest, stdStorage, StdStorage} from '@test/utils/HaiTest.t.sol';
+import {AzosTest, stdStorage, StdStorage} from '@test/utils/AzosTest.t.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   address deployer = label('deployer');
@@ -28,7 +28,9 @@ abstract contract Base is HaiTest {
     vm.stopPrank();
   }
 
-  function _mockPaused(bool _paused) internal {
+  function _mockPaused(
+    bool _paused
+  ) internal {
     stdstore.target(address(protocolToken)).sig(Pausable.paused.selector).checked_write(_paused);
   }
 }
@@ -41,13 +43,17 @@ contract Unit_ProtocolToken_Constructor is Base {
     _;
   }
 
-  function test_Set_Name(string memory _name) public happyPath {
+  function test_Set_Name(
+    string memory _name
+  ) public happyPath {
     protocolToken = new ProtocolToken(_name, symbol);
 
     assertEq(protocolToken.name(), _name);
   }
 
-  function test_Set_Symbol(string memory _symbol) public happyPath {
+  function test_Set_Symbol(
+    string memory _symbol
+  ) public happyPath {
     protocolToken = new ProtocolToken(name, _symbol);
 
     assertEq(protocolToken.symbol(), _symbol);
@@ -97,7 +103,9 @@ contract Unit_ProtocolToken_Mint is Base {
 contract Unit_ProtocolToken_Burn is Base {
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
-  modifier happyPath(uint256 _wad) {
+  modifier happyPath(
+    uint256 _wad
+  ) {
     _assumeHappyPath(_wad);
     _mockPaused(false);
 
@@ -108,11 +116,15 @@ contract Unit_ProtocolToken_Burn is Base {
     _;
   }
 
-  function _assumeHappyPath(uint256 _wad) internal pure {
+  function _assumeHappyPath(
+    uint256 _wad
+  ) internal pure {
     vm.assume(_wad <= type(uint208).max);
   }
 
-  function test_Emit_Transfer(uint256 _wad) public happyPath(_wad) {
+  function test_Emit_Transfer(
+    uint256 _wad
+  ) public happyPath(_wad) {
     vm.expectEmit();
     emit Transfer(user, address(0), _wad);
 

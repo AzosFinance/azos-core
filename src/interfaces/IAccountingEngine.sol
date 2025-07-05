@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {ISurplusAuctionHouse} from '@interfaces/ISurplusAuctionHouse.sol';
@@ -181,7 +181,9 @@ interface IAccountingEngine is IAuthorizable, IDisableable, IModifiable {
    * @param  _blockTimestamp The timestamp of the debtBlock
    * @return _debtBlock The amount of debt created in the inputted blockTimestamp [rad]
    */
-  function debtQueue(uint256 _blockTimestamp) external view returns (uint256 _debtBlock);
+  function debtQueue(
+    uint256 _blockTimestamp
+  ) external view returns (uint256 _debtBlock);
 
   /**
    * @notice The total amount of debt that is currently in the debtQueue to be auctioned
@@ -218,28 +220,36 @@ interface IAccountingEngine is IAuthorizable, IDisableable, IModifiable {
    *         and gather surplus
    * @param  _debtBlock Amount of debt to push [rad]
    */
-  function pushDebtToQueue(uint256 _debtBlock) external;
+  function pushDebtToQueue(
+    uint256 _debtBlock
+  ) external;
 
   /**
    * @notice Pop a block of debt from the debt queue
    * @dev    A debtBlock can be popped from the queue after `popDebtDelay` seconds have passed since creation
    * @param  _debtBlockTimestamp Timestamp of the block of debt that should be popped out
    */
-  function popDebtFromQueue(uint256 _debtBlockTimestamp) external;
+  function popDebtFromQueue(
+    uint256 _debtBlockTimestamp
+  ) external;
 
   /**
    * @notice Destroy an equal amount of coins and debt
    * @dev    It can only destroy debt that is not locked in the queue and also not in a debt auction (`unqueuedUnauctionedDebt`)
    * @param _rad Amount of coins & debt to destroy [rad]
    */
-  function settleDebt(uint256 _rad) external;
+  function settleDebt(
+    uint256 _rad
+  ) external;
 
   /**
    * @notice Use surplus coins to destroy debt that was in a debt auction
    * @dev    Usually called by the `DebtAuctionHouse` after a debt bid is made
    * @param _rad Amount of coins & debt to destroy with surplus [rad]
    */
-  function cancelAuctionedDebtWithSurplus(uint256 _rad) external;
+  function cancelAuctionedDebtWithSurplus(
+    uint256 _rad
+  ) external;
 
   /**
    * @notice Start a debt auction (print protocol tokens in exchange for coins so that the system can be recapitalized)

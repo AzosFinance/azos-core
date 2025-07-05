@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ITaxCollector} from '@interfaces/ITaxCollector.sol';
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
@@ -46,7 +46,9 @@ contract TaxCollector is Authorizable, Modifiable, ModifiablePerCollateral, ITax
   mapping(bytes32 _cType => TaxCollectorCollateralParams) public _cParams;
 
   /// @inheritdoc ITaxCollector
-  function cParams(bytes32 _cType) external view returns (TaxCollectorCollateralParams memory _taxCollectorCParams) {
+  function cParams(
+    bytes32 _cType
+  ) external view returns (TaxCollectorCollateralParams memory _taxCollectorCParams) {
     return _cParams[_cType];
   }
 
@@ -55,7 +57,9 @@ contract TaxCollector is Authorizable, Modifiable, ModifiablePerCollateral, ITax
   mapping(bytes32 _cType => TaxCollectorCollateralData) public _cData;
 
   /// @inheritdoc ITaxCollector
-  function cData(bytes32 _cType) external view returns (TaxCollectorCollateralData memory _taxCollectorCData) {
+  function cData(
+    bytes32 _cType
+  ) external view returns (TaxCollectorCollateralData memory _taxCollectorCData) {
     return _cData[_cType];
   }
 
@@ -124,7 +128,9 @@ contract TaxCollector is Authorizable, Modifiable, ModifiablePerCollateral, ITax
   }
 
   /// @inheritdoc ITaxCollector
-  function taxSingleOutcome(bytes32 _cType) public view returns (uint256 _newlyAccumulatedRate, int256 _deltaRate) {
+  function taxSingleOutcome(
+    bytes32 _cType
+  ) public view returns (uint256 _newlyAccumulatedRate, int256 _deltaRate) {
     uint256 _lastAccumulatedRate = safeEngine.cData(_cType).accumulatedRate;
 
     TaxCollectorCollateralData memory __cData = _cData[_cType];
@@ -146,7 +152,9 @@ contract TaxCollector is Authorizable, Modifiable, ModifiablePerCollateral, ITax
   }
 
   /// @inheritdoc ITaxCollector
-  function isSecondaryReceiver(address _receiver) public view returns (bool _isSecondaryReceiver) {
+  function isSecondaryReceiver(
+    address _receiver
+  ) public view returns (bool _isSecondaryReceiver) {
     return _secondaryReceivers.contains(_receiver);
   }
 
@@ -158,11 +166,9 @@ contract TaxCollector is Authorizable, Modifiable, ModifiablePerCollateral, ITax
   }
 
   /// @inheritdoc ITaxCollector
-  function secondaryReceiverRevenueSourcesList(address _secondaryReceiver)
-    external
-    view
-    returns (bytes32[] memory _secondaryReceiverRevenueSourcesList)
-  {
+  function secondaryReceiverRevenueSourcesList(
+    address _secondaryReceiver
+  ) external view returns (bytes32[] memory _secondaryReceiverRevenueSourcesList) {
     return _secondaryReceiverRevenueSources[_secondaryReceiver].values();
   }
 
@@ -177,7 +183,9 @@ contract TaxCollector is Authorizable, Modifiable, ModifiablePerCollateral, ITax
   }
 
   /// @inheritdoc ITaxCollector
-  function taxSingle(bytes32 _cType) public returns (uint256 _latestAccumulatedRate) {
+  function taxSingle(
+    bytes32 _cType
+  ) public returns (uint256 _latestAccumulatedRate) {
     TaxCollectorCollateralData memory __cData = _cData[_cType];
 
     if (block.timestamp == __cData.updateTime) {
@@ -204,7 +212,9 @@ contract TaxCollector is Authorizable, Modifiable, ModifiablePerCollateral, ITax
    * @return _nextStabilityFee The next stability fee to be applied for the collateral type
    * @dev    The stability fee calculation is bounded by the maxStabilityFeeRange
    */
-  function _getNextStabilityFee(bytes32 _cType) internal view returns (uint256 _nextStabilityFee) {
+  function _getNextStabilityFee(
+    bytes32 _cType
+  ) internal view returns (uint256 _nextStabilityFee) {
     _nextStabilityFee = _params.globalStabilityFee.rmul(_cParams[_cType].stabilityFee);
     if (_nextStabilityFee < RAY - _params.maxStabilityFeeRange) return RAY - _params.maxStabilityFeeRange;
     if (_nextStabilityFee > RAY + _params.maxStabilityFeeRange) return RAY + _params.maxStabilityFeeRange;
@@ -310,7 +320,9 @@ contract TaxCollector is Authorizable, Modifiable, ModifiablePerCollateral, ITax
   }
 
   /// @inheritdoc ModifiablePerCollateral
-  function _validateCParameters(bytes32 _cType) internal view override {
+  function _validateCParameters(
+    bytes32 _cType
+  ) internal view override {
     _cParams[_cType].stabilityFee.assertGtEq(RAY - _params.maxStabilityFeeRange).assertLtEq(
       RAY + _params.maxStabilityFeeRange
     );
@@ -320,7 +332,9 @@ contract TaxCollector is Authorizable, Modifiable, ModifiablePerCollateral, ITax
    * @notice Sets the primary tax receiver, the address that receives the unallocated SF from all collateral types
    * @param  _primaryTaxReceiver Address of the primary tax receiver
    */
-  function _setPrimaryTaxReceiver(address _primaryTaxReceiver) internal {
+  function _setPrimaryTaxReceiver(
+    address _primaryTaxReceiver
+  ) internal {
     _params.primaryTaxReceiver = _primaryTaxReceiver;
     emit SetPrimaryReceiver(_GLOBAL_PARAM, _primaryTaxReceiver);
   }

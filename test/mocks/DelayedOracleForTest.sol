@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
 import {IDelayedOracle} from '@interfaces/oracles/IDelayedOracle.sol';
@@ -38,11 +38,15 @@ contract DelayedOracleForTest is IBaseOracle, IDelayedOracle {
     validity = _validity;
   }
 
-  function setPriceSource(address _priceSource) public virtual {
+  function setPriceSource(
+    address _priceSource
+  ) public virtual {
     priceSource = IBaseOracle(_priceSource);
   }
 
-  function setThrowsError(bool _throwError) public virtual {
+  function setThrowsError(
+    bool _throwError
+  ) public virtual {
     throwsError = _throwError;
   }
 

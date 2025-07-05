@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {ISAFEEngine} from '@interfaces/ISAFEEngine.sol';
 import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
@@ -47,7 +47,9 @@ contract OracleRelayer is Authorizable, Disableable, Modifiable, ModifiablePerCo
   }
 
   /// @inheritdoc IOracleRelayer
-  function cParams(bytes32 _cType) external view returns (OracleRelayerCollateralParams memory _oracleRelayerCParams) {
+  function cParams(
+    bytes32 _cType
+  ) external view returns (OracleRelayerCollateralParams memory _oracleRelayerCParams) {
     return _cParams[_cType];
   }
 
@@ -118,7 +120,9 @@ contract OracleRelayer is Authorizable, Disableable, Modifiable, ModifiablePerCo
   // --- Update value ---
 
   /// @inheritdoc IOracleRelayer
-  function updateCollateralPrice(bytes32 _cType) external whenEnabled {
+  function updateCollateralPrice(
+    bytes32 _cType
+  ) external whenEnabled {
     (uint256 _priceFeedValue, bool _hasValidValue) = _cParams[_cType].oracle.getResultWithValidity();
     uint256 _updatedRedemptionPrice = _getRedemptionPrice();
 
@@ -134,7 +138,9 @@ contract OracleRelayer is Authorizable, Disableable, Modifiable, ModifiablePerCo
   }
 
   /// @inheritdoc IOracleRelayer
-  function updateRedemptionRate(uint256 _redemptionRate) external isAuthorized whenEnabled {
+  function updateRedemptionRate(
+    uint256 _redemptionRate
+  ) external isAuthorized whenEnabled {
     if (block.timestamp != redemptionPriceUpdateTime) revert OracleRelayer_RedemptionPriceNotUpdated();
 
     if (_redemptionRate > _params.redemptionRateUpperBound) {
@@ -195,7 +201,9 @@ contract OracleRelayer is Authorizable, Disableable, Modifiable, ModifiablePerCo
   }
 
   /// @inheritdoc ModifiablePerCollateral
-  function _validateCParameters(bytes32 _cType) internal view override {
+  function _validateCParameters(
+    bytes32 _cType
+  ) internal view override {
     OracleRelayerCollateralParams memory __cParams = _cParams[_cType];
     __cParams.safetyCRatio.assertGtEq(__cParams.liquidationCRatio);
     __cParams.liquidationCRatio.assertGtEq(RAY);

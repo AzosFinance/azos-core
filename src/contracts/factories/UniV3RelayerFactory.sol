@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IUniV3RelayerFactory} from '@interfaces/factories/IUniV3RelayerFactory.sol';
 import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
@@ -29,7 +29,9 @@ contract UniV3RelayerFactory is Authorizable, IUniV3RelayerFactory {
 
   // --- Init ---
 
-  constructor(address _uniV3Factory) Authorizable(msg.sender) {
+  constructor(
+    address _uniV3Factory
+  ) Authorizable(msg.sender) {
     _UNI_V3_FACTORY = _uniV3Factory;
   }
 

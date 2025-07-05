@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 
@@ -23,7 +23,9 @@ abstract contract Authorizable is IAuthorizable {
   /**
    * @param  _account Initial account to add authorization to
    */
-  constructor(address _account) {
+  constructor(
+    address _account
+  ) {
     _addAuthorization(_account);
   }
 
@@ -33,7 +35,9 @@ abstract contract Authorizable is IAuthorizable {
    * @notice Checks whether an account is authorized
    * @return _authorized Whether the account is authorized or not
    */
-  function authorizedAccounts(address _account) external view returns (bool _authorized) {
+  function authorizedAccounts(
+    address _account
+  ) external view returns (bool _authorized) {
     return _isAuthorized(_account);
   }
 
@@ -51,7 +55,9 @@ abstract contract Authorizable is IAuthorizable {
    * @notice Add auth to an account
    * @param  _account Account to add auth to
    */
-  function addAuthorization(address _account) external virtual isAuthorized {
+  function addAuthorization(
+    address _account
+  ) external virtual isAuthorized {
     _addAuthorization(_account);
   }
 
@@ -59,12 +65,16 @@ abstract contract Authorizable is IAuthorizable {
    * @notice Remove auth from an account
    * @param  _account Account to remove auth from
    */
-  function removeAuthorization(address _account) external virtual isAuthorized {
+  function removeAuthorization(
+    address _account
+  ) external virtual isAuthorized {
     _removeAuthorization(_account);
   }
 
   // --- Internal methods ---
-  function _addAuthorization(address _account) internal {
+  function _addAuthorization(
+    address _account
+  ) internal {
     if (_authorizedAccounts.add(_account)) {
       emit AddAuthorization(_account);
     } else {
@@ -72,7 +82,9 @@ abstract contract Authorizable is IAuthorizable {
     }
   }
 
-  function _removeAuthorization(address _account) internal {
+  function _removeAuthorization(
+    address _account
+  ) internal {
     if (_authorizedAccounts.remove(_account)) {
       emit RemoveAuthorization(_account);
     } else {
@@ -80,7 +92,9 @@ abstract contract Authorizable is IAuthorizable {
     }
   }
 
-  function _isAuthorized(address _account) internal view virtual returns (bool _authorized) {
+  function _isAuthorized(
+    address _account
+  ) internal view virtual returns (bool _authorized) {
     return _authorizedAccounts.contains(_account);
   }
 

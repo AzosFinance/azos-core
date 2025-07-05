@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {StdStorage, stdStorage} from 'forge-std/StdStorage.sol';
 
@@ -12,7 +12,7 @@ import {IAuthorizable} from '@interfaces/utils/IAuthorizable.sol';
 import {IDisableable} from '@interfaces/utils/IDisableable.sol';
 import {IModifiablePerCollateral} from '@interfaces/utils/IModifiablePerCollateral.sol';
 
-import {HaiTest} from '@test/utils/HaiTest.t.sol';
+import {AzosTest} from '@test/utils/AzosTest.t.sol';
 import {OracleRelayer} from '@contracts/OracleRelayer.sol';
 import {SAFEEngine} from '@contracts/SAFEEngine.sol';
 import {OracleForTest} from '@test/mocks/OracleForTest.sol';
@@ -21,7 +21,7 @@ import {OracleRelayerForTest, OracleRelayerForInternalCallsTest} from '@test/moc
 import {Math, RAY, WAD} from '@libraries/Math.sol';
 import {Assertions} from '@libraries/Assertions.sol';
 
-abstract contract Base is HaiTest {
+abstract contract Base is AzosTest {
   using stdStorage for StdStorage;
 
   IOracleRelayer oracleRelayer;
@@ -48,12 +48,16 @@ abstract contract Base is HaiTest {
     _;
   }
 
-  function _mockContractEnabled(bool _contractEnabled) internal {
+  function _mockContractEnabled(
+    bool _contractEnabled
+  ) internal {
     // BUG: Accessing packed slots is not supported by Std Storage
     OracleRelayerForTest(address(oracleRelayer)).setContractEnabled(_contractEnabled);
   }
 
-  function _mockRedemptionRate(uint256 _redemptionRate) internal {
+  function _mockRedemptionRate(
+    uint256 _redemptionRate
+  ) internal {
     stdstore.target(address(oracleRelayer)).sig(IOracleRelayer.redemptionRate.selector).checked_write(_redemptionRate);
   }
 
@@ -67,27 +71,37 @@ abstract contract Base is HaiTest {
       .checked_write(_liquidationCRatio);
   }
 
-  function _mockCollateralList(bytes32 _cType) internal {
+  function _mockCollateralList(
+    bytes32 _cType
+  ) internal {
     OracleRelayerForTest(address(oracleRelayer)).addToCollateralList(_cType);
   }
 
-  function _mockRedemptionPrice(uint256 _redemptionPrice) internal {
+  function _mockRedemptionPrice(
+    uint256 _redemptionPrice
+  ) internal {
     OracleRelayerForTest(address(oracleRelayer)).setRedemptionPrice(_redemptionPrice);
   }
 
-  function _mockRedemptionPriceUpdateTime(uint256 _redemptionPriceUpdateTime) internal {
+  function _mockRedemptionPriceUpdateTime(
+    uint256 _redemptionPriceUpdateTime
+  ) internal {
     stdstore.target(address(oracleRelayer)).sig(IOracleRelayer.redemptionPriceUpdateTime.selector).checked_write(
       _redemptionPriceUpdateTime
     );
   }
 
-  function _mockRedemptionRateUpperBound(uint256 _redemptionRateUpperBound) internal {
+  function _mockRedemptionRateUpperBound(
+    uint256 _redemptionRateUpperBound
+  ) internal {
     stdstore.target(address(oracleRelayer)).sig(IOracleRelayer.params.selector).depth(0).checked_write(
       _redemptionRateUpperBound
     );
   }
 
-  function _mockRedemptionRateLowerBound(uint256 _redemptionRateLowerBound) internal {
+  function _mockRedemptionRateLowerBound(
+    uint256 _redemptionRateLowerBound
+  ) internal {
     stdstore.target(address(oracleRelayer)).sig(IOracleRelayer.params.selector).depth(1).checked_write(
       _redemptionRateLowerBound
     );
@@ -131,7 +145,9 @@ contract Unit_OracleRelayer_Constructor is Base {
     assertEq(IAuthorizable(address(oracleRelayer)).authorizedAccounts(deployer), true);
   }
 
-  function test_Set_OracleRelayer_Params(IOracleRelayer.OracleRelayerParams memory _oracleRelayerParams) public {
+  function test_Set_OracleRelayer_Params(
+    IOracleRelayer.OracleRelayerParams memory _oracleRelayerParams
+  ) public {
     vm.assume(_oracleRelayerParams.redemptionRateUpperBound > RAY);
     vm.assume(_oracleRelayerParams.redemptionRateLowerBound > 0 && _oracleRelayerParams.redemptionRateLowerBound < RAY);
     oracleRelayer = new OracleRelayer(address(mockSafeEngine), mockSystemCoinOracle, _oracleRelayerParams);
@@ -153,13 +169,17 @@ contract Unit_OracleRelayer_Constructor is Base {
 }
 
 contract Unit_OracleRelayer_ModifyParameters is Base {
-  function _validOracleRelayerParams(IOracleRelayer.OracleRelayerParams memory _fuzz) internal pure returns (bool) {
+  function _validOracleRelayerParams(
+    IOracleRelayer.OracleRelayerParams memory _fuzz
+  ) internal pure returns (bool) {
     return (
       _fuzz.redemptionRateUpperBound > RAY && _fuzz.redemptionRateLowerBound > 0 && _fuzz.redemptionRateLowerBound < RAY
     );
   }
 
-  modifier previousValidCTypeParams(bytes32 _cType) {
+  modifier previousValidCTypeParams(
+    bytes32 _cType
+  ) {
     OracleRelayerForTest(address(oracleRelayer)).setCTypeOracle(_cType, mockContract(newAddress(), 'NewCTypeOracle'));
     _mockCTypeSafetyCRatio(_cType, type(uint256).max);
     _mockCTypeLiquidationCRatio(_cType, 0);
@@ -167,18 +187,18 @@ contract Unit_OracleRelayer_ModifyParameters is Base {
     _;
   }
 
-  function _validOracleRelayerCollateralParams(IOracleRelayer.OracleRelayerCollateralParams memory _fuzz)
-    internal
-    pure
-    returns (bool)
-  {
+  function _validOracleRelayerCollateralParams(
+    IOracleRelayer.OracleRelayerCollateralParams memory _fuzz
+  ) internal pure returns (bool) {
     return (
       _fuzz.liquidationCRatio >= 1e27 && _fuzz.safetyCRatio >= _fuzz.liquidationCRatio
         && address(_fuzz.oracle) != address(vm) && uint160(address(_fuzz.oracle)) > 20
     );
   }
 
-  function test_ModifyParameters(IOracleRelayer.OracleRelayerParams memory _fuzz) public authorized {
+  function test_ModifyParameters(
+    IOracleRelayer.OracleRelayerParams memory _fuzz
+  ) public authorized {
     vm.assume(_validOracleRelayerParams(_fuzz));
 
     oracleRelayer.modifyParameters('redemptionRateUpperBound', abi.encode(_fuzz.redemptionRateUpperBound));
@@ -296,24 +316,26 @@ contract Unit_OracleRelayer_ModifyParameters is Base {
     oracleRelayer.modifyParameters(_cType, 'liquidationCRatio', abi.encode(_fuzz.liquidationCRatio));
   }
 
-  function test_Revert_ModifyParameters_PerCollateral(bytes32 _cType)
-    public
-    authorized
-    previousValidCTypeParams(_cType)
-  {
+  function test_Revert_ModifyParameters_PerCollateral(
+    bytes32 _cType
+  ) public authorized previousValidCTypeParams(_cType) {
     vm.expectRevert(abi.encodeWithSelector(Assertions.NoCode.selector, address(0)));
 
     oracleRelayer.modifyParameters(_cType, 'oracle', abi.encode(address(0)));
   }
 
-  function test_Revert_ModifyParameters_PerCollateral_UnrecognizedParam(bytes32 _cType) public authorized {
+  function test_Revert_ModifyParameters_PerCollateral_UnrecognizedParam(
+    bytes32 _cType
+  ) public authorized {
     _mockCollateralList(_cType);
 
     vm.expectRevert(IModifiable.UnrecognizedParam.selector);
     oracleRelayer.modifyParameters(_cType, 'unrecognizedParam', abi.encode(0));
   }
 
-  function test_Revert_ModifyParameters_PerCollateral_UnrecognizedCType(bytes32 _cType) public authorized {
+  function test_Revert_ModifyParameters_PerCollateral_UnrecognizedCType(
+    bytes32 _cType
+  ) public authorized {
     vm.expectRevert(IModifiable.UnrecognizedCType.selector);
     oracleRelayer.modifyParameters(_cType, '', abi.encode(0));
   }
@@ -326,7 +348,9 @@ contract Unit_OracleRelayer_ModifyParameters is Base {
     oracleRelayer.modifyParameters('unrecognizedParam', abi.encode(0));
   }
 
-  function test_Revert_ModifyParameters_PerCollateral_ContractIsDisabled(bytes32 _cType) public authorized {
+  function test_Revert_ModifyParameters_PerCollateral_ContractIsDisabled(
+    bytes32 _cType
+  ) public authorized {
     _mockContractEnabled(false);
 
     vm.expectRevert(IDisableable.ContractIsDisabled.selector);
@@ -456,36 +480,43 @@ contract Unit_OracleRelayer_Internal_UpdateRedemptionPrice is Base {
     uint256 redemptionPriceUpdateTime;
   }
 
-  function _assumeHappyPath(UpdateRedemptionPriceScenario memory _scenario) internal view {
+  function _assumeHappyPath(
+    UpdateRedemptionPriceScenario memory _scenario
+  ) internal view {
     vm.assume(_scenario.timestamp > _scenario.redemptionPriceUpdateTime);
     vm.assume(notOverflowRPow(_scenario.redemptionRate, _scenario.timestamp - _scenario.redemptionPriceUpdateTime));
     uint256 _rpowResult = _scenario.redemptionRate.rpow(_scenario.timestamp - _scenario.redemptionPriceUpdateTime);
     vm.assume(notOverflowMul(_rpowResult, _scenario.redemptionPrice));
   }
 
-  function _mockValues(UpdateRedemptionPriceScenario memory _scenario) internal {
+  function _mockValues(
+    UpdateRedemptionPriceScenario memory _scenario
+  ) internal {
     _mockRedemptionRate(_scenario.redemptionRate);
     _mockRedemptionPrice(_scenario.redemptionPrice);
     _mockRedemptionPriceUpdateTime(_scenario.redemptionPriceUpdateTime);
     vm.warp(_scenario.timestamp);
   }
 
-  modifier happyPath(UpdateRedemptionPriceScenario memory _scenario) {
+  modifier happyPath(
+    UpdateRedemptionPriceScenario memory _scenario
+  ) {
     _assumeHappyPath(_scenario);
     _mockValues(_scenario);
     _;
   }
 
-  function test_Set_RedemptionPriceUpdateTime(UpdateRedemptionPriceScenario memory _scenario)
-    public
-    happyPath(_scenario)
-  {
+  function test_Set_RedemptionPriceUpdateTime(
+    UpdateRedemptionPriceScenario memory _scenario
+  ) public happyPath(_scenario) {
     OracleRelayerForTest(address(oracleRelayer)).callUpdateRedemptionPrice();
 
     assertEq(oracleRelayer.redemptionPriceUpdateTime(), block.timestamp);
   }
 
-  function test_Set_RedemptionPrice(UpdateRedemptionPriceScenario memory _scenario) public happyPath(_scenario) {
+  function test_Set_RedemptionPrice(
+    UpdateRedemptionPriceScenario memory _scenario
+  ) public happyPath(_scenario) {
     uint256 _updatedPrice = _scenario.redemptionRate.rpow(_scenario.timestamp - _scenario.redemptionPriceUpdateTime)
       .rmul(_scenario.redemptionPrice);
     _updatedPrice = _updatedPrice == 0 ? 1 : _updatedPrice;
@@ -496,7 +527,9 @@ contract Unit_OracleRelayer_Internal_UpdateRedemptionPrice is Base {
     assertEq(_redemptionPrice, _updatedPrice);
   }
 
-  function test_Emit_UpdateRedemptionPrice(UpdateRedemptionPriceScenario memory _scenario) public happyPath(_scenario) {
+  function test_Emit_UpdateRedemptionPrice(
+    UpdateRedemptionPriceScenario memory _scenario
+  ) public happyPath(_scenario) {
     uint256 _updatedPrice = _scenario.redemptionRate.rpow(_scenario.timestamp - _scenario.redemptionPriceUpdateTime)
       .rmul(_scenario.redemptionPrice);
     _updatedPrice = _updatedPrice == 0 ? 1 : _updatedPrice;
@@ -531,10 +564,9 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     OracleRelayerForTest(address(oracleRelayer)).setCTypeOracle(collateralType, address(mockOracle));
   }
 
-  function _assumeHappyPathValidatyWithoutUpdateRedemptionPrice(UpdateCollateralPriceScenario memory _scenario)
-    internal
-    pure
-  {
+  function _assumeHappyPathValidatyWithoutUpdateRedemptionPrice(
+    UpdateCollateralPriceScenario memory _scenario
+  ) internal pure {
     vm.assume(_scenario.timestamp <= _scenario.redemptionPriceUpdateTime);
     vm.assume(_scenario.redemptionPrice > 0);
     vm.assume(_scenario.safetyCRatio > 0);
@@ -544,10 +576,9 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     vm.assume(notOverflowMul((_scenario.priceFeedValue * 10 ** 9).rdiv(_scenario.redemptionPrice), RAY));
   }
 
-  function _assumeHappyPathValidatyWithUpdateRedemptionPrice(UpdateCollateralPriceScenario memory _scenario)
-    internal
-    view
-  {
+  function _assumeHappyPathValidatyWithUpdateRedemptionPrice(
+    UpdateCollateralPriceScenario memory _scenario
+  ) internal view {
     vm.assume(_scenario.timestamp > _scenario.redemptionPriceUpdateTime);
     vm.assume(_scenario.redemptionPrice > 0);
     vm.assume(_scenario.safetyCRatio > 0);
@@ -578,19 +609,25 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     vm.warp(_scenario.timestamp);
   }
 
-  modifier happyPathValidityNoUpdate(UpdateCollateralPriceScenario memory _scenario) {
+  modifier happyPathValidityNoUpdate(
+    UpdateCollateralPriceScenario memory _scenario
+  ) {
     _assumeHappyPathValidatyWithoutUpdateRedemptionPrice(_scenario);
     _mockValues(_scenario, true);
     _;
   }
 
-  modifier happyPathValidityWithUpdate(UpdateCollateralPriceScenario memory _scenario) {
+  modifier happyPathValidityWithUpdate(
+    UpdateCollateralPriceScenario memory _scenario
+  ) {
     _assumeHappyPathValidatyWithUpdateRedemptionPrice(_scenario);
     _mockValues(_scenario, true);
     _;
   }
 
-  modifier happyPathNoValidity(UpdateCollateralPriceScenario memory _scenario) {
+  modifier happyPathNoValidity(
+    UpdateCollateralPriceScenario memory _scenario
+  ) {
     _assumeHappyPathValidatyWithUpdateRedemptionPrice(_scenario);
     _mockValues(_scenario, false);
     _;
@@ -624,28 +661,25 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Call_Orcl_GetResultWithValidity_ValidityNoPriceUpdate(UpdateCollateralPriceScenario memory _scenario)
-    public
-    happyPathValidityNoUpdate(_scenario)
-  {
+  function test_Call_Orcl_GetResultWithValidity_ValidityNoPriceUpdate(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public happyPathValidityNoUpdate(_scenario) {
     vm.expectCall(address(mockOracle), abi.encodeWithSelector(IBaseOracle.getResultWithValidity.selector));
 
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Call_Orcl_GetResultWithValidity_ValidityWithPriceUpdate(UpdateCollateralPriceScenario memory _scenario)
-    public
-    happyPathValidityWithUpdate(_scenario)
-  {
+  function test_Call_Orcl_GetResultWithValidity_ValidityWithPriceUpdate(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public happyPathValidityWithUpdate(_scenario) {
     vm.expectCall(address(mockOracle), abi.encodeWithSelector(IBaseOracle.getResultWithValidity.selector));
 
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Call_Internal_GetRedemptionPrice_ValidityNoPriceUpdate(UpdateCollateralPriceScenario memory _scenario)
-    public
-    happyPathValidityNoUpdate(_scenario)
-  {
+  function test_Call_Internal_GetRedemptionPrice_ValidityNoPriceUpdate(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public happyPathValidityNoUpdate(_scenario) {
     oracleRelayer =
       new OracleRelayerForInternalCallsTest(address(mockSafeEngine), mockSystemCoinOracle, oracleRelayerParams);
     OracleRelayerForInternalCallsTest(address(oracleRelayer)).setCTypeOracle(collateralType, address(mockOracle));
@@ -659,9 +693,9 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Call_Internal_GetRedemptionPrice_ValidityWithPriceUpdate(UpdateCollateralPriceScenario memory _scenario)
-    public
-  {
+  function test_Call_Internal_GetRedemptionPrice_ValidityWithPriceUpdate(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public {
     oracleRelayer =
       new OracleRelayerForInternalCallsTest(address(mockSafeEngine), mockSystemCoinOracle, oracleRelayerParams);
     OracleRelayerForInternalCallsTest(address(oracleRelayer)).setCTypeOracle(collateralType, address(mockOracle));
@@ -675,10 +709,9 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Call_SafeEngine_UpdateCollateralPrice(UpdateCollateralPriceScenario memory _scenario)
-    public
-    happyPathValidityNoUpdate(_scenario)
-  {
+  function test_Call_SafeEngine_UpdateCollateralPrice(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public happyPathValidityNoUpdate(_scenario) {
     (uint256 _safetyPrice, uint256 _liquidationPrice) = _getSafeEngineNewParameters(_scenario, false);
 
     vm.expectCall(
@@ -689,10 +722,9 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Call_SafeEngine_UpdateCollateralPrice_WithPriceUpdate(UpdateCollateralPriceScenario memory _scenario)
-    public
-    happyPathValidityWithUpdate(_scenario)
-  {
+  function test_Call_SafeEngine_UpdateCollateralPrice_WithPriceUpdate(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public happyPathValidityWithUpdate(_scenario) {
     (uint256 _safetyPrice, uint256 _liquidationPrice) = _getSafeEngineNewParameters(_scenario, true);
 
     vm.expectCall(
@@ -703,19 +735,17 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Call_SafeEngine_UpdateCollateralPrice_NoValidity(UpdateCollateralPriceScenario memory _scenario)
-    public
-    happyPathNoValidity(_scenario)
-  {
+  function test_Call_SafeEngine_UpdateCollateralPrice_NoValidity(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public happyPathNoValidity(_scenario) {
     vm.expectCall(address(mockSafeEngine), abi.encodeCall(ISAFEEngine.updateCollateralPrice, (collateralType, 0, 0)));
 
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Emit_UpdateCollateralPrice(UpdateCollateralPriceScenario memory _scenario)
-    public
-    happyPathValidityNoUpdate(_scenario)
-  {
+  function test_Emit_UpdateCollateralPrice(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public happyPathValidityNoUpdate(_scenario) {
     (uint256 _safetyPrice, uint256 _liquidationPrice) = _getSafeEngineNewParameters(_scenario, false);
 
     vm.expectEmit(true, true, false, false);
@@ -724,10 +754,9 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Emit_UpdateCollateralPrice_WithUpdate(UpdateCollateralPriceScenario memory _scenario)
-    public
-    happyPathValidityWithUpdate(_scenario)
-  {
+  function test_Emit_UpdateCollateralPrice_WithUpdate(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public happyPathValidityWithUpdate(_scenario) {
     (uint256 _safetyPrice, uint256 _liquidationPrice) = _getSafeEngineNewParameters(_scenario, true);
 
     vm.expectEmit(true, true, false, false);
@@ -736,10 +765,9 @@ contract Unit_OracleRelayer_UpdateCollateralPrice is Base {
     oracleRelayer.updateCollateralPrice(collateralType);
   }
 
-  function test_Emit_UpdateCollateralPrice_NoValidity(UpdateCollateralPriceScenario memory _scenario)
-    public
-    happyPathNoValidity(_scenario)
-  {
+  function test_Emit_UpdateCollateralPrice_NoValidity(
+    UpdateCollateralPriceScenario memory _scenario
+  ) public happyPathNoValidity(_scenario) {
     vm.expectEmit(true, true, false, false);
     emit UpdateCollateralPrice(collateralType, _scenario.priceFeedValue, 0, 0);
 
@@ -833,7 +861,9 @@ contract Unit_OracleRelayer_UpdateRedemptionRate is Base {
     oracleRelayer.updateRedemptionRate(_redemptionRate);
   }
 
-  function test_Revert_ContractIsDisabled(uint256 _redemptionRate) public authorized {
+  function test_Revert_ContractIsDisabled(
+    uint256 _redemptionRate
+  ) public authorized {
     _mockContractEnabled(false);
 
     vm.expectRevert(IDisableable.ContractIsDisabled.selector);
@@ -841,7 +871,9 @@ contract Unit_OracleRelayer_UpdateRedemptionRate is Base {
     oracleRelayer.updateRedemptionRate(_redemptionRate);
   }
 
-  function test_Revert_Unauthorized(uint256 _redemptionRate) public {
+  function test_Revert_Unauthorized(
+    uint256 _redemptionRate
+  ) public {
     vm.expectRevert(IAuthorizable.Unauthorized.selector);
 
     oracleRelayer.updateRedemptionRate(_redemptionRate);
@@ -849,20 +881,26 @@ contract Unit_OracleRelayer_UpdateRedemptionRate is Base {
 }
 
 contract Unit_OracleRelayer_InitializeCollateralType is Base {
-  modifier happyPath(IOracleRelayer.OracleRelayerCollateralParams memory _oracleRelayerCParams) {
+  modifier happyPath(
+    IOracleRelayer.OracleRelayerCollateralParams memory _oracleRelayerCParams
+  ) {
     _assumeHappyPath(_oracleRelayerCParams);
     _mockValues(_oracleRelayerCParams);
     _;
   }
 
-  function _assumeHappyPath(IOracleRelayer.OracleRelayerCollateralParams memory _oracleRelayerCParams) internal pure {
+  function _assumeHappyPath(
+    IOracleRelayer.OracleRelayerCollateralParams memory _oracleRelayerCParams
+  ) internal pure {
     vm.assume(_oracleRelayerCParams.oracle != IDelayedOracle(address(vm)));
     vm.assume(_oracleRelayerCParams.oracle != IDelayedOracle(address(0)));
     vm.assume(_oracleRelayerCParams.safetyCRatio >= _oracleRelayerCParams.liquidationCRatio);
     vm.assume(_oracleRelayerCParams.liquidationCRatio >= RAY);
   }
 
-  function _mockValues(IOracleRelayer.OracleRelayerCollateralParams memory _oracleRelayerCParams) internal {
+  function _mockValues(
+    IOracleRelayer.OracleRelayerCollateralParams memory _oracleRelayerCParams
+  ) internal {
     vm.mockCall(
       address(_oracleRelayerCParams.oracle),
       abi.encodeCall(IDelayedOracle.priceSource, ()),

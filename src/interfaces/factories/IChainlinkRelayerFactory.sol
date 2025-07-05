@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {IBaseOracle} from '@interfaces/oracles/IBaseOracle.sol';
 import {IChainlinkOracle} from '@interfaces/oracles/IChainlinkOracle.sol';
@@ -56,5 +56,7 @@ interface IChainlinkRelayerFactory is IAuthorizable {
    * @notice Sets the Chainlink sequencer uptime feed contract address
    * @param _sequencerUptimeFeed The address of the Chainlink sequencer uptime feed
    */
-  function setSequencerUptimeFeed(address _sequencerUptimeFeed) external;
+  function setSequencerUptimeFeed(
+    address _sequencerUptimeFeed
+  ) external;
 }
